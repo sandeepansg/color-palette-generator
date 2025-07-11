@@ -446,4 +446,98 @@ class ValidationEngine {
    * @param {Object} options - Validation options
    * @returns {Array} - Array of validation results
    */
+   batchValidate(swatches, options = {}) {
+    if (!Array.isArray(swatches)) {
+      throw new Error('Swatches must be an array');
+    }
+
+    return swatches.map((swatch, index) => {
+      try {
+        const result = this.validateSwatch(swatch, options);
+        result.batchIndex = index;
+        return result;
+      } catch (error) {
+        return {
+          valid: false,
+          swatch: swatch,
+          batchIndex: index,
+          errors: [`Validation failed: ${error.message}`],
+          warnings: [],
+          results: [],
+          overallRating: null,
+          timestamp: new Date().toISOString()
+        };
+      }
+    });
+  }
+
+  /**
+   * Get validation summary for batch results
+   * @param {Array} batchResults - Array of validation results
+   * @returns {Object} - Validation summary
+   */
+  getBatchSummary(batchResults) {
+    const summary = {
+      total: batchResults.length,
+      valid: 0,
+      invalid: 0,
+      warnings: 0,
+      averageRating: null,
+      bestRating: null,
+      worstRating: null,
+      commonErrors: new Map(),
+      timestamp: new Date().toISOString()
+    };
+
+    let totalRating = 0;
+    let ratingCount = 0;
+
+    batchResults.forEach(result => {
+      if (result.valid) {
+        summary.valid++;
+      } else {
+        summary.invalid++;
+      }
+
+      if (result.warnings.length > 0) {
+        summary.warnings++;
+      }
+
+      if (result.overallRating !== null) {
+        totalRating += result.overallRating;
+        ratingCount++;
+
+        if (summary.bestRating === null || result.overallRating > summary.bestRating) {
+          summary.bestRating = result.overallRating;
+        }
+
+        if (summary.worstRating === null || result.overallRating < summary.worstRating) {
+          summary.worstRating = result.overallRating;
+        }
+      }
+
+      // Count common errors
+      result.errors.forEach(error => {
+        const count = summary.commonErrors.get(error) || 0;
+        summary.commonErrors.set(error, count + 1);
+      });
+    });
+
+    if (ratingCount > 0) {
+      summary.averageRating = totalRating / ratingCount;
+    }
+
+    return summary;
+  }
+}
+
+// Export for module systems
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = ValidationEngine;
+}
+
+// Global assignment for browser environments
+if (typeof window !== 'undefined') {
+  window.ValidationEngine = ValidationEngine;
+}
   
