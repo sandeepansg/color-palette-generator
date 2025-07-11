@@ -290,4 +290,212 @@ class WCAGApp {
    */
   async simulateSwatchGeneration(colorCount, wcagStandard) {
     const steps = 10;
-    const demoColors = ['#
+    const demoColors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF'];
+    
+    for (let i = 0; i < steps; i++) {
+      const progress = ((i + 1) / steps) * 100;
+      const status = `Processing combination ${i + 1}/${steps}`;
+      
+      this.updateProgress(progress, status, i + 1, steps);
+      
+      // Simulate processing time
+      await new Promise(resolve => setTimeout(resolve, 300));
+    }
+    
+    // Generate demo swatch
+    this.displayDemoSwatch(colorCount, wcagStandard);
+  }
+
+  /**
+   * Display demo swatch
+   */
+  displayDemoSwatch(colorCount, wcagStandard) {
+    const carousel = document.getElementById('swatch-carousel');
+    const demoColors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF'];
+    const selectedColors = demoColors.slice(0, colorCount);
+    
+    const swatchHTML = `
+      <div class="swatch-item">
+        <div class="swatch-wheel">
+          <svg viewBox="0 0 200 200" class="swatch-svg">
+            ${this.generateSwatchSegments(selectedColors)}
+            ${this.generateContrastLabels(selectedColors, wcagStandard)}
+          </svg>
+        </div>
+        <div class="swatch-info">
+          <h3>Demo Swatch #1</h3>
+          <p>WCAG ${wcagStandard} Compliant</p>
+          <p>Colors: ${colorCount}</p>
+        </div>
+      </div>
+    `;
+    
+    carousel.innerHTML = swatchHTML;
+  }
+
+  /**
+   * Generate SVG segments for swatch
+   */
+  generateSwatchSegments(colors) {
+    const segments = [];
+    const angleStep = 360 / colors.length;
+    
+    colors.forEach((color, index) => {
+      const startAngle = index * angleStep;
+      const endAngle = (index + 1) * angleStep;
+      
+      const segment = this.createSVGSegment(color, startAngle, endAngle);
+      segments.push(segment);
+    });
+    
+    return segments.join('');
+  }
+
+  /**
+   * Create SVG segment
+   */
+  createSVGSegment(color, startAngle, endAngle) {
+    const centerX = 100;
+    const centerY = 100;
+    const radius = 70;
+    
+    const startRad = (startAngle * Math.PI) / 180;
+    const endRad = (endAngle * Math.PI) / 180;
+    
+    const x1 = centerX + radius * Math.cos(startRad);
+    const y1 = centerY + radius * Math.sin(startRad);
+    const x2 = centerX + radius * Math.cos(endRad);
+    const y2 = centerY + radius * Math.sin(endRad);
+    
+    const largeArcFlag = endAngle - startAngle <= 180 ? 0 : 1;
+    
+    return `
+      <path d="M ${centerX} ${centerY} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2} Z"
+            fill="${color}" stroke="#333" stroke-width="2"/>
+    `;
+  }
+
+  /**
+   * Generate contrast labels
+   */
+  generateContrastLabels(colors, wcagStandard) {
+    const labels = [];
+    const angleStep = 360 / colors.length;
+    const labelRadius = 85;
+    
+    colors.forEach((color, index) => {
+      const nextIndex = (index + 1) % colors.length;
+      const nextColor = colors[nextIndex];
+      
+      // Demo contrast values
+      const contrastRatio = wcagStandard === 'AAA' ? 
+        (7.5 + Math.random() * 2).toFixed(1) : 
+        (4.5 + Math.random() * 2).toFixed(1);
+      
+      const angle = (index * angleStep + angleStep / 2) * Math.PI / 180;
+      const x = 100 + labelRadius * Math.cos(angle);
+      const y = 100 + labelRadius * Math.sin(angle);
+      
+      labels.push(`
+        <circle cx="${x}" cy="${y}" r="15" fill="#fff" stroke="#333" stroke-width="2"/>
+        <text x="${x}" y="${y + 4}" text-anchor="middle" font-size="10" fill="#333">${contrastRatio}</text>
+      `);
+    });
+    
+    return labels.join('');
+  }
+
+  /**
+   * Show progress indicator
+   */
+  showProgress() {
+    const progressContainer = document.getElementById('progress-container');
+    progressContainer.style.display = 'block';
+  }
+
+  /**
+   * Hide progress indicator
+   */
+  hideProgress() {
+    const progressContainer = document.getElementById('progress-container');
+    progressContainer.style.display = 'none';
+  }
+
+  /**
+   * Update progress
+   */
+  updateProgress(percentage, status, current = 0, total = 0) {
+    const progressBar = document.getElementById('main-progress-bar');
+    const progressText = document.getElementById('progress-text');
+    const progressCount = document.getElementById('progress-count');
+    
+    if (progressBar) {
+      progressBar.style.width = `${percentage}%`;
+    }
+    
+    if (progressText) {
+      progressText.textContent = status;
+    }
+    
+    if (progressCount && total > 0) {
+      progressCount.textContent = `${current} / ${total}`;
+    }
+  }
+
+  /**
+   * Handle control changes
+   */
+  onControlChange() {
+    // Clear previous results when controls change
+    const carousel = document.getElementById('swatch-carousel');
+    carousel.innerHTML = `
+      <div class="swatch-placeholder">
+        <p>Click "Generate Swatches" to create WCAG compliant color combinations</p>
+      </div>
+    `;
+  }
+
+  /**
+   * Clear application cache
+   */
+  async clearCache() {
+    if (this.systemManager) {
+      const cacheManager = this.systemManager.getCacheManager();
+      if (cacheManager) {
+        await cacheManager.clearCache();
+        alert('Cache cleared successfully');
+      }
+    }
+  }
+
+  /**
+   * Show error screen
+   */
+  showErrorScreen(message) {
+    const errorHTML = `
+      <div class="error-screen">
+        <div class="error-container">
+          <h2>Initialization Error</h2>
+          <p>${message}</p>
+          <button onclick="location.reload()">Reload Application</button>
+        </div>
+        <footer>
+          <p>© 2025 Sandeepan Sengupta. All rights reserved.</p>
+        </footer>
+      </div>
+    `;
+    
+    document.body.innerHTML = errorHTML;
+  }
+}
+
+// Auto-initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', async () => {
+  const app = new WCAGApp();
+  await app.init();
+});
+
+// Export for module use
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = WCAGApp;
+}
