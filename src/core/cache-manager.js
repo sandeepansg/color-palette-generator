@@ -605,3 +605,44 @@ class CacheManager {
       request.onerror = () => reject(request.error);
     });
   
+  async dbDelete(storeName, key) {
+    return new Promise((resolve, reject) => {
+      const transaction = this.db.transaction([storeName], 'readwrite');
+      const store = transaction.objectStore(storeName);
+      const request = store.delete(key);
+      
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async dbClear(storeName) {
+    return new Promise((resolve, reject) => {
+      const transaction = this.db.transaction([storeName], 'readwrite');
+      const store = transaction.objectStore(storeName);
+      const request = store.clear();
+      
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Close database connection
+   * @returns {Promise<void>}
+   */
+  async shutdown() {
+    if (this.db) {
+      this.db.close();
+      this.db = null;
+    }
+    this.initialized = false;
+  }
+}
+
+// Export for module use
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = CacheManager;
+} else {
+  window.CacheManager = CacheManager;
+}
