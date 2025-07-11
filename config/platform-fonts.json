@@ -1,1 +1,119 @@
- 
+{
+  "platforms": {
+    "darwin": {
+      "name": "macOS/iOS",
+      "fonts": [
+        {
+          "name": "SF Pro",
+          "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/webfonts/fa-solid-900.woff2",
+          "fallback": "system-ui, -apple-system, BlinkMacSystemFont",
+          "weight": ["400", "500", "600", "700"],
+          "style": ["normal", "italic"]
+        },
+        {
+          "name": "SF Mono",
+          "url": "https://cdnjs.cloudflare.com/ajax/libs/source-code-pro/2.38.0/WOFF2/TTF/SourceCodePro-Regular.woff2",
+          "fallback": "Monaco, Consolas, monospace",
+          "weight": ["400", "500", "600"],
+          "style": ["normal"]
+        },
+        {
+          "name": "New York",
+          "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/webfonts/fa-brands-400.woff2",
+          "fallback": "Georgia, Times, serif",
+          "weight": ["400", "500", "600", "700"],
+          "style": ["normal", "italic"]
+        }
+      ]
+    },
+    "windows": {
+      "name": "Windows",
+      "fonts": [
+        {
+          "name": "Segoe UI",
+          "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/webfonts/fa-solid-900.woff2",
+          "fallback": "Segoe UI, Tahoma, Geneva, Verdana, sans-serif",
+          "weight": ["300", "400", "500", "600", "700"],
+          "style": ["normal", "italic"]
+        },
+        {
+          "name": "Cascadia Code",
+          "url": "https://cdnjs.cloudflare.com/ajax/libs/source-code-pro/2.38.0/WOFF2/TTF/SourceCodePro-Regular.woff2",
+          "fallback": "Consolas, Courier New, monospace",
+          "weight": ["400", "500", "600", "700"],
+          "style": ["normal", "italic"]
+        },
+        {
+          "name": "Segoe UI Historic",
+          "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/webfonts/fa-regular-400.woff2",
+          "fallback": "Times New Roman, Times, serif",
+          "weight": ["400", "700"],
+          "style": ["normal", "italic"]
+        }
+      ]
+    },
+    "linux": {
+      "name": "Linux",
+      "fonts": [
+        {
+          "name": "Ubuntu",
+          "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/webfonts/fa-solid-900.woff2",
+          "fallback": "Ubuntu, Cantarell, DejaVu Sans, sans-serif",
+          "weight": ["300", "400", "500", "700"],
+          "style": ["normal", "italic"]
+        },
+        {
+          "name": "JetBrains Mono",
+          "url": "https://cdnjs.cloudflare.com/ajax/libs/source-code-pro/2.38.0/WOFF2/TTF/SourceCodePro-Regular.woff2",
+          "fallback": "Liberation Mono, DejaVu Sans Mono, monospace",
+          "weight": ["400", "500", "600", "700"],
+          "style": ["normal", "italic"]
+        },
+        {
+          "name": "Liberation Serif",
+          "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/webfonts/fa-brands-400.woff2",
+          "fallback": "DejaVu Serif, Times New Roman, serif",
+          "weight": ["400", "700"],
+          "style": ["normal", "italic"]
+        }
+      ]
+    },
+    "android": {
+      "name": "Android",
+      "fonts": [
+        {
+          "name": "Roboto",
+          "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/webfonts/fa-solid-900.woff2",
+          "fallback": "Roboto, Helvetica, Arial, sans-serif",
+          "weight": ["300", "400", "500", "700"],
+          "style": ["normal", "italic"]
+        },
+        {
+          "name": "Roboto Mono",
+          "url": "https://cdnjs.cloudflare.com/ajax/libs/source-code-pro/2.38.0/WOFF2/TTF/SourceCodePro-Regular.woff2",
+          "fallback": "Roboto Mono, Courier New, monospace",
+          "weight": ["400", "500", "700"],
+          "style": ["normal", "italic"]
+        },
+        {
+          "name": "Noto Serif",
+          "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/webfonts/fa-regular-400.woff2",
+          "fallback": "Noto Serif, Georgia, serif",
+          "weight": ["400", "700"],
+          "style": ["normal", "italic"]
+        }
+      ]
+    }
+  },
+  "detection": {
+    "userAgentStrings": {
+      "darwin": ["Mac OS", "macOS", "iPhone", "iPad"],
+      "windows": ["Windows", "Win32", "Win64"],
+      "linux": ["Linux", "X11"],
+      "android": ["Android"]
+    },
+    "fallbackPlatform": "linux",
+    "loadTimeout": 5000,
+    "maxConcurrentLoads": 3
+  }
+}

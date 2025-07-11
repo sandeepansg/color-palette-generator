@@ -1,1 +1,53 @@
- 
+{
+  "app": {
+    "name": "WCAG Compliant Colour Swatch Generator",
+    "version": "1.0.0",
+    "author": "Sandeepan Sengupta",
+    "website": "http://sandeepan.net",
+    "description": "Generate and preview WCAG compliant colour swatches with intelligent caching and multi-threading"
+  },
+  "performance": {
+    "maxWorkers": 4,
+    "chunkSize": 100,
+    "cacheTimeout": 86400000,
+    "maxCacheSize": 104857600,
+    "preloadAssets": true,
+    "useGPUAcceleration": true
+  },
+  "ui": {
+    "maxColors": 5,
+    "minColors": 2,
+    "defaultColors": 3,
+    "defaultWCAGLevel": "AA",
+    "animationDuration": 300,
+    "touchSensitivity": 50,
+    "minScreenWidth": 320,
+    "minScreenHeight": 568
+  },
+  "cache": {
+    "dbName": "wcag_swatch_cache",
+    "dbVersion": 1,
+    "storeName": "assets",
+    "keyPrefix": "wcag_",
+    "maxAge": 604800000,
+    "compressionEnabled": true
+  },
+  "threading": {
+    "colorWorkerUrl": "./src/workers/color-worker.js",
+    "renderWorkerUrl": "./src/workers/render-worker.js",
+    "maxConcurrentTasks": 8,
+    "timeoutMs": 30000
+  },
+  "fonts": {
+    "maxFontSets": 3,
+    "fallbackFonts": ["Arial", "Helvetica", "sans-serif"],
+    "loadTimeout": 5000,
+    "preloadEnabled": true
+  },
+  "development": {
+    "debugMode": false,
+    "verboseLogging": false,
+    "performanceMonitoring": true,
+    "errorReporting": true
+  }
+}
