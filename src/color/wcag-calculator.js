@@ -195,4 +195,133 @@ class WCAGCalculator {
         ...pairResult
       });
       
-      if (!pair
+      if (!pairResult.compliant) {
+        results.allAdjacentCompliant = false;
+      }
+      
+      if (pairResult.contrastRatio < results.lowestAdjacentRatio) {
+        results.lowestAdjacentRatio = pairResult.contrastRatio;
+      }
+    }
+    
+    // Overall rating is the lowest adjacent contrast
+    results.overallRating = results.lowestAdjacentRatio;
+    
+    return results;
+  }
+
+  /**
+   * Find colors that would be compliant with a given color
+   * @param {string} baseColor - Base color to find compliant colors for
+   * @param {string[]} candidateColors - Array of candidate colors
+   * @param {string} level - WCAG level ('AA' or 'AAA')
+   * @returns {Object[]} - Array of compliant color results
+   */
+  findCompliantColors(baseColor, candidateColors, level = 'AA') {
+    const results = [];
+    
+    candidateColors.forEach(candidate => {
+      const compliance = this.checkCompliance(baseColor, candidate, level);
+      if (compliance.compliant) {
+        results.push(compliance);
+      }
+    });
+    
+    // Sort by contrast ratio (highest first)
+    return results.sort((a, b) => b.contrastRatio - a.contrastRatio);
+  }
+
+  /**
+   * Generate contrast enhancement suggestions
+   * @param {string} color1 - First color
+   * @param {string} color2 - Second color
+   * @param {string} level - Target WCAG level
+   * @returns {Object} - Enhancement suggestions
+   */
+  generateSuggestions(color1, color2, level = 'AA') {
+    const currentCompliance = this.checkCompliance(color1, color2, level);
+    
+    if (currentCompliance.compliant) {
+      return {
+        compliant: true,
+        current: currentCompliance,
+        suggestions: []
+      };
+    }
+    
+    const suggestions = [];
+    const requiredRatio = this.thresholds[level].normal;
+    const currentRatio = currentCompliance.contrastRatio;
+    const improvement = requiredRatio - currentRatio;
+    
+    suggestions.push({
+      type: 'darken_background',
+      description: `Darken the background color by approximately ${Math.ceil(improvement * 10)}%`,
+      impact: `Would improve contrast by ~${improvement.toFixed(1)}`
+    });
+    
+    suggestions.push({
+      type: 'lighten_text',
+      description: `Lighten the text color by approximately ${Math.ceil(improvement * 10)}%`,
+      impact: `Would improve contrast by ~${improvement.toFixed(1)}`
+    });
+    
+    return {
+      compliant: false,
+      current: currentCompliance,
+      suggestions
+    };
+  }
+
+  /**
+   * Batch calculate contrasts for efficiency
+   * @param {Array} colorPairs - Array of color pair objects
+   * @param {string} level - WCAG level
+   * @returns {Array} - Array of results
+   */
+  batchCalculateContrasts(colorPairs, level = 'AA') {
+    return colorPairs.map(pair => ({
+      ...pair,
+      result: this.checkCompliance(pair.color1, pair.color2, level)
+    }));
+  }
+
+  /**
+   * Get WCAG thresholds
+   * @returns {Object} - Current thresholds
+   */
+  getThresholds() {
+    return { ...this.thresholds };
+  }
+
+  /**
+   * Update WCAG thresholds (for testing purposes)
+   * @param {Object} newThresholds - New threshold values
+   */
+  updateThresholds(newThresholds) {
+    this.thresholds = { ...this.thresholds, ...newThresholds };
+  }
+
+  /**
+   * Get calculator statistics
+   * @returns {Object} - Calculator statistics
+   */
+  getStats() {
+    return {
+      supportedLevels: ['AA', 'AAA'],
+      supportedTextSizes: ['normal', 'large'],
+      thresholds: this.thresholds,
+      colorParserStats: this.colorParser.getStats()
+    };
+  }
+}
+
+// Export for module systems
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = WCAGCalculator;
+}
+
+// Export for ES6 modules
+if (typeof window !== 'undefined') {
+  window.WCAGCalculator = WCAGCalculator;
+}
