@@ -96,6 +96,7 @@ A sophisticated web-based business card generator that creates professional, cus
 ## Installation
 
 ### Requirements
+- Only use open-source assets and frameworks
 - Modern web browser (Chrome 60+, Firefox 55+, Safari 12+)
 - JavaScript enabled
 - Canvas API support
@@ -112,7 +113,7 @@ A sophisticated web-based business card generator that creates professional, cus
 
 #### 1. Initial Setup
 - Application launches with precalculated WCAG-compliant palette
-- Default card uses ISO standard in landscape orientation
+- Default card uses ISO standard in portrait orientation
 - Contact information pre-filled with sample data
 
 #### 2. Contact Information
