@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Business Card Generator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Creepster&family=Nosifer&family=Butcherman&family=Eater&family=Griffy&display=swap" rel="stylesheet">
     <style>
         /* Core Styles */
         * {
@@ -307,38 +307,6 @@
             transform: translateX(0);
         }
 
-        /* Keyboard shortcuts hint */
-        .shortcuts {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(103, 126, 234, 0.1);
-            border-radius: 6px;
-            font-size: 12px;
-        }
-
-        .shortcuts h3 {
-            margin-bottom: 10px;
-            color: #2c3e50;
-        }
-
-        .shortcuts ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .shortcuts li {
-            margin-bottom: 5px;
-            color: #555;
-        }
-
-        .shortcuts kbd {
-            background: #f8f9fa;
-            border: 1px solid #e0e0e0;
-            border-radius: 3px;
-            padding: 2px 6px;
-            font-size: 11px;
-            font-weight: 500;
-        }
     </style>
 </head>
 <body>
@@ -408,20 +376,10 @@
                     <h2>Color Palette</h2>
                     <div class="button-group">
                         <button id="generatePalette">Generate Palette</button>
-                        <button id="randomPalette">Random Colors</button>
                     </div>
                     <div class="color-swatches" id="colorSwatches"></div>
                 </section>
 
-                <div class="shortcuts">
-                    <h3>Keyboard Shortcuts</h3>
-                    <ul>
-                        <li><kbd>Ctrl+G</kbd> Generate new card</li>
-                        <li><kbd>Ctrl+R</kbd> Random palette</li>
-                        <li><kbd>Ctrl+S</kbd> Save config</li>
-                        <li><kbd>Space</kbd> Randomize chaos</li>
-                    </ul>
-                </div>
             </div>
             
             <div class="canvas-container">
@@ -603,7 +561,6 @@
             updateCanvasDimensions();
             generateWCAGPalette();
             setupEventListeners();
-            setupKeyboardShortcuts();
             setupDragAndDrop();
         }
 
@@ -619,6 +576,7 @@
             
             // Draw components in order
             drawBackground();
+			drawTexture();
             generateBackgroundElements();
             drawLogoArea();
             drawContactInfo();
@@ -636,43 +594,43 @@
         }
 
         function generateBackgroundElements() {
-            currentConfig.elements = [];
-            const elementCount = randomInt(8, 15);
-            
-            for (let i = 0; i < elementCount; i++) {
-                const element = {
-                    type: randomChoice(SHAPE_TYPES),
-                    x: randomFloat(0, canvas.width),
-                    y: randomFloat(0, canvas.height),
-                    size: randomFloat(20, 100),
-                    color: randomChoice(currentConfig.colorPalette).hex,
-                    opacity: randomFloat(0.1, 0.3),
-                    rotation: randomFloat(0, 360),
-                    bezierPoints: generateBezierPoints(),
-                    spikes: randomInt(3, 8),
-                    amplitude: randomFloat(10, 50)
-                };
-                
-                // Apply chaos level offset
-                const chaosOffset = (currentConfig.chaosLevel / 100) * 50;
-                element.x += randomFloat(-chaosOffset, chaosOffset);
-                element.y += randomFloat(-chaosOffset, chaosOffset);
-                
-                currentConfig.elements.push(element);
-                drawElement(element);
-            }
-        }
+    currentConfig.elements = [];
+    const baseElementCount = 8;
+    const chaosMultiplier = 1 + (currentConfig.chaosLevel / 100) * 4;
+    const elementCount = Math.floor(baseElementCount * chaosMultiplier);
+    
+    for (let i = 0; i < elementCount; i++) {
+        const element = {
+            type: randomChoice(SHAPE_TYPES),
+            x: randomFloat(-50, canvas.width + 50),
+            y: randomFloat(-50, canvas.height + 50),
+            size: randomFloat(10, 150 * chaosMultiplier),
+            color: randomChoice(currentConfig.colorPalette).hex,
+            opacity: randomFloat(0.05, 0.4 * chaosMultiplier),
+            rotation: randomFloat(0, 360),
+            bezierPoints: generateBezierPoints(),
+            spikes: randomInt(3, 12),
+            amplitude: randomFloat(5, 100 * chaosMultiplier),
+            frequency: randomFloat(0.5, 3),
+            distortion: randomFloat(0.1, 2 * chaosMultiplier)
+        };
+        
+        currentConfig.elements.push(element);
+        drawElement(element);
+    }
+}
 
         function generateBezierPoints() {
-            const points = [];
-            for (let i = 0; i < 4; i++) {
-                points.push({
-                    x: randomFloat(-50, 50),
-                    y: randomFloat(-50, 50)
-                });
-            }
-            return points;
-        }
+    const points = [];
+    const pointCount = 6 + randomInt(0, 6);
+    for (let i = 0; i < pointCount; i++) {
+        points.push({
+            x: randomFloat(-100, 100),
+            y: randomFloat(-100, 100)
+        });
+    }
+    return points;
+}
 
         function drawElement(element) {
             ctx.save();
@@ -740,22 +698,93 @@
         }
 
         function drawOrganicShape(element) {
-            ctx.beginPath();
-            ctx.moveTo(element.bezierPoints[0].x, element.bezierPoints[0].y);
+    ctx.beginPath();
+    const points = 8 + Math.floor(element.distortion * 4);
+    const angleStep = (Math.PI * 2) / points;
+    
+    for (let i = 0; i <= points; i++) {
+        const angle = i * angleStep;
+        const radiusVariation = 1 + Math.sin(angle * element.frequency) * element.distortion;
+        const radius = (element.size / 2) * radiusVariation;
+        const x = Math.cos(angle) * radius + randomFloat(-element.size * 0.1, element.size * 0.1);
+        const y = Math.sin(angle) * radius + randomFloat(-element.size * 0.1, element.size * 0.1);
+        
+        if (i === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            const prevAngle = (i - 1) * angleStep;
+            const prevRadiusVariation = 1 + Math.sin(prevAngle * element.frequency) * element.distortion;
+            const prevRadius = (element.size / 2) * prevRadiusVariation;
+            const prevX = Math.cos(prevAngle) * prevRadius;
+            const prevY = Math.sin(prevAngle) * prevRadius;
             
-            for (let i = 1; i < element.bezierPoints.length; i++) {
-                const cp1 = element.bezierPoints[i - 1];
-                const cp2 = element.bezierPoints[i];
-                const end = element.bezierPoints[(i + 1) % element.bezierPoints.length];
-                
-                ctx.bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, end.x, end.y);
-            }
+            const cp1x = prevX + Math.cos(prevAngle + Math.PI / 2) * element.size * 0.2;
+            const cp1y = prevY + Math.sin(prevAngle + Math.PI / 2) * element.size * 0.2;
+            const cp2x = x + Math.cos(angle - Math.PI / 2) * element.size * 0.2;
+            const cp2y = y + Math.sin(angle - Math.PI / 2) * element.size * 0.2;
             
-            ctx.closePath();
-            ctx.fill();
+            ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y);
         }
+    }
+    
+    ctx.closePath();
+    ctx.fill();
+}
 
-        function drawHexagon(element) {
+        function drawTexture() {
+    const textureCount = 200 + (currentConfig.chaosLevel / 100) * 300;
+    
+    for (let i = 0; i < textureCount; i++) {
+        ctx.save();
+        ctx.globalAlpha = randomFloat(0.05, 0.2);
+        ctx.fillStyle = randomChoice(currentConfig.colorPalette).hex;
+        
+        const x = randomFloat(0, canvas.width);
+        const y = randomFloat(0, canvas.height);
+        const size = randomFloat(0.5, 3);
+        
+        // Random texture elements
+        const textureType = randomChoice(['dot', 'line', 'cross', 'dash']);
+        
+        switch (textureType) {
+            case 'dot':
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fill();
+                break;
+            case 'line':
+                ctx.strokeStyle = ctx.fillStyle;
+                ctx.lineWidth = size * 0.5;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + randomFloat(-10, 10), y + randomFloat(-10, 10));
+                ctx.stroke();
+                break;
+            case 'cross':
+                ctx.strokeStyle = ctx.fillStyle;
+                ctx.lineWidth = size * 0.3;
+                ctx.beginPath();
+                ctx.moveTo(x - size, y);
+                ctx.lineTo(x + size, y);
+                ctx.moveTo(x, y - size);
+                ctx.lineTo(x, y + size);
+                ctx.stroke();
+                break;
+            case 'dash':
+                ctx.strokeStyle = ctx.fillStyle;
+                ctx.lineWidth = size * 0.8;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + randomFloat(-5, 5), y);
+                ctx.stroke();
+                break;
+        }
+        
+        ctx.restore();
+    }
+}
+		
+		function drawHexagon(element) {
             ctx.beginPath();
             for (let i = 0; i < 6; i++) {
                 const angle = (Math.PI / 3) * i;
@@ -805,53 +834,81 @@
         }
 
         function drawContactInfo() {
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-            const chaosOffset = currentConfig.chaosLevel / 100 * 20;
-            
-            // Primary group (name and title)
-            const primaryGroup = [
-                { 
-                    text: currentConfig.contact.nameEnglish, 
-                    fontSize: Math.min(canvas.width / 25, 32), 
-                    fontWeight: 'bold',
-                    font: currentConfig.typography.primaryFont
-                },
-                { 
-                    text: currentConfig.contact.nameLocal, 
-                    fontSize: Math.min(canvas.width / 35, 24),
-                    fontWeight: 'normal',
-                    font: currentConfig.typography.primaryFont
-                },
-                { 
-                    text: currentConfig.contact.jobTitle, 
-                    fontSize: Math.min(canvas.width / 40, 20),
-                    fontWeight: '500',
-                    font: currentConfig.typography.accentFont
-                }
-            ];
-            
-            // Secondary group (contact details)
-            const secondaryGroup = [
-                { 
-                    text: currentConfig.contact.phone, 
-                    fontSize: Math.min(canvas.width / 50, 16),
-                    fontWeight: 'normal',
-                    font: currentConfig.typography.secondaryFont
-                },
-                { 
-                    text: currentConfig.contact.email, 
-                    fontSize: Math.min(canvas.width / 50, 16),
-                    fontWeight: 'normal',
-                    font: currentConfig.typography.secondaryFont
-                }
-            ];
-            
-            // Draw groups with chaos-based positioning
-            drawTextGroup(primaryGroup, centerX, centerY - chaosOffset, chaosOffset);
-            
-            drawTextGroup(secondaryGroup, centerX, centerY + 150, chaosOffset);
+    const chaosOffset = currentConfig.chaosLevel / 100 * 100;
+    
+    // Primary group with random positions and colors
+    const primaryGroup = [
+        { 
+            text: currentConfig.contact.nameEnglish, 
+            fontSize: Math.min(canvas.width / 25, 32), 
+            fontWeight: 'bold',
+            font: 'Creepster, cursive',
+            x: randomFloat(canvas.width * 0.1, canvas.width * 0.6),
+            y: randomFloat(canvas.height * 0.4, canvas.height * 0.7),
+            rotation: randomFloat(-15, 15),
+            color: randomChoice(currentConfig.colorPalette).hex
+        },
+        { 
+            text: currentConfig.contact.nameLocal, 
+            fontSize: Math.min(canvas.width / 35, 24),
+            fontWeight: 'normal',
+            font: 'Nosifer, cursive',
+            x: randomFloat(canvas.width * 0.1, canvas.width * 0.6),
+            y: randomFloat(canvas.height * 0.4, canvas.height * 0.7),
+            rotation: randomFloat(-10, 10),
+            color: randomChoice(currentConfig.colorPalette).hex
+        },
+        { 
+            text: currentConfig.contact.jobTitle, 
+            fontSize: Math.min(canvas.width / 40, 20),
+            fontWeight: '500',
+            font: 'Butcherman, cursive',
+            x: randomFloat(canvas.width * 0.1, canvas.width * 0.6),
+            y: randomFloat(canvas.height * 0.4, canvas.height * 0.7),
+            rotation: randomFloat(-20, 20),
+            color: randomChoice(currentConfig.colorPalette).hex
         }
+    ];
+    
+    // Secondary group with random positions and colors
+    const secondaryGroup = [
+        { 
+            text: currentConfig.contact.phone, 
+            fontSize: Math.min(canvas.width / 50, 16),
+            fontWeight: 'normal',
+            font: 'Eater, cursive',
+            x: randomFloat(canvas.width * 0.1, canvas.width * 0.6),
+            y: randomFloat(canvas.height * 0.6, canvas.height * 0.9),
+            rotation: randomFloat(-8, 8),
+            color: randomChoice(currentConfig.colorPalette).hex
+        },
+        { 
+            text: currentConfig.contact.email, 
+            fontSize: Math.min(canvas.width / 50, 16),
+            fontWeight: 'normal',
+            font: 'Griffy, cursive',
+            x: randomFloat(canvas.width * 0.1, canvas.width * 0.6),
+            y: randomFloat(canvas.height * 0.6, canvas.height * 0.9),
+            rotation: randomFloat(-8, 8),
+            color: randomChoice(currentConfig.colorPalette).hex
+        }
+    ];
+    
+    // Draw all text items
+    [...primaryGroup, ...secondaryGroup].forEach(item => {
+        if (item.text) {
+            ctx.save();
+            ctx.translate(item.x, item.y);
+            ctx.rotate(item.rotation * Math.PI / 180);
+            ctx.font = `${item.fontWeight} ${item.fontSize}px ${item.font}`;
+            ctx.fillStyle = item.color;
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(item.text, 0, 0);
+            ctx.restore();
+        }
+    });
+}
 
         function drawTextGroup(textItems, centerX, centerY, chaosOffset) {
             let yOffset = 0;
@@ -875,20 +932,46 @@
         }
 
         function drawLogoArea() {
-            const logoSize = Math.min(canvas.width, canvas.height) * 0.15;
-            const logoX = canvas.width * 0.85 - logoSize/2;
-            const logoY = canvas.height * 0.15;
-            
-            ctx.save();
-            ctx.translate(logoX, logoY);
-            ctx.fillStyle = currentConfig.colorPalette[1]?.hex || '#34495e';
-            ctx.globalAlpha = 0.7;
-            
-            // Create abstract geometric logo
-            drawHexagon({ size: logoSize, x: 0, y: 0 });
-            
-            ctx.restore();
-        }
+    const logoSize = randomFloat(canvas.width * 0.15, canvas.width * 0.25);
+    const logoX = randomFloat(canvas.width * 0.65, canvas.width * 0.9);
+    const logoY = randomFloat(canvas.height * 0.1, canvas.height * 0.4);
+    const logoRotation = randomFloat(-30, 30);
+    
+    ctx.save();
+    ctx.translate(logoX, logoY);
+    ctx.rotate(logoRotation * Math.PI / 180);
+    
+    // Multiple overlapping shapes for logo
+    const shapeCount = 3 + Math.floor(currentConfig.chaosLevel / 100 * 5);
+    
+    for (let i = 0; i < shapeCount; i++) {
+        const shapeElement = {
+            type: randomChoice(['circle', 'square', 'triangle', 'hexagon', 'organic']),
+            size: logoSize * randomFloat(0.6, 1.2),
+            color: randomChoice(currentConfig.colorPalette).hex,
+            opacity: randomFloat(0.3, 0.8),
+            rotation: randomFloat(0, 360),
+            x: randomFloat(-logoSize * 0.3, logoSize * 0.3),
+            y: randomFloat(-logoSize * 0.3, logoSize * 0.3),
+            bezierPoints: generateBezierPoints(),
+            spikes: randomInt(3, 8),
+            distortion: randomFloat(0.2, 1.5),
+            frequency: randomFloat(0.5, 2)
+        };
+        
+        ctx.save();
+        ctx.translate(shapeElement.x, shapeElement.y);
+        ctx.rotate(shapeElement.rotation * Math.PI / 180);
+        ctx.fillStyle = shapeElement.color;
+        ctx.globalAlpha = shapeElement.opacity;
+        
+        drawElement(shapeElement);
+        
+        ctx.restore();
+    }
+    
+    ctx.restore();
+}
 
         function drawBorder() {
             ctx.strokeStyle = currentConfig.colorPalette[0]?.hex || '#2c3e50';
@@ -897,29 +980,33 @@
         }
 
         function generateWCAGPalette() {
-            currentConfig.colorPalette = [];
-            
-            // Generate a harmonious color palette
-            const baseHue = randomInt(0, 360);
-            const saturation = randomInt(60, 80);
-            const lightness = randomInt(30, 70);
-            
-            // Generate 5 colors using color theory
-            for (let i = 0; i < 5; i++) {
-                const hue = (baseHue + i * 72) % 360; // Pentad harmony
-                const color = hslToHex(hue, saturation, lightness);
-                const contrast = calculateContrast(color, '#ffffff');
-                
-                currentConfig.colorPalette.push({
-                    hex: color,
-                    name: `Color ${i + 1}`,
-                    wcag: getWCAGRating(contrast),
-                    contrast: contrast
-                });
-            }
-            
-            updateColorSwatches();
-        }
+    currentConfig.colorPalette = [];
+    
+    // Generate 5 WCAG compliant colors
+    for (let i = 0; i < 5; i++) {
+        let color, contrast;
+        let attempts = 0;
+        
+        do {
+            const hue = randomInt(0, 360);
+            const saturation = randomInt(40, 90);
+            const lightness = randomInt(15, 60); // Darker for better contrast
+            color = hslToHex(hue, saturation, lightness);
+            contrast = calculateContrast(color, '#ffffff');
+            attempts++;
+        } while (contrast < 4.5 && attempts < 100);
+        
+        currentConfig.colorPalette.push({
+            hex: color,
+            name: `Color ${i + 1}`,
+            wcag: getWCAGRating(contrast),
+            contrast: contrast
+        });
+    }
+    
+    updateColorSwatches();
+    generateCard();
+}
 
         function updateColorSwatches() {
             const container = document.getElementById('colorSwatches');
@@ -969,11 +1056,6 @@
             
             // Color palette buttons
             document.getElementById('generatePalette').addEventListener('click', generateWCAGPalette);
-            document.getElementById('randomPalette').addEventListener('click', () => {
-                currentConfig.colorPalette = randomChoice([BASE_COLORS, BASE_COLORS, BASE_COLORS]).slice(0, 5);
-                updateColorSwatches();
-                generateCard();
-            });
             
             // Settings updates
             document.getElementById('standard').addEventListener('change', (e) => {
