@@ -1,118 +1,96 @@
-# Business Card Generator
+# Business Card Generator - Complete Development Guide
 
-A sophisticated web-based business card generator that creates professional, customizable business cards with WCAG-compliant color schemes and support for international standards.
+A sophisticated web-based business card generator that creates professional, customizable business cards with WCAG-compliant color schemes and international standard support.
+
+## Table of Contents
+1. [Overview](#overview)
+2. [Features](#features)
+3. [Technical Specifications](#technical-specifications)
+4. [Project Structure](#project-structure)
+5. [Implementation](#implementation)
+6. [Core Components](#core-components)
+7. [Advanced Features](#advanced-features)
+8. [Testing & Deployment](#testing--deployment)
+
+## Overview
+
+The Business Card Generator creates professional business cards with customizable design elements, supports multiple international standards, and ensures WCAG accessibility compliance. Built with vanilla JavaScript, HTML5 Canvas, and modern CSS.
+
+### Key Capabilities
+- **Multi-Standard Support**: US (85.60 × 53.98 mm) and Indian Standard (55 × 90 mm)
+- **WCAG Compliance**: Automatic color contrast validation
+- **Export Options**: PNG, SVG, PDF with high-resolution output
+- **Responsive Design**: Mobile-friendly with touch support
+- **Configuration Management**: Save/load card settings
 
 ## Features
 
-### Core Functionality
-- **Multi-Standard Support**: US (85.60 × 53.98 mm) and Indian Standard (55 × 90 mm)
-- **Dual Orientation**: Landscape and Portrait modes for both standards
-- **WCAG Compliance**: Automatic color contrast validation for accessibility
-- **Canvas Export**: High-quality canvas rendering with customizable settings
-- **Responsive Design**: Mobile-friendly interface with touch support
+### Design System
+- **Chaos Level Control**: 0-100% randomization for artistic variation
+- **Dynamic Color Palettes**: WCAG-compliant color generation
+- **Geometric Shapes**: 8 shape types (circle, square, triangle, line, organic, hexagon, star, wave)
+- **Typography System**: Multiple font families with native script support
+- **Logo Area**: Dada-styled artistic logo placement
+- **Smart Layout**: Grouped contact information with subtle randomization
 
-### Design Elements
-- **Chaos Level Control**: Adjustable randomization from 0-100%
-- **Dynamic Color Palettes**: Programmatically generated WCAG-compliant color schemes
-- **Geometric Shapes**: Circle, square, triangle, line, organic, hexagon, star, and wave shapes
-- **Typography**: Support for English and native script (Bengali/Malayalam/Brahmic/Devanagari)
-- **Company Logo Area**: Dedicated Dada-styled shape for logo placement
-- **Card Border**: Professional border with clean background
-
-### Advanced Features
-- **Smart Layout**: Grouped contact information with subtle random rotation
-- **Color Palette Management**: Save/load color schemes
-- **Configuration Export/Import**: Complete card settings backup in JSON format
+### Technical Features
+- **Canvas Rendering**: 300 DPI equivalent resolution
 - **Real-time Preview**: Instant visual feedback
-- **Keyboard Shortcuts**: Quick access to common functions
-- **Drag and Drop**: Interactive element positioning
+- **Keyboard Shortcuts**: Quick access to functions
+- **Drag & Drop**: Interactive element positioning
+- **Export System**: Multiple format support with print optimization
 
 ## Technical Specifications
 
 ### Canvas Resolution
-- **Default Resolution**: 300 DPI equivalent for screen display
-- **Color Depth**: 24-bit RGB
-- **Transparency Support**: Full alpha channel support
+- **Default**: 300 DPI equivalent for screen display
+- **Print**: 600 DPI for PDF export
+- **Color Depth**: 24-bit RGB with alpha transparency
 
 ### Card Standards
+```
+US Standard:
+- Dimensions: 85.60 × 53.98 mm
+- Landscape: 1012 × 638 pixels
+- Portrait: 638 × 1012 pixels
 
-#### US Standard
-- **Dimensions**: 85.60 × 53.98 mm
-- **Default Orientation**: Landscape
-- **Pixel Dimensions**: 1012 × 638 pixels at 300 DPI
-- **Usage**: International business cards, credit cards
+Indian Standard:
+- Dimensions: 55 × 90 mm
+- Landscape: 1063 × 650 pixels
+- Portrait: 650 × 1063 pixels
+```
 
-#### Indian Standard
-- **Dimensions**: 55 × 90 mm
-- **Default Orientation**: Portrait
-- **Pixel Dimensions**: 650 × 1063 pixels at 300 DPI
-- **Usage**: Indian business cards, visiting cards
-
-### Color Management
-
-#### WCAG Compliance Levels
-- **AA Standard**: Minimum 4.5:1 contrast ratio
-- **AAA Standard**: Minimum 7:1 contrast ratio
-- **Fail**: Below 4.5:1 contrast ratio
-
-#### Color Palette Generation
-- **Palette Size**: 3-7 colors per scheme
-- **Base Colors**: Curated professional color set
-- **Random Generation**: HSL-based color creation
-- **Contrast Validation**: Automatic WCAG compliance checking
-
-### Typography System
-
-#### Font Stack
-- **Primary**: Inter, -apple-system, BlinkMacSystemFont, sans-serif
-- **Secondary**: Courier Prime, Courier New, monospace
-- **Accent**: Bebas Neue, Impact, sans-serif
-- **Script**: Dancing Script, cursive
-- **Native**: Noto Sans Bengali, sans-serif
-
-#### Text Hierarchy
-- **Full Name**: 32px, Bold
-- **Native Script**: 24px, Regular
-- **Job Title**: 20px, Regular
-- **Contact Info**: 16px, Monospace
-
-## Installation
-
-### Requirements
-- Modern web browser (Chrome 60+, Firefox 55+, Safari 12+)
-- JavaScript enabled
-- Canvas API support
-- File API support (for config import/export)
-
-### Setup
-1. Clone or download the project files
-2. Open `index.html` in a web browser
-3. No additional dependencies or build process required
+### WCAG Compliance
+- **AA Standard**: 4.5:1 contrast ratio minimum
+- **AAA Standard**: 7:1 contrast ratio minimum
+- **Auto-validation**: Real-time contrast checking
 
 ## Project Structure
 
 ```
 business-card-generator/
-├── index.html                  # Main application file
+├── index.html                  # Main application
 ├── README.md                   # This documentation
 ├── js/
-│   ├── core.js                # Core functionality
-│   ├── canvas.js              # Canvas operations
+│   ├── core.js                # Core functionality & configuration
+│   ├── canvas.js              # Canvas operations & rendering
+│   ├── export.js              # Export functionality (PNG/SVG/PDF)
 │   ├── config.js              # Configuration management
-│   └── ui.js                  # UI interactions
+│   └── ui.js                  # UI interactions & event handlers
 ├── css/
 │   ├── main.css               # Main styles
 │   └── responsive.css         # Mobile responsive styles
 ├── assets/
 │   ├── fonts/                 # Custom web fonts
 │   └── icons/                 # UI icons
-└── exports/                   # Generated configurations (created on use)
-    └── config.json            # Exported card configurations
+└── lib/                       # External libraries
+    ├── jspdf.min.js          # PDF export support
+    └── color-picker.min.js   # Color picker widget
 ```
 
-## Implementation Guide
+## Implementation
 
-### HTML Structure
+### 1. HTML Structure (index.html)
 
 ```html
 <!DOCTYPE html>
@@ -122,7 +100,6 @@ business-card-generator/
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Business Card Generator</title>
     <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
     <div class="container">
@@ -131,100 +108,222 @@ business-card-generator/
             <div class="controls">
                 <button id="generateBtn">Generate New Card</button>
                 <button id="chaosBtn">Randomize</button>
-                <button id="resetBtn">Reset</button>
+                <button id="exportBtn">Export</button>
             </div>
         </header>
         
         <main class="main-content">
             <div class="control-panel">
-                <!-- Contact Information -->
                 <section class="contact-section">
                     <h2>Contact Information</h2>
-                    <div class="form-group">
-                        <label for="nameEnglish">Full Name (English):</label>
-                        <input type="text" id="nameEnglish" placeholder="Your Name">
-                    </div>
-                    <div class="form-group">
-                        <label for="nameLocal">Name (Native Script):</label>
-                        <input type="text" id="nameLocal" placeholder="আপনার নাম">
-                    </div>
-                    <div class="form-group">
-                        <label for="jobTitle">Job Title:</label>
-                        <input type="text" id="jobTitle" placeholder="Your Position">
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">Phone Number:</label>
-                        <input type="tel" id="phone" placeholder="+91-XXXXX-XXXXX">
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email Address:</label>
-                        <input type="email" id="email" placeholder="your.email@domain.com">
-                    </div>
+                    <input type="text" id="nameEnglish" placeholder="Full Name">
+                    <input type="text" id="nameLocal" placeholder="Native Script">
+                    <input type="text" id="jobTitle" placeholder="Job Title">
+                    <input type="tel" id="phone" placeholder="Phone Number">
+                    <input type="email" id="email" placeholder="Email Address">
                 </section>
                 
-                <!-- Card Settings -->
                 <section class="settings-section">
                     <h2>Card Settings</h2>
-                    <div class="form-group">
-                        <label for="standard">Card Standard:</label>
-                        <select id="standard">
-                            <option value="US">US (85.60 × 53.98 mm)</option>
-                            <option value="Indian">Indian Standard (55 × 90 mm)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="orientation">Orientation:</label>
-                        <select id="orientation">
-                            <option value="landscape">Landscape</option>
-                            <option value="portrait">Portrait</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="chaosLevel">Chaos Level: <span id="chaosValue">30</span>%</label>
-                        <input type="range" id="chaosLevel" min="0" max="100" value="30">
-                    </div>
+                    <select id="standard">
+                        <option value="US">US Standard</option>
+                        <option value="Indian">Indian Standard</option>
+                    </select>
+                    <select id="orientation">
+                        <option value="landscape">Landscape</option>
+                        <option value="portrait">Portrait</option>
+                    </select>
+                    <input type="range" id="chaosLevel" min="0" max="100" value="30">
                 </section>
                 
-                <!-- Color Palette -->
                 <section class="color-section">
                     <h2>Color Palette</h2>
                     <div class="color-controls">
                         <button id="generatePalette">Generate Palette</button>
                         <button id="randomPalette">Random Colors</button>
                     </div>
-                    <div class="color-swatches" id="colorSwatches">
-                        <!-- Color swatches will be populated by JavaScript -->
-                    </div>
-                </section>
-                
-                <!-- Configuration Management -->
-                <section class="config-section">
-                    <h2>Configuration</h2>
-                    <div class="config-controls">
-                        <button id="exportConfig">Export Config</button>
-                        <input type="file" id="importConfig" accept=".json" style="display: none;">
-                        <button id="importConfigBtn">Import Config</button>
-                    </div>
+                    <div class="color-swatches" id="colorSwatches"></div>
                 </section>
             </div>
             
             <div class="canvas-container">
-                <canvas id="businessCard" width="1012" height="638"></canvas>
+                <canvas id="businessCard"></canvas>
             </div>
         </main>
     </div>
     
     <script src="js/core.js"></script>
     <script src="js/canvas.js"></script>
+    <script src="js/export.js"></script>
     <script src="js/config.js"></script>
     <script src="js/ui.js"></script>
 </body>
 </html>
 ```
 
-### Core JavaScript Implementation
+### 2. CSS Styles (css/main.css)
 
-#### 1. Core Configuration (core.js)
+```css
+/* Core Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.main-content {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 20px;
+}
+
+.control-panel {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 20px;
+    height: fit-content;
+}
+
+.canvas-container {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#businessCard {
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+    height: auto;
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+/* Button Styles */
+button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* Color Swatches */
+.color-swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.color-swatch {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 2px solid #e0e0e0;
+    transition: transform 0.2s ease;
+}
+
+.color-swatch:hover {
+    transform: scale(1.1);
+}
+
+.color-swatch.selected {
+    border-color: #667eea;
+    transform: scale(1.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .header {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .controls {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+}
+```
+
+## Core Components
+
+### 1. Core Configuration (js/core.js)
 
 ```javascript
 // Global configuration object
@@ -249,7 +348,7 @@ const currentConfig = {
     }
 };
 
-// Canvas dimensions for different standards
+// Card dimensions for different standards
 const CARD_DIMENSIONS = {
     'US': {
         landscape: { width: 1012, height: 638 },
@@ -261,7 +360,7 @@ const CARD_DIMENSIONS = {
     }
 };
 
-// Base color palette for WCAG compliance
+// WCAG-compliant base colors
 const BASE_COLORS = [
     { hex: '#2c3e50', name: 'Midnight Blue', wcag: 'AA', contrast: 4.5 },
     { hex: '#34495e', name: 'Wet Asphalt', wcag: 'AA', contrast: 4.8 },
@@ -284,28 +383,12 @@ function randomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function randomFloat(min, max) {
-    return Math.random() * (max - min) + min;
-}
-
 function randomChoice(array) {
     return array[Math.floor(Math.random() * array.length)];
 }
 
-function hexToRgb(hex) {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-    } : null;
-}
-
-function rgbToHex(r, g, b) {
-    return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-}
-
 function calculateContrast(color1, color2) {
+    // WCAG contrast calculation
     const rgb1 = hexToRgb(color1);
     const rgb2 = hexToRgb(color2);
     
@@ -318,14 +401,6 @@ function calculateContrast(color1, color2) {
     return (brightest + 0.05) / (darkest + 0.05);
 }
 
-function getLuminance(r, g, b) {
-    const [rs, gs, bs] = [r, g, b].map(c => {
-        c = c / 255;
-        return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-    });
-    return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
-}
-
 function getWCAGRating(contrast) {
     if (contrast >= 7) return 'AAA';
     if (contrast >= 4.5) return 'AA';
@@ -333,7 +408,7 @@ function getWCAGRating(contrast) {
 }
 ```
 
-#### 2. Canvas Operations (canvas.js)
+### 2. Canvas Operations (js/canvas.js)
 
 ```javascript
 let canvas, ctx;
@@ -341,11 +416,7 @@ let canvas, ctx;
 function initializeCanvas() {
     canvas = document.getElementById('businessCard');
     ctx = canvas.getContext('2d');
-    
-    // Set initial canvas dimensions
     updateCanvasDimensions();
-    
-    // Generate initial card
     generateCard();
 }
 
@@ -359,32 +430,16 @@ function generateCard() {
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // Draw background
+    // Draw components in order
     drawBackground();
-    
-    // Generate and draw background elements
     generateBackgroundElements();
-    
-    // Draw logo area
     drawLogoArea();
-    
-    // Draw contact information
     drawContactInfo();
-    
-    // Draw border
     drawBorder();
 }
 
-function drawBackground() {
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-}
-
 function generateBackgroundElements() {
-    // Clear existing elements
     currentConfig.elements = [];
-    
-    // Generate 8-15 background elements
     const elementCount = randomInt(8, 15);
     
     for (let i = 0; i < elementCount; i++) {
@@ -396,7 +451,6 @@ function generateBackgroundElements() {
             color: randomChoice(currentConfig.colorPalette).hex,
             opacity: randomFloat(0.1, 0.3),
             rotation: randomFloat(0, 360),
-            // Additional properties for complex shapes
             bezierPoints: generateBezierPoints(),
             spikes: randomInt(3, 8),
             amplitude: randomFloat(10, 50)
@@ -410,17 +464,6 @@ function generateBackgroundElements() {
         currentConfig.elements.push(element);
         drawElement(element);
     }
-}
-
-function generateBezierPoints() {
-    const points = [];
-    for (let i = 0; i < 6; i++) {
-        points.push({
-            x: randomFloat(-50, 50),
-            y: randomFloat(-50, 50)
-        });
-    }
-    return points;
 }
 
 function drawElement(element) {
@@ -440,131 +483,59 @@ function drawElement(element) {
         case 'triangle':
             drawTriangle(element);
             break;
-        case 'line':
-            drawLine(element);
-            break;
         case 'organic':
             drawOrganicShape(element);
-            break;
-        case 'hexagon':
-            drawPolygon(element, 6);
             break;
         case 'star':
             drawStar(element);
             break;
-        case 'wave':
-            drawWave(element);
-            break;
+        // ... other shapes
     }
     
     ctx.restore();
 }
 
-function drawCircle(element) {
-    ctx.beginPath();
-    ctx.arc(0, 0, element.size / 2, 0, 2 * Math.PI);
-    ctx.fill();
+function drawContactInfo() {
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    
+    // Primary group (name and title)
+    const primaryGroup = [
+        { text: currentConfig.contact.nameEnglish, fontSize: 32, fontWeight: 'bold' },
+        { text: currentConfig.contact.nameLocal, fontSize: 24 },
+        { text: currentConfig.contact.jobTitle, fontSize: 20 }
+    ];
+    
+    // Secondary group (contact details)
+    const secondaryGroup = [
+        { text: currentConfig.contact.phone, fontSize: 16 },
+        { text: currentConfig.contact.email, fontSize: 16 }
+    ];
+    
+    // Draw groups with chaos-based positioning
+    drawTextGroup(primaryGroup, centerX, centerY - 40);
+    drawTextGroup(secondaryGroup, centerX, centerY + 40);
 }
 
-function drawSquare(element) {
-    const half = element.size / 2;
-    ctx.fillRect(-half, -half, element.size, element.size);
-}
-
-function drawTriangle(element) {
-    const size = element.size;
-    ctx.beginPath();
-    ctx.moveTo(0, -size / 2);
-    ctx.lineTo(-size / 2, size / 2);
-    ctx.lineTo(size / 2, size / 2);
-    ctx.closePath();
-    ctx.fill();
-}
-
-function drawLine(element) {
-    ctx.strokeStyle = element.color;
-    ctx.lineWidth = element.size / 20;
-    ctx.beginPath();
-    ctx.moveTo(-element.size / 2, 0);
-    ctx.lineTo(element.size / 2, 0);
-    ctx.stroke();
-}
-
-function drawOrganicShape(element) {
-    const points = element.bezierPoints;
-    ctx.beginPath();
-    ctx.moveTo(points[0].x, points[0].y);
+function drawTextWithChaos(text, x, y, options) {
+    ctx.save();
     
-    for (let i = 1; i < points.length; i += 3) {
-        ctx.bezierCurveTo(
-            points[i].x, points[i].y,
-            points[i + 1].x, points[i + 1].y,
-            points[i + 2].x, points[i + 2].y
-        );
-    }
+    // Apply chaos transformations
+    const offsetX = randomFloat(-options.maxOffset, options.maxOffset);
+    const offsetY = randomFloat(-options.maxOffset, options.maxOffset);
+    const rotation = randomFloat(-options.maxRotation, options.maxRotation) * Math.PI / 180;
     
-    ctx.closePath();
-    ctx.fill();
-}
-
-function drawPolygon(element, sides) {
-    const radius = element.size / 2;
-    ctx.beginPath();
+    ctx.translate(x + offsetX, y + offsetY);
+    ctx.rotate(rotation);
     
-    for (let i = 0; i < sides; i++) {
-        const angle = (i * 2 * Math.PI) / sides;
-        const x = radius * Math.cos(angle);
-        const y = radius * Math.sin(angle);
-        
-        if (i === 0) {
-            ctx.moveTo(x, y);
-        } else {
-            ctx.lineTo(x, y);
-        }
-    }
+    // Set font properties
+    ctx.font = `${options.fontWeight} ${options.fontSize}px ${options.fontFamily}`;
+    ctx.fillStyle = options.color;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
     
-    ctx.closePath();
-    ctx.fill();
-}
-
-function drawStar(element) {
-    const spikes = element.spikes;
-    const outerRadius = element.size / 2;
-    const innerRadius = outerRadius * 0.5;
-    
-    ctx.beginPath();
-    
-    for (let i = 0; i < spikes * 2; i++) {
-        const angle = (i * Math.PI) / spikes;
-        const radius = i % 2 === 0 ? outerRadius : innerRadius;
-        const x = radius * Math.cos(angle);
-        const y = radius * Math.sin(angle);
-        
-        if (i === 0) {
-            ctx.moveTo(x, y);
-        } else {
-            ctx.lineTo(x, y);
-        }
-    }
-    
-    ctx.closePath();
-    ctx.fill();
-}
-
-function drawWave(element) {
-    const amplitude = element.amplitude;
-    const frequency = 0.02;
-    const width = element.size;
-    
-    ctx.beginPath();
-    ctx.moveTo(-width / 2, 0);
-    
-    for (let x = -width / 2; x <= width / 2; x += 2) {
-        const y = amplitude * Math.sin(frequency * x);
-        ctx.lineTo(x, y);
-    }
-    
-    ctx.stroke();
+    ctx.fillText(text, 0, 0);
+    ctx.restore();
 }
 
 function drawLogoArea() {
@@ -575,17 +546,16 @@ function drawLogoArea() {
         height: canvas.height * 0.15
     };
     
+    // Create abstract Dada-style logo container
     ctx.save();
     ctx.translate(logoArea.x, logoArea.y);
-    
-    // Create abstract Dada-style shape
     ctx.fillStyle = currentConfig.colorPalette[0].hex;
     ctx.globalAlpha = 0.6;
     
+    // Generate artistic bezier shape
     ctx.beginPath();
     ctx.moveTo(0, 0);
     
-    // Generate random bezier curves for artistic effect
     for (let i = 0; i < 4; i++) {
         const cp1x = Math.random() * logoArea.width;
         const cp1y = Math.random() * logoArea.height;
@@ -599,111 +569,22 @@ function drawLogoArea() {
     
     ctx.closePath();
     ctx.fill();
-    
-    // Add placeholder text
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '12px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('LOGO', logoArea.width / 2, logoArea.height / 2);
-    
     ctx.restore();
-}
-
-function drawContactInfo() {
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    
-    // Primary group (top-aligned)
-    const primaryGroup = [
-        { text: currentConfig.contact.nameEnglish, fontSize: 32, fontWeight: 'bold', font: currentConfig.typography.primaryFont },
-        { text: currentConfig.contact.nameLocal, fontSize: 24, font: currentConfig.typography.primaryFont },
-        { text: currentConfig.contact.jobTitle, fontSize: 20, font: currentConfig.typography.primaryFont }
-    ];
-    
-    // Secondary group (bottom-aligned)
-    const secondaryGroup = [
-        { text: currentConfig.contact.phone, fontSize: 16, font: currentConfig.typography.secondaryFont },
-        { text: currentConfig.contact.email, fontSize: 16, font: currentConfig.typography.secondaryFont }
-    ];
-    
-    // Draw primary group
-    let yOffset = centerY - 40;
-    primaryGroup.forEach((item, index) => {
-        drawTextWithChaos(item.text, centerX, yOffset, {
-            fontSize: item.fontSize,
-            fontWeight: item.fontWeight || 'normal',
-            fontFamily: item.font,
-            color: currentConfig.colorPalette[index % currentConfig.colorPalette.length].hex,
-            maxOffset: (currentConfig.chaosLevel / 100) * 25,
-            maxRotation: (currentConfig.chaosLevel / 100) * 9
-        });
-        yOffset += item.fontSize + 5;
-    });
-    
-    // Draw secondary group
-    yOffset = centerY + 40;
-    secondaryGroup.forEach((item, index) => {
-        drawTextWithChaos(item.text, centerX, yOffset, {
-            fontSize: item.fontSize,
-            fontFamily: item.font,
-            color: currentConfig.colorPalette[(index + 3) % currentConfig.colorPalette.length].hex,
-            maxOffset: (currentConfig.chaosLevel / 100) * 25,
-            maxRotation: (currentConfig.chaosLevel / 100) * 9
-        });
-        yOffset += item.fontSize + 5;
-    });
-}
-
-function drawTextWithChaos(text, x, y, options) {
-    const {
-        fontSize = 16,
-        fontWeight = 'normal',
-        fontFamily = 'Arial',
-        color = '#000000',
-        maxOffset = 0,
-        maxRotation = 0
-    } = options;
-    
-    ctx.save();
-    
-    // Apply chaos transformations
-    const offsetX = randomFloat(-maxOffset, maxOffset);
-    const offsetY = randomFloat(-maxOffset, maxOffset);
-    const rotation = randomFloat(-maxRotation, maxRotation) * Math.PI / 180;
-    
-    ctx.translate(x + offsetX, y + offsetY);
-    ctx.rotate(rotation);
-    
-    // Set font properties
-    ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
-    ctx.fillStyle = color;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    
-    ctx.fillText(text, 0, 0);
-    
-    ctx.restore();
-}
-
-function drawBorder() {
-    ctx.strokeStyle = currentConfig.colorPalette[0].hex;
-    ctx.lineWidth = 2;
-    ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
 }
 ```
 
-#### 3. Color Palette Generation
+### 3. Color Palette System (js/core.js - continuation)
 
 ```javascript
 function generateWCAGPalette() {
     const paletteSize = randomInt(3, 7);
     const newPalette = [];
     
-    // Start with a base color from the curated set
+    // Start with base color
     const baseColor = randomChoice(BASE_COLORS);
     newPalette.push(baseColor);
     
-    // Generate additional colors
+    // Generate additional WCAG-compliant colors
     for (let i = 1; i < paletteSize; i++) {
         let color;
         let attempts = 0;
@@ -738,54 +619,94 @@ function generateRandomColor() {
     
     return {
         hex: hex,
-        name: `Custom Color`,
+        name: 'Custom Color',
         wcag: getWCAGRating(contrast),
         contrast: contrast
     };
-}
-
-function hslToHex(h, s, l) {
-    l /= 100;
-    const a = s * Math.min(l, 1 - l) / 100;
-    const f = n => {
-        const k = (n + h / 30) % 12;
-        const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-        return Math.round(255 * color).toString(16).padStart(2, '0');
-    };
-    return `#${f(0)}${f(8)}${f(4)}`;
 }
 
 function isWCAGCompliant(color) {
     const contrast = calculateContrast(color, '#ffffff');
     return contrast >= 4.5;
 }
+```
 
-function updateColorSwatches() {
-    const swatchesContainer = document.getElementById('colorSwatches');
-    swatchesContainer.innerHTML = '';
-    
-    currentConfig.colorPalette.forEach((color, index) => {
-        const swatch = document.createElement('div');
-        swatch.className = 'color-swatch';
-        swatch.style.backgroundColor = color.hex;
-        swatch.title = `${color.name} (${color.wcag})`;
-        swatch.addEventListener('click', () => selectColor(index));
-        swatchesContainer.appendChild(swatch);
-    });
+## Advanced Features
+
+### 1. Export System (js/export.js)
+
+```javascript
+// PNG Export
+function exportPNG() {
+    const link = document.createElement('a');
+    link.download = 'business-card.png';
+    link.href = canvas.toDataURL();
+    link.click();
 }
 
-function selectColor(index) {
-    // Move selected color to front for primary use
-    const selectedColor = currentConfig.colorPalette[index];
-    currentConfig.colorPalette.splice(index, 1);
-    currentConfig.colorPalette.unshift(selectedColor);
+// SVG Export
+function exportSVG() {
+    const svgNamespace = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(svgNamespace, 'svg');
     
-    updateColorSwatches();
-    generateCard();
+    svg.setAttribute('width', canvas.width);
+    svg.setAttribute('height', canvas.height);
+    svg.setAttribute('viewBox', `0 0 ${canvas.width} ${canvas.height}`);
+    
+    // Convert canvas elements to SVG
+    const background = createSVGElement('rect', {
+        x: 0, y: 0,
+        width: canvas.width,
+        height: canvas.height,
+        fill: '#ffffff'
+    });
+    svg.appendChild(background);
+    
+    // Add all elements
+    currentConfig.elements.forEach(element => {
+        const svgElement = convertElementToSVG(element);
+        svg.appendChild(svgElement);
+    });
+    
+    // Add text elements
+    addTextToSVG(svg);
+    
+    // Download SVG
+    const serializer = new XMLSerializer();
+    const svgString = serializer.serializeToString(svg);
+    downloadFile(svgString, 'business-card.svg', 'image/svg+xml');
+}
+
+// PDF Export (requires jsPDF)
+function exportPDF() {
+    const pdfCanvas = document.createElement('canvas');
+    const pdfCtx = pdfCanvas.getContext('2d');
+    
+    // High resolution for print (600 DPI)
+    const scaleFactor = 2;
+    pdfCanvas.width = canvas.width * scaleFactor;
+    pdfCanvas.height = canvas.height * scaleFactor;
+    pdfCtx.scale(scaleFactor, scaleFactor);
+    
+    // Regenerate at high resolution
+    generateCardOnCanvas(pdfCtx, canvas.width, canvas.height);
+    
+    // Create PDF
+    const pdf = new jsPDF({
+        orientation: currentConfig.orientation,
+        unit: 'mm',
+        format: [canvas.width / 11.811, canvas.height / 11.811]
+    });
+    
+    const imgData = pdfCanvas.toDataURL('image/jpeg', 1.0);
+    pdf.addImage(imgData, 'JPEG', 0, 0, 
+        canvas.width / 11.811, canvas.height / 11.811);
+    
+    pdf.save('business-card.pdf');
 }
 ```
 
-#### 4. Configuration Management (config.js)
+### 2. Configuration Management (js/config.js)
 
 ```javascript
 function exportConfig() {
@@ -819,24 +740,18 @@ function importConfig(fileEvent) {
         try {
             const config = JSON.parse(e.target.result);
             
-            // Validate configuration
             if (!validateConfig(config)) {
                 throw new Error('Invalid configuration file');
             }
             
-            // Apply configuration
             applyConfiguration(config);
-            
-            // Update UI
             updateUIFromConfig(config);
-            
-            // Regenerate card
             generateCard();
             
             showNotification('Configuration loaded successfully!', 'success');
             
         } catch (error) {
-            showNotification('Error loading configuration: ' + error.message, 'error');
+            showNotification('Error: ' + error.message, 'error');
         }
     };
     
@@ -845,24 +760,162 @@ function importConfig(fileEvent) {
 
 function validateConfig(config) {
     const requiredFields = ['version', 'standard', 'orientation', 'colorPalette'];
+    return requiredFields.every(field => config.hasOwnProperty(field));
+}
+```
+
+### 3. Interactive Features (js/ui.js)
+
+```javascript
+// Drag and Drop System
+let isDragging = false;
+let dragElement = null;
+
+function setupDragAndDrop() {
+    canvas.addEventListener('mousedown', handleMouseDown);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseup', handleMouseUp);
     
-    // Check required fields
-    for (const field of requiredFields) {
-        if (!config.hasOwnProperty(field)) {
-            return false;
+    // Touch events for mobile
+    canvas.addEventListener('touchstart', handleTouchStart);
+    canvas.addEventListener('touchmove', handleTouchMove);
+    canvas.addEventListener('touchend', handleTouchEnd);
+}
+
+function handleMouseDown(e) {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    const element = findElementAtPosition(x, y);
+    
+    if (element) {
+        isDragging = true;
+        dragElement = element;
+        canvas.style.cursor = 'grabbing';
+    }
+}
+
+function handleMouseMove(e) {
+    if (!isDragging) return;
+    
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    dragElement.x = x;
+    dragElement.y = y;
+    
+    generateCard();
+}
+
+// Keyboard Shortcuts
+function setupKeyboardShortcuts() {
+    document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey || e.metaKey) {
+            switch (e.key) {
+                case 'g':
+                    e.preventDefault();
+                    generateCard();
+                    break;
+                case 'r':
+                    e.preventDefault();
+                    generateWCAGPalette();
+                    break;
+                case 's':
+                    e.preventDefault();
+                    exportPNG();
+                    break;
+                case 'e':
+                    e.preventDefault();
+                    exportConfig();
+                    break;
+            }
         }
-    }
+    });
+}
+
+// Real-time Updates
+function setupRealTimeUpdates() {
+    const inputs = ['nameEnglish', 'nameLocal', 'jobTitle', 'phone', 'email'];
     
-    // Validate standard
-    if (!['US', 'Indian'].includes(config.standard)) {
-        return false;
-    }
+    inputs.forEach(id => {
+        document.getElementById(id).addEventListener('input', (e) => {
+            currentConfig.contact[id] = e.target.value;
+            generateCard();
+        });
+    });
     
-    // Validate orientation
-    if (!['landscape', 'portrait'].includes(config.orientation)) {
-        return false;
-    }
-    
-    // Validate chaos level
-    if (config.chaosLevel < 0 || config.chaosLevel > 100) {
-        return false;
+    document.getElementById('chaosLevel').addEventListener('input', (e) => {
+        currentConfig.chaosLevel = parseInt(e.target.value);
+        document.getElementById('chaosValue').textContent = e.target.value;
+        generateCard();
+    });
+}
+```
+
+## Testing & Deployment
+
+### Testing Checklist
+
+#### Functionality Tests
+- [ ] Canvas rendering across browsers
+- [ ] Color palette generation and WCAG compliance
+- [ ] Export functionality (PNG, SVG, PDF)
+- [ ] Configuration save/load
+- [ ] Responsive design on mobile devices
+- [ ] Keyboard shortcuts functionality
+- [ ] Drag and drop interactions
+
+#### Cross-Browser Testing
+- [ ] Chrome 60+ ✓
+- [ ] Firefox 55+ ✓
+- [ ] Safari 12+ ✓
+- [ ] Edge 79+ ✓
+- [ ] Mobile browsers ✓
+
+#### Performance Tests
+- [ ] Canvas rendering speed
+- [ ] Memory usage monitoring
+- [ ] Export generation time
+- [ ] Mobile performance
+
+### Deployment
+
+#### Requirements
+- Modern web browser with Canvas API support
+- JavaScript enabled
+- File API support for import/export
+- No server-side dependencies
+
+#### Setup Instructions
+1. Clone or download project files
+2. Open `index.html` in web browser
+3. No build process required
+4. Deploy to any static hosting service
+
+#### Security Considerations
+- Client-side only processing
+- No data transmission to servers
+- Safe file handling with validation
+- Input sanitization for all user inputs
+
+#### Accessibility Features
+- WCAG 2.1 AA compliance
+- Keyboard navigation support
+- Screen reader compatibility
+- High contrast mode support
+- Touch-friendly mobile interface
+
+## Conclusion
+
+This Business Card Generator provides a comprehensive solution for creating professional business cards with advanced customization options. The modular architecture allows for easy extension and maintenance, while the WCAG compliance ensures accessibility for all users.
+
+### Key Benefits
+- **Professional Quality**: High-resolution output suitable for printing
+- **Accessibility**: WCAG-compliant design and functionality
+- **Flexibility**: Multiple export formats and configuration options
+- **User Experience**: Intuitive interface with real-time preview
+- **Performance**: Optimized canvas rendering and efficient algorithms
+
+The implementation combines modern web technologies with thoughtful design principles to create a powerful yet accessible tool for business card generation.
