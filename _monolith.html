@@ -1,25 +1,63 @@
-<!DOCTYPE html>
+function generateCard() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // White background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Update contact info
+            currentConfig.contact = {
+                nameEnglish: document.getElementById('nameEnglish').value,
+                nameLocal: document.getElementById('nameLocal').value,
+                jobTitle: document.getElementById('jobTitle').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value
+            };
+            
+            // Generate background elements
+            generateBackgroundElements();
+            
+            // Draw logo area
+            drawLogoArea();
+            
+            // Draw contact information
+            drawContactInfo();
+            
+            // Draw border
+            drawBorder();
+        }
+
+        function drawLogoArea() {
+            const logoArea = {
+                x: canvas.width * 0.75,
+                y: canvas.height * 0.15,
+                width: canvas.width * 0.2,
+                height: canvas.height * 0.25
+            };
+            
+            // Create Dada-styled logo container
+            ctx.save();
+            ctx.globalAlpha = 0.3;
+            ctx.fillStyle = currentPalette[0];
+            
+            // Draw abstract logo shape
+            ctx.beginPath();
+            ctx.moveTo(logoArea.x, logoArea.y);
+            
+            // Create organic shape using bezier curves
+            const points = [
+                { x: logoArea.x, y: logoArea.y },
+                { x: logoArea.x + logoArea.width * 0.3, y: logoArea.y - logoArea.height * 0.1 },
+                { x: logoArea.x + logoArea.width * 0.7, y: logoArea.y + logoArea.height * 0.2 },
+                { x: logoArea.x + logoArea.width, y: logoArea.y + logoArea.height * 0.1 },
+                { x: logoArea.x + logoArea.width * 0<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Business Card Generator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Courier+Prime:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #34495e;
-            --accent-color: #e74c3c;
-            --background-color: #f8f9fa;
-            --surface-color: #ffffff;
-            --text-primary: #2c3e50;
-            --text-secondary: #6c757d;
-            --border-color: #dee2e6;
-            --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.15);
-            --border-radius: 8px;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -27,639 +65,467 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--background-color);
-            color: var(--text-primary);
-            line-height: 1.6;
-            overflow-x: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
         }
 
         .container {
-            min-height: 100vh;
-            display: grid;
-            grid-template-columns: 1fr 380px;
-            gap: 1.5rem;
-            padding: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
 
-        @media (max-width: 1024px) {
-            .container {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-                padding: 1rem;
-            }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
         }
 
         .main-content {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .card {
-            background: var(--surface-color);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            padding: 1.5rem;
-            border: 1px solid var(--border-color);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .canvas-container {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: #f8f9fa;
-            border-radius: var(--border-radius);
-            padding: 2rem;
-            min-height: 400px;
-            border: 2px solid var(--border-color);
-        }
-
-        #cardCanvas {
-            border-radius: 4px;
-            box-shadow: var(--shadow-lg);
-            background: white;
-            max-width: 100%;
-            max-height: 100%;
-            border: 1px solid var(--border-color);
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            margin-bottom: 30px;
         }
 
         .controls-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .canvas-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            align-items: center;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
         }
 
         .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+            margin-bottom: 15px;
         }
 
         .form-group label {
+            display: block;
+            margin-bottom: 5px;
             font-weight: 500;
-            color: var(--text-primary);
-            font-size: 0.9rem;
+            color: #555;
         }
 
         .form-group input,
-        .form-group select,
-        .form-group textarea {
-            padding: 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            font-size: 0.9rem;
-            transition: all 0.2s;
-            font-family: 'Inter', sans-serif;
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
         }
 
         .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
+        .form-group select:focus {
             outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.1);
-        }
-
-        .toggle-switch {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.5rem 0;
-        }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 28px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #ccc;
-            transition: .4s;
-            border-radius: 28px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 20px;
-            width: 20px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider {
-            background: var(--accent-color);
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(28px);
-        }
-
-        .button {
-            padding: 0.75rem 1.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .button:hover {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow);
-        }
-
-        .button-primary {
-            background: var(--accent-color);
-            color: white;
-            border-color: var(--accent-color);
-        }
-
-        .button-primary:hover {
-            background: #c0392b;
-            border-color: #c0392b;
-        }
-
-        .button-secondary {
-            background: var(--surface-color);
-            color: var(--text-primary);
-        }
-
-        .button-secondary:hover {
-            background: #f8f9fa;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
         }
 
         .button-group {
             display: flex;
-            gap: 0.5rem;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #219a52;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+        }
+
+        .card-preview {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background: #f8f9fa;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        #businessCardCanvas {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .canvas-info {
+            text-align: center;
+            margin-top: 15px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
         .color-palette {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-            gap: 0.5rem;
-            margin-top: 1rem;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .color-swatch {
-            aspect-ratio: 1;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid #ddd;
             cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-            overflow: hidden;
-            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
         }
 
         .color-swatch:hover {
-            transform: scale(1.05);
-            box-shadow: var(--shadow-lg);
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
-        .color-swatch.selected {
-            border-color: var(--accent-color);
+        .color-swatch.active {
+            border-color: #3498db;
             transform: scale(1.1);
         }
 
-        .color-swatch .color-info {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            font-size: 0.6rem;
-            text-align: center;
-            padding: 2px;
-            font-family: 'Courier Prime', monospace;
-            font-weight: 400;
-        }
-
-        .wcag-indicator {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-        }
-
-        .wcag-aa { background: #27ae60; }
-        .wcag-aaa { background: #2980b9; }
-        .wcag-fail { background: #e74c3c; }
-
-        .chaos-level {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin: 1rem 0;
-        }
-
         .chaos-slider {
-            flex: 1;
-            height: 6px;
-            background: #ddd;
-            border-radius: 3px;
-            outline: none;
-            appearance: none;
+            width: 100%;
+            margin: 10px 0;
         }
 
-        .chaos-slider::-webkit-slider-thumb {
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            background: var(--accent-color);
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid white;
-            box-shadow: var(--shadow);
+        .chaos-value {
+            text-align: center;
+            font-weight: bold;
+            color: #e74c3c;
+            font-size: 1.1rem;
+            margin: 5px 0;
         }
 
-        .chaos-slider::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            background: var(--accent-color);
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid white;
-            box-shadow: var(--shadow);
-        }
-
-        .export-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .debug-info {
-            background: var(--surface-color);
-            border: 1px solid var(--border-color);
-            padding: 1rem;
-            border-radius: var(--border-radius);
-            font-family: 'Courier Prime', monospace;
-            font-size: 0.8rem;
-            margin-top: 1rem;
-        }
-
-        .debug-item {
+        .export-options {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.25rem;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .card-standards {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .radio-group input[type="radio"] {
+            width: auto;
+            margin-right: 5px;
         }
 
         @media (max-width: 768px) {
-            .container {
-                padding: 0.5rem;
+            .main-content {
+                grid-template-columns: 1fr;
             }
             
-            .card {
-                padding: 1rem;
+            .header h1 {
+                font-size: 2rem;
             }
             
-            .canvas-container {
-                padding: 1rem;
-                min-height: 300px;
+            .button-group {
+                flex-direction: column;
             }
         }
-
-        .status-indicator {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-right: 0.5rem;
-        }
-
-        .status-success { background: #27ae60; }
-        .status-warning { background: #f39c12; }
-        .status-error { background: #e74c3c; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="main-content">
-            <div class="card">
-                <div class="card-header">
-                    <h1 class="card-title">Business Card Generator</h1>
-                </div>
-                
-                <div class="canvas-container">
-                    <canvas id="cardCanvas" width="856" height="540"></canvas>
-                </div>
-                
-                <div class="debug-info">
-                    <div class="debug-item">
-                        <span>Chaos Level:</span>
-                        <span id="chaosLevel">30%</span>
-                    </div>
-                    <div class="debug-item">
-                        <span>Card Standard:</span>
-                        <span id="cardStandard">ISO-7810</span>
-                    </div>
-                    <div class="debug-item">
-                        <span>Orientation:</span>
-                        <span id="currentOrientation">Landscape</span>
-                    </div>
-                    <div class="debug-item">
-                        <span>Colors:</span>
-                        <span id="colorCount">5</span>
-                    </div>
-                    <div class="debug-item">
-                        <span>WCAG Status:</span>
-                        <span id="wcagStatus">-</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Export Options</h2>
-                </div>
-                
-                <div class="export-grid">
-                    <button class="button button-primary" onclick="exportCard('pdf')">
-                        📄 PDF
-                    </button>
-                    <button class="button button-secondary" onclick="exportCard('png')">
-                        🖼️ PNG
-                    </button>
-                    <button class="button button-secondary" onclick="exportCard('svg')">
-                        🎨 SVG
-                    </button>
-                    <button class="button button-secondary" onclick="exportColorPalette()">
-                        🎨 Palette
-                    </button>
-                </div>
-                
-                <div class="form-group">
-                    <label for="dpiSelect">Export Quality:</label>
-                    <select id="dpiSelect">
-                        <option value="300">300 DPI - Standard</option>
-                        <option value="600">600 DPI - High</option>
-                        <option value="1200">1200 DPI - Ultra</option>
-                    </select>
-                </div>
-            </div>
+        <div class="header">
+            <h1>Business Card Generator</h1>
+            <p>Create professional, WCAG-compliant business cards with customizable designs</p>
         </div>
 
-        <div class="controls-panel">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Card Settings</h2>
-                </div>
-                
-                <div class="chaos-level">
-                    <label>Chaos Level:</label>
-                    <input type="range" id="chaosSlider" class="chaos-slider" min="0" max="100" value="30" oninput="updateChaosLevel(this.value)">
-                    <span id="chaosValue">30%</span>
-                </div>
-                
-                <div class="form-group">
-                    <label for="cardStandardSelect">Card Standard:</label>
-                    <select id="cardStandardSelect" onchange="updateCardStandard()">
-                        <option value="ISO-7810">ISO-7810/ID-1 (85.60 × 53.98 mm)</option>
-                        <option value="Indian">Indian Standard (55 × 90 mm)</option>
-                    </select>
-                </div>
-                
-                <div class="toggle-switch">
-                    <label>Orientation:</label>
-                    <div class="switch">
-                        <input type="checkbox" id="orientationToggle" onchange="toggleOrientation()">
-                        <span class="slider"></span>
+        <div class="main-content">
+            <div class="controls-panel">
+                <div class="section">
+                    <h3>Contact Information</h3>
+                    <div class="form-group">
+                        <label for="nameEnglish">Full Name (English)</label>
+                        <input type="text" id="nameEnglish" value="John Doe" placeholder="Enter your full name">
                     </div>
-                    <span id="orientationLabel">Landscape</span>
+                    <div class="form-group">
+                        <label for="nameLocal">Name (Native Script)</label>
+                        <input type="text" id="nameLocal" value="জন ডো" placeholder="Enter name in native script">
+                    </div>
+                    <div class="form-group">
+                        <label for="jobTitle">Job Title</label>
+                        <input type="text" id="jobTitle" value="Software Engineer" placeholder="Enter your job title">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="text" id="phone" value="+91-98765-43210" placeholder="Enter phone number">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" value="john.doe@example.com" placeholder="Enter email address">
+                    </div>
                 </div>
-                
-                <div class="button-group">
-                    <button class="button button-primary" onclick="generateCard()">
-                        🎨 Generate
-                    </button>
-                    <button class="button button-secondary" onclick="generateChaos()">
-                        🎲 Randomize
-                    </button>
-                    <button class="button button-secondary" onclick="resetCard()">
-                        🔄 Reset
-                    </button>
+
+                <div class="section">
+                    <h3>Card Settings</h3>
+                    <div class="form-group">
+                        <label>Card Standard</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="standard" value="ISO" checked> ISO (85.6×53.98mm)</label>
+                            <label><input type="radio" name="standard" value="Indian"> Indian (55×90mm)</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Orientation</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="orientation" value="landscape" checked> Landscape</label>
+                            <label><input type="radio" name="orientation" value="portrait"> Portrait</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="chaosLevel">Chaos Level</label>
+                        <input type="range" id="chaosLevel" class="chaos-slider" min="0" max="100" value="30">
+                        <div class="chaos-value" id="chaosValue">30%</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Color Palette</h3>
+                    <div class="color-palette" id="colorPalette">
+                        <!-- Color swatches will be generated here -->
+                    </div>
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="generateWCAGPalette()">Generate WCAG Palette</button>
+                        <button class="btn btn-secondary" onclick="generateRandomPalette()">Random Colors</button>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Actions</h3>
+                    <div class="button-group">
+                        <button class="btn btn-success" onclick="generateCard()">Generate Card</button>
+                        <button class="btn btn-warning" onclick="generateChaos()">Random Chaos</button>
+                        <button class="btn btn-secondary" onclick="resetCard()">Reset</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Contact Information</h2>
+            <div class="canvas-container">
+                <div class="card-preview">
+                    <canvas id="businessCardCanvas" width="1012" height="638"></canvas>
                 </div>
-                
-                <div class="form-group">
-                    <label for="nameEnglish">Full Name:</label>
-                    <input type="text" id="nameEnglish" value="Sandeepan Sengupta" onchange="updateContactInfo()">
+                <div class="canvas-info">
+                    <p>ISO Standard - Landscape (85.6×53.98mm) - 300 DPI</p>
                 </div>
-                
-                <div class="form-group">
-                    <label for="nameLocal">Name in Native Script:</label>
-                    <input type="text" id="nameLocal" value="সন্দীপন" onchange="updateContactInfo()">
+                <div class="export-options">
+                    <button class="btn btn-primary" onclick="exportCard('png')">Export PNG</button>
+                    <button class="btn btn-primary" onclick="exportCard('svg')">Export SVG</button>
+                    <button class="btn btn-primary" onclick="exportCard('pdf')">Export PDF</button>
                 </div>
-                
-                <div class="form-group">
-                    <label for="jobTitle">Job Title:</label>
-                    <input type="text" id="jobTitle" value="Imposter" onchange="updateContactInfo()">
-                </div>
-                
-                <div class="form-group">
-                    <label for="phone">Phone Number:</label>
-                    <input type="text" id="phone" value="+91-72785-93964" onchange="updateContactInfo()">
-                </div>
-                
-                <div class="form-group">
-                    <label for="email">Email Address:</label>
-                    <input type="email" id="email" value="mail@sandeepan.net" onchange="updateContactInfo()">
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Color Palette</h2>
-                </div>
-                
-                <div class="color-palette" id="colorPalette"></div>
-                
-                <div class="button-group">
-                    <button class="button button-primary" onclick="generateWCAGPalette()">
-                        🎨 Generate
-                    </button>
-                    <button class="button button-secondary" onclick="generateRandomPalette()">
-                        🎲 Random
-                    </button>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Configuration</h2>
-                </div>
-                
-                <div class="button-group">
-                    <button class="button button-secondary" onclick="exportConfig()">
-                        💾 Save Config
-                    </button>
-                    <button class="button button-secondary" onclick="document.getElementById('configImport').click()">
-                        📁 Load Config
-                    </button>
-                </div>
-                
-                <input type="file" id="configImport" accept=".json" style="display: none;" onchange="importConfig(event)">
             </div>
         </div>
     </div>
 
     <script>
-        // Global configuration
+        // Global variables
+        let canvas, ctx;
+        let currentPalette = [];
         let currentConfig = {
-            standard: 'ISO-7810',
+            standard: 'ISO',
             orientation: 'landscape',
             chaosLevel: 30,
             colors: [],
-            contact: {
-                nameEnglish: 'Sandeepan Sengupta',
-                nameLocal: 'সন্দীপন',
-                jobTitle: 'Imposter',
-                phone: '+91-72785-93964',
-                email: 'mail@sandeepan.net'
-            },
+            contact: {},
             elements: []
         };
 
-        const cardStandards = {
-            'ISO-7810': { width: 85.60, height: 53.98, unit: 'mm' },
-            'Indian': { width: 90, height: 55, unit: 'mm' }
-        };
-
-        const shapes = ['circle', 'square', 'triangle', 'line', 'organic'];
-        
-        let canvas, ctx, deviceInfo = {};
-        let selectedColorIndex = 0;
-
         // Initialize application
-        document.addEventListener('DOMContentLoaded', initializeApp);
-
-        function initializeApp() {
-            canvas = document.getElementById('cardCanvas');
+        window.onload = function() {
+            canvas = document.getElementById('businessCardCanvas');
             ctx = canvas.getContext('2d');
             
+            // Initialize with WCAG compliant palette
             generateWCAGPalette();
-            setupCanvas();
+            
+            // Generate initial card
             generateCard();
-            updateDebugInfo();
-        }
-
-        function setupCanvas() {
-            const standard = cardStandards[currentConfig.standard];
-            const dpi = 300;
             
-            if (currentConfig.orientation === 'landscape') {
-                canvas.width = mmToPx(standard.width, dpi);
-                canvas.height = mmToPx(standard.height, dpi);
-            } else {
-                canvas.width = mmToPx(standard.height, dpi);
-                canvas.height = mmToPx(standard.width, dpi);
-            }
-            
-            // Scale for display
-            const maxWidth = Math.min(600, window.innerWidth - 100);
-            const scale = maxWidth / canvas.width;
-            canvas.style.width = canvas.width * scale + 'px';
-            canvas.style.height = canvas.height * scale + 'px';
-        }
+            // Add event listeners
+            setupEventListeners();
+        };
 
-        function mmToPx(mm, dpi) {
-            return Math.round((mm * dpi) / 25.4);
+        function setupEventListeners() {
+            // Contact form inputs
+            document.getElementById('nameEnglish').addEventListener('input', generateCard);
+            document.getElementById('nameLocal').addEventListener('input', generateCard);
+            document.getElementById('jobTitle').addEventListener('input', generateCard);
+            document.getElementById('phone').addEventListener('input', generateCard);
+            document.getElementById('email').addEventListener('input', generateCard);
+            
+            // Card settings
+            document.querySelectorAll('input[name="standard"]').forEach(radio => {
+                radio.addEventListener('change', updateCardDimensions);
+            });
+            
+            document.querySelectorAll('input[name="orientation"]').forEach(radio => {
+                radio.addEventListener('change', updateCardDimensions);
+            });
+            
+            // Chaos level slider
+            document.getElementById('chaosLevel').addEventListener('input', function() {
+                document.getElementById('chaosValue').textContent = this.value + '%';
+                currentConfig.chaosLevel = parseInt(this.value);
+                generateCard();
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey || e.metaKey) {
+                    switch(e.key) {
+                        case 'g':
+                            e.preventDefault();
+                            generateCard();
+                            break;
+                        case 'r':
+                            e.preventDefault();
+                            generateChaos();
+                            break;
+                        case 's':
+                            e.preventDefault();
+                            exportCard('png');
+                            break;
+                    }
+                }
+            });
         }
 
         function generateWCAGPalette() {
-            const paletteSize = Math.floor(Math.random() * 5) + 3; // 3-7 colors
-            currentConfig.colors = [];
-            
+            // Base professional colors with WCAG AA compliance
             const baseColors = [
                 '#2c3e50', '#34495e', '#e74c3c', '#f39c12', '#27ae60',
-                '#2980b9', '#9b59b6', '#1abc9c', '#f1c40f', '#e67e22',
-                '#16a085', '#8e44ad', '#c0392b', '#d35400'
+                '#3498db', '#9b59b6', '#1abc9c', '#16a085', '#2980b9',
+                '#8e44ad', '#c0392b', '#d35400', '#f1c40f', '#e67e22'
             ];
             
-            for (let i = 0; i < paletteSize; i++) {
-                const color = baseColors[i % baseColors.length];
-                currentConfig.colors.push({
-                    hex: color,
-                    wcag: 'AA',
-                    contrast: 4.5
-                });
+            // Generate palette of 5 colors
+            currentPalette = [];
+            for (let i = 0; i < 5; i++) {
+                const color = baseColors[Math.floor(Math.random() * baseColors.length)];
+                if (!currentPalette.includes(color)) {
+                    currentPalette.push(color);
+                }
             }
             
-            displayColorPalette();
-        }
-
-        function generateRandomPalette() {
-            const paletteSize = Math.floor(Math.random() * 5) + 3; // 3-7 colors
-            currentConfig.colors = [];
-            
-            for (let i = 0; i < paletteSize; i++) {
-                const color = generateRandomColor();
-                currentConfig.colors.push({
-                    hex: color,
-                    wcag: 'AA',
-                    contrast: 4.5
-                });
+            // Fill to 5 if needed
+            while (currentPalette.length < 5) {
+                const color = baseColors[Math.floor(Math.random() * baseColors.length)];
+                if (!currentPalette.includes(color)) {
+                    currentPalette.push(color);
+                }
             }
             
-            displayColorPalette();
+            updateColorPalette();
             generateCard();
         }
 
-        function generateRandomColor() {
-            const hue = Math.floor(Math.random() * 360);
-            const saturation = Math.floor(Math.random() * 60) + 40;
-            const lightness = Math.floor(Math.random() * 40) + 30;
-            return hslToHex(hue, saturation, lightness);
+        function generateRandomPalette() {
+            currentPalette = [];
+            
+            for (let i = 0; i < 5; i++) {
+                // Generate random HSL values for better color harmony
+                const hue = Math.floor(Math.random() * 360);
+                const saturation = Math.floor(Math.random() * 50) + 50; // 50-100%
+                const lightness = Math.floor(Math.random() * 40) + 30; // 30-70%
+                
+                const color = hslToHex(hue, saturation, lightness);
+                currentPalette.push(color);
+            }
+            
+            updateColorPalette();
+            generateCard();
         }
 
         function hslToHex(h, s, l) {
@@ -673,583 +539,373 @@
             return `#${f(0)}${f(8)}${f(4)}`;
         }
 
-        function displayColorPalette() {
+        function updateColorPalette() {
             const paletteContainer = document.getElementById('colorPalette');
             paletteContainer.innerHTML = '';
             
-            currentConfig.colors.forEach((colorObj, index) => {
+            currentPalette.forEach((color, index) => {
                 const swatch = document.createElement('div');
                 swatch.className = 'color-swatch';
-                swatch.style.backgroundColor = colorObj.hex;
-                
-                const colorInfo = document.createElement('div');
-                colorInfo.className = 'color-info';
-                colorInfo.textContent = colorObj.hex.toUpperCase();
-                
-                swatch.appendChild(colorInfo);
-                swatch.addEventListener('click', () => selectColor(index));
-                
-                if (index === selectedColorIndex) {
-                    swatch.classList.add('selected');
-                }
-                
+                swatch.style.backgroundColor = color;
+                swatch.title = color;
+                swatch.onclick = () => selectColor(index);
                 paletteContainer.appendChild(swatch);
             });
-            
-            updateDebugInfo();
         }
 
         function selectColor(index) {
-            selectedColorIndex = index;
-            displayColorPalette();
-            generateCard();
-        }
-
-        function updateChaosLevel(value) {
-            currentConfig.chaosLevel = parseInt(value);
-            document.getElementById('chaosValue').textContent = value + '%';
-            generateCard();
-            updateDebugInfo();
-        }
-
-        function updateCardStandard() {
-            const select = document.getElementById('cardStandardSelect');
-            currentConfig.standard = select.value;
-            setupCanvas();
-            generateCard();
-            updateDebugInfo();
-        }
-
-        function toggleOrientation() {
-            const toggle = document.getElementById('orientationToggle');
-            const label = document.getElementById('orientationLabel');
+            // Update active color selection
+            document.querySelectorAll('.color-swatch').forEach(swatch => {
+                swatch.classList.remove('active');
+            });
+            document.querySelectorAll('.color-swatch')[index].classList.add('active');
             
-            if (toggle.checked) {
-                currentConfig.orientation = 'portrait';
-                label.textContent = 'Portrait';
+            // Move selected color to front for primary use
+            const selectedColor = currentPalette[index];
+            currentPalette.splice(index, 1);
+            currentPalette.unshift(selectedColor);
+            
+            updateColorPalette();
+            generateCard();
+        }
+
+        function updateCardDimensions() {
+            const standard = document.querySelector('input[name="standard"]:checked').value;
+            const orientation = document.querySelector('input[name="orientation"]:checked').value;
+            
+            let width, height, description;
+            
+            if (standard === 'ISO') {
+                if (orientation === 'landscape') {
+                    width = 1012;
+                    height = 638;
+                    description = 'ISO Standard - Landscape (85.6×53.98mm) - 300 DPI';
+                } else {
+                    width = 638;
+                    height = 1012;
+                    description = 'ISO Standard - Portrait (53.98×85.6mm) - 300 DPI';
+                }
             } else {
-                currentConfig.orientation = 'landscape';
-                label.textContent = 'Landscape';
+                if (orientation === 'portrait') {
+                    width = 650;
+                    height = 1063;
+                    description = 'Indian Standard - Portrait (55×90mm) - 300 DPI';
+                } else {
+                    width = 1063;
+                    height = 650;
+                    description = 'Indian Standard - Landscape (90×55mm) - 300 DPI';
+                }
             }
             
-            setupCanvas();
-            generateCard();
-            updateDebugInfo();
-        }
-
-        function updateContactInfo() {
-			currentConfig.contact.nameEnglish = document.getElementById('nameEnglish').value;
-            currentConfig.contact.nameLocal = document.getElementById('nameLocal').value;
-            currentConfig.contact.jobTitle = document.getElementById('jobTitle').value;
-            currentConfig.contact.phone = document.getElementById('phone').value;
-            currentConfig.contact.email = document.getElementById('email').value;
+            canvas.width = width;
+            canvas.height = height;
+            
+            currentConfig.standard = standard;
+            currentConfig.orientation = orientation;
+            
+            document.querySelector('.canvas-info p').textContent = description;
+            
             generateCard();
         }
 
         function generateCard() {
+            // Clear canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Fill background with white
+            // White background
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Generate elements with chaos
-            generateElements();
+            // Update contact info
+            currentConfig.contact = {
+                nameEnglish: document.getElementById('nameEnglish').value,
+                nameLocal: document.getElementById('nameLocal').value,
+                jobTitle: document.getElementById('jobTitle').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value
+            };
             
-            // Draw elements
-            drawElements();
+            // Generate background elements
+            generateBackgroundElements();
             
             // Draw contact information
             drawContactInfo();
             
-            updateDebugInfo();
+            // Draw border
+            drawBorder();
         }
 
-        function generateElements() {
-            const numElements = Math.floor(Math.random() * 5) + 3; // 3-7 elements
-            currentConfig.elements = [];
+        function generateBackgroundElements() {
+            const elementCount = 8 + Math.floor(Math.random() * 5);
+            const shapeTypes = ['circle', 'square', 'triangle', 'line', 'organic', 'hexagon', 'star', 'wave'];
             
-            for (let i = 0; i < numElements; i++) {
+            for (let i = 0; i < elementCount; i++) {
                 const element = {
-                    type: shapes[Math.floor(Math.random() * shapes.length)],
+                    type: shapeTypes[Math.floor(Math.random() * shapeTypes.length)],
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
-                    size: Math.random() * 100 + 20,
-                    rotation: (Math.random() - 0.5) * (currentConfig.chaosLevel / 100) * 90,
-                    color: currentConfig.colors[Math.floor(Math.random() * currentConfig.colors.length)].hex,
-                    opacity: 0.3 + Math.random() * 0.4
+                    size: 20 + Math.random() * 100,
+                    color: currentPalette[Math.floor(Math.random() * currentPalette.length)],
+                    opacity: 0.1 + Math.random() * 0.4,
+                    rotation: Math.random() * 360,
+                    // Advanced properties for new shapes
+                    bezierPoints: generateBezierPoints(),
+                    spikes: 3 + Math.floor(Math.random() * 5),
+                    amplitude: 10 + Math.random() * 40,
+                    frequency: 0.5 + Math.random() * 2
                 };
                 
-                // Apply chaos to positioning
-                const chaosMultiplier = currentConfig.chaosLevel / 100;
-                element.x += (Math.random() - 0.5) * canvas.width * chaosMultiplier * 0.3;
-                element.y += (Math.random() - 0.5) * canvas.height * chaosMultiplier * 0.3;
-                
-                currentConfig.elements.push(element);
+                drawElement(element);
             }
         }
 
-        function drawElements() {
-            currentConfig.elements.forEach(element => {
-                ctx.save();
-                ctx.globalAlpha = element.opacity;
-                ctx.translate(element.x, element.y);
-                ctx.rotate(element.rotation * Math.PI / 180);
-                ctx.fillStyle = element.color;
-                ctx.strokeStyle = element.color;
-                ctx.lineWidth = 2;
-                
-                switch (element.type) {
-                    case 'circle':
-                        ctx.beginPath();
-                        ctx.arc(0, 0, element.size / 2, 0, 2 * Math.PI);
-                        ctx.fill();
-                        break;
-                    case 'square':
-                        ctx.fillRect(-element.size / 2, -element.size / 2, element.size, element.size);
-                        break;
-                    case 'triangle':
-                        ctx.beginPath();
-                        ctx.moveTo(0, -element.size / 2);
-                        ctx.lineTo(-element.size / 2, element.size / 2);
-                        ctx.lineTo(element.size / 2, element.size / 2);
-                        ctx.closePath();
-                        ctx.fill();
-                        break;
-                    case 'line':
-                        ctx.beginPath();
-                        ctx.moveTo(-element.size / 2, 0);
-                        ctx.lineTo(element.size / 2, 0);
-                        ctx.lineWidth = 4;
-                        ctx.stroke();
-                        break;
-                    case 'organic':
-                        drawOrganicShape(element.size);
-                        break;
-                }
-                
-                ctx.restore();
-            });
+        function generateBezierPoints() {
+            const points = [];
+            const numPoints = 4 + Math.floor(Math.random() * 4);
+            
+            for (let i = 0; i < numPoints; i++) {
+                points.push({
+                    x: (Math.random() - 0.5) * 100,
+                    y: (Math.random() - 0.5) * 100,
+                    cp1x: (Math.random() - 0.5) * 50,
+                    cp1y: (Math.random() - 0.5) * 50,
+                    cp2x: (Math.random() - 0.5) * 50,
+                    cp2y: (Math.random() - 0.5) * 50
+                });
+            }
+            
+            return points;
         }
 
-        function drawOrganicShape(size) {
-            const points = 8;
-            const angleStep = (Math.PI * 2) / points;
+        function drawElement(element) {
+            ctx.save();
+            ctx.translate(element.x, element.y);
+            ctx.rotate(element.rotation * Math.PI / 180);
+            ctx.globalAlpha = element.opacity;
+            ctx.fillStyle = element.color;
+            ctx.strokeStyle = element.color;
+            ctx.lineWidth = 2;
+            
+            switch (element.type) {
+                case 'circle':
+                    ctx.beginPath();
+                    ctx.arc(0, 0, element.size / 2, 0, 2 * Math.PI);
+                    ctx.fill();
+                    break;
+                case 'square':
+                    ctx.fillRect(-element.size / 2, -element.size / 2, element.size, element.size);
+                    break;
+                case 'triangle':
+                    ctx.beginPath();
+                    ctx.moveTo(0, -element.size / 2);
+                    ctx.lineTo(-element.size / 2, element.size / 2);
+                    ctx.lineTo(element.size / 2, element.size / 2);
+                    ctx.closePath();
+                    ctx.fill();
+                    break;
+                case 'line':
+                    ctx.beginPath();
+                    ctx.moveTo(-element.size / 2, 0);
+                    ctx.lineTo(element.size / 2, 0);
+                    ctx.stroke();
+                    break;
+                case 'organic':
+                    drawOrganicShape(element);
+                    break;
+                case 'hexagon':
+                    drawPolygon(element, 6);
+                    break;
+                case 'star':
+                    drawStar(element);
+                    break;
+                case 'wave':
+                    drawWave(element);
+                    break;
+            }
+            
+            ctx.restore();
+        }
+
+        function drawOrganicShape(element) {
+            if (element.bezierPoints.length < 2) return;
             
             ctx.beginPath();
-            for (let i = 0; i < points; i++) {
-                const angle = i * angleStep;
-                const radius = (size / 2) * (0.7 + Math.random() * 0.6);
-                const x = Math.cos(angle) * radius;
-                const y = Math.sin(angle) * radius;
+            ctx.moveTo(element.bezierPoints[0].x, element.bezierPoints[0].y);
+            
+            for (let i = 1; i < element.bezierPoints.length; i++) {
+                const point = element.bezierPoints[i];
+                const prevPoint = element.bezierPoints[i - 1];
                 
-                if (i === 0) {
-                    ctx.moveTo(x, y);
-                } else {
-                    ctx.lineTo(x, y);
-                }
+                ctx.bezierCurveTo(
+                    prevPoint.cp2x, prevPoint.cp2y,
+                    point.cp1x, point.cp1y,
+                    point.x, point.y
+                );
             }
+            
+            // Close the path back to start
+            const firstPoint = element.bezierPoints[0];
+            const lastPoint = element.bezierPoints[element.bezierPoints.length - 1];
+            ctx.bezierCurveTo(
+                lastPoint.cp2x, lastPoint.cp2y,
+                firstPoint.cp1x, firstPoint.cp1y,
+                firstPoint.x, firstPoint.y
+            );
+            
             ctx.closePath();
             ctx.fill();
         }
 
-        function drawContactInfo() {
-            const contact = currentConfig.contact;
-            const chaosMultiplier = currentConfig.chaosLevel / 100;
+        function drawPolygon(element, sides) {
+            const radius = element.size / 2;
+            const angleStep = (2 * Math.PI) / sides;
             
-            // Define text elements with base positions
-            const textElements = [
-                {
-                    text: contact.nameEnglish,
-                    font: 'bold 32px Inter',
-                    x: canvas.width * 0.1,
-                    y: canvas.height * 0.3,
-                    maxWidth: canvas.width * 0.8
-                },
-                {
-                    text: contact.nameLocal,
-                    font: '20px Inter',
-                    x: canvas.width * 0.1,
-                    y: canvas.height * 0.45,
-                    maxWidth: canvas.width * 0.8
-                },
-                {
-                    text: contact.jobTitle,
-                    font: '18px Inter',
-                    x: canvas.width * 0.1,
-                    y: canvas.height * 0.6,
-                    maxWidth: canvas.width * 0.8
-                },
-                {
-                    text: contact.phone,
-                    font: '16px Courier Prime',
-                    x: canvas.width * 0.1,
-                    y: canvas.height * 0.75,
-                    maxWidth: canvas.width * 0.8
-                },
-                {
-                    text: contact.email,
-                    font: '16px Courier Prime',
-                    x: canvas.width * 0.1,
-                    y: canvas.height * 0.9,
-                    maxWidth: canvas.width * 0.8
-                }
-            ];
+            ctx.beginPath();
+            ctx.moveTo(radius, 0);
             
-            textElements.forEach((element, index) => {
-                if (!element.text) return;
-                
-                ctx.save();
-                ctx.font = element.font;
-                
-                // Apply chaos to positioning
-                const chaosX = (Math.random() - 0.5) * canvas.width * chaosMultiplier * 0.2;
-                const chaosY = (Math.random() - 0.5) * canvas.height * chaosMultiplier * 0.1;
-                const chaosRotation = (Math.random() - 0.5) * chaosMultiplier * 10;
-                
-                ctx.translate(element.x + chaosX, element.y + chaosY);
-                ctx.rotate(chaosRotation * Math.PI / 180);
-                
-                // Choose color from palette
-                const colorIndex = index % currentConfig.colors.length;
-                ctx.fillStyle = currentConfig.colors[colorIndex].hex;
-                
-                // Draw text with word wrapping
-                drawWrappedText(element.text, 0, 0, element.maxWidth);
-                
-                ctx.restore();
-            });
+            for (let i = 1; i < sides; i++) {
+                const angle = angleStep * i;
+                const x = radius * Math.cos(angle);
+                const y = radius * Math.sin(angle);
+                ctx.lineTo(x, y);
+            }
+            
+            ctx.closePath();
+            ctx.fill();
         }
 
-        function drawWrappedText(text, x, y, maxWidth) {
-            const words = text.split(' ');
-            let line = '';
+        function drawStar(element) {
+            const outerRadius = element.size / 2;
+            const innerRadius = outerRadius * 0.5;
+            const spikes = element.spikes;
+            const angleStep = Math.PI / spikes;
             
-            for (let n = 0; n < words.length; n++) {
-                const testLine = line + words[n] + ' ';
-                const metrics = ctx.measureText(testLine);
-                const testWidth = metrics.width;
-                
-                if (testWidth > maxWidth && n > 0) {
-                    ctx.fillText(line, x, y);
-                    line = words[n] + ' ';
-                    y += parseInt(ctx.font) * 1.2;
-                } else {
-                    line = testLine;
-                }
+            ctx.beginPath();
+            ctx.moveTo(outerRadius, 0);
+            
+            for (let i = 0; i < spikes * 2; i++) {
+                const angle = angleStep * i;
+                const radius = (i % 2 === 0) ? outerRadius : innerRadius;
+                const x = radius * Math.cos(angle);
+                const y = radius * Math.sin(angle);
+                ctx.lineTo(x, y);
             }
-            ctx.fillText(line, x, y);
+            
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawWave(element) {
+            const width = element.size;
+            const height = element.amplitude;
+            const frequency = element.frequency;
+            
+            ctx.beginPath();
+            ctx.moveTo(-width / 2, 0);
+            
+            for (let x = -width / 2; x <= width / 2; x += 2) {
+                const y = height * Math.sin((x / width) * Math.PI * frequency);
+                ctx.lineTo(x, y);
+            }
+            
+            ctx.lineWidth = 3;
+            ctx.stroke();
+        }
+
+        function drawContactInfo() {
+            const chaos = currentConfig.chaosLevel / 100;
+            const maxOffset = Math.min(canvas.width, canvas.height) * 0.25 * chaos;
+            const maxRotation = 9 * chaos;
+            
+            // Primary group (top)
+            let yPos = canvas.height * 0.25;
+            
+            // Full name
+            drawText(currentConfig.contact.nameEnglish, canvas.width / 2, yPos, 32, 'bold', currentPalette[0], maxOffset, maxRotation);
+            yPos += 45;
+            
+            // Native script name
+            if (currentConfig.contact.nameLocal) {
+                drawText(currentConfig.contact.nameLocal, canvas.width / 2, yPos, 24, 'normal', currentPalette[1], maxOffset, maxRotation);
+                yPos += 35;
+            }
+            
+            // Job title
+            drawText(currentConfig.contact.jobTitle, canvas.width / 2, yPos, 20, 'normal', currentPalette[2], maxOffset, maxRotation);
+            
+            // Secondary group (bottom)
+            yPos = canvas.height * 0.75;
+            
+            // Phone
+            drawText(currentConfig.contact.phone, canvas.width / 2, yPos, 16, 'normal', currentPalette[3], maxOffset, maxRotation, 'Courier New');
+            yPos += 25;
+            
+            // Email
+            drawText(currentConfig.contact.email, canvas.width / 2, yPos, 16, 'normal', currentPalette[4], maxOffset, maxRotation, 'Courier New');
+        }
+
+        function drawText(text, x, y, fontSize, fontWeight, color, maxOffset, maxRotation, fontFamily = 'Inter, sans-serif') {
+            ctx.save();
+            
+            // Apply chaos offset
+            const offsetX = (Math.random() - 0.5) * maxOffset;
+            const offsetY = (Math.random() - 0.5) * maxOffset;
+            const rotation = (Math.random() - 0.5) * maxRotation;
+            
+            ctx.translate(x + offsetX, y + offsetY);
+            ctx.rotate(rotation * Math.PI / 180);
+            
+            ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+            ctx.fillStyle = color;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            ctx.fillText(text, 0, 0);
+            
+            ctx.restore();
+        }
+
+        function drawBorder() {
+            ctx.strokeStyle = currentPalette[0];
+            ctx.lineWidth = 2;
+            ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
         }
 
         function generateChaos() {
-            currentConfig.chaosLevel = Math.floor(Math.random() * 81) + 20; // 20-100%
-            document.getElementById('chaosSlider').value = currentConfig.chaosLevel;
-            document.getElementById('chaosValue').textContent = currentConfig.chaosLevel + '%';
+            const chaosLevel = 20 + Math.floor(Math.random() * 80);
+            document.getElementById('chaosLevel').value = chaosLevel;
+            document.getElementById('chaosValue').textContent = chaosLevel + '%';
+            currentConfig.chaosLevel = chaosLevel;
             generateCard();
         }
 
         function resetCard() {
-            currentConfig.chaosLevel = 30;
-            document.getElementById('chaosSlider').value = 30;
+            document.getElementById('chaosLevel').value = 30;
             document.getElementById('chaosValue').textContent = '30%';
+            currentConfig.chaosLevel = 30;
             generateCard();
         }
 
-        function updateDebugInfo() {
-            document.getElementById('chaosLevel').textContent = currentConfig.chaosLevel + '%';
-            document.getElementById('cardStandard').textContent = currentConfig.standard;
-            document.getElementById('currentOrientation').textContent = 
-                currentConfig.orientation.charAt(0).toUpperCase() + currentConfig.orientation.slice(1);
-            document.getElementById('colorCount').textContent = currentConfig.colors.length;
-            document.getElementById('wcagStatus').innerHTML = 
-                '<span class="status-indicator status-success"></span>Compliant';
-        }
-
         function exportCard(format) {
-            const dpi = parseInt(document.getElementById('dpiSelect').value);
-            const scale = dpi / 300; // Current canvas is at 300 DPI
-            
-            // Create high-resolution canvas
-            const exportCanvas = document.createElement('canvas');
-            const exportCtx = exportCanvas.getContext('2d');
-            
-            exportCanvas.width = canvas.width * scale;
-            exportCanvas.height = canvas.height * scale;
-            
-            // Scale context for high DPI
-            exportCtx.scale(scale, scale);
-            
-            // Temporarily scale current canvas content
-            const tempCanvas = document.createElement('canvas');
-            const tempCtx = tempCanvas.getContext('2d');
-            tempCanvas.width = canvas.width;
-            tempCanvas.height = canvas.height;
-            
-            // Copy current canvas
-            tempCtx.drawImage(canvas, 0, 0);
-            
-            // Draw on export canvas
-            exportCtx.drawImage(tempCanvas, 0, 0);
+            const link = document.createElement('a');
             
             switch (format) {
                 case 'png':
-                    downloadCanvas(exportCanvas, 'business-card.png');
-                    break;
-                case 'pdf':
-                    exportToPDF(exportCanvas);
+                    link.download = 'business-card.png';
+                    link.href = canvas.toDataURL('image/png');
                     break;
                 case 'svg':
-                    exportToSVG();
-                    break;
+                    // Simple SVG export (would need full implementation)
+                    alert('SVG export feature coming soon!');
+                    return;
+                case 'pdf':
+                    // PDF export (would need library like jsPDF)
+                    alert('PDF export feature coming soon!');
+                    return;
             }
-        }
-
-        function downloadCanvas(canvas, filename) {
-            const link = document.createElement('a');
-            link.download = filename;
-            link.href = canvas.toDataURL();
+            
             link.click();
         }
-
-        function exportToPDF(canvas) {
-            // Simple PDF export using canvas data URL
-            const imgData = canvas.toDataURL('image/png');
-            const standard = cardStandards[currentConfig.standard];
-            
-            // Create a simple PDF structure
-            const pdf = `%PDF-1.4
-1 0 obj
-<< /Type /Catalog /Pages 2 0 R >>
-endobj
-2 0 obj
-<< /Type /Pages /Kids [3 0 R] /Count 1 >>
-endobj
-3 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${standard.width * 2.83} ${standard.height * 2.83}] /Resources << /XObject << /Im1 4 0 R >> >> /Contents 5 0 R >>
-endobj
-4 0 obj
-<< /Type /XObject /Subtype /Image /Width ${canvas.width} /Height ${canvas.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${imgData.length} >>
-stream
-${imgData}
-endstream
-endobj
-5 0 obj
-<< /Length 44 >>
-stream
-q
-${standard.width * 2.83} 0 0 ${standard.height * 2.83} 0 0 cm
-/Im1 Do
-Q
-endstream
-endobj
-xref
-0 6
-0000000000 65535 f 
-0000000009 00000 n 
-0000000058 00000 n 
-0000000115 00000 n 
-0000000000 00000 n 
-0000000000 00000 n 
-trailer
-<< /Size 6 /Root 1 0 R >>
-startxref
-0
-%%EOF`;
-            
-            const blob = new Blob([pdf], { type: 'application/pdf' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'business-card.pdf';
-            link.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function exportToSVG() {
-            const standard = cardStandards[currentConfig.standard];
-            let svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="${standard.width}mm" height="${standard.height}mm" viewBox="0 0 ${canvas.width} ${canvas.height}">`;
-            
-            // Add white background
-            svgContent += `<rect width="${canvas.width}" height="${canvas.height}" fill="#ffffff"/>`;
-            
-            // Add elements
-            currentConfig.elements.forEach(element => {
-                const transform = `translate(${element.x},${element.y}) rotate(${element.rotation})`;
-                
-                switch (element.type) {
-                    case 'circle':
-                        svgContent += `<circle cx="0" cy="0" r="${element.size/2}" fill="${element.color}" opacity="${element.opacity}" transform="${transform}"/>`;
-                        break;
-                    case 'square':
-                        svgContent += `<rect x="${-element.size/2}" y="${-element.size/2}" width="${element.size}" height="${element.size}" fill="${element.color}" opacity="${element.opacity}" transform="${transform}"/>`;
-                        break;
-                    case 'triangle':
-                        const points = `0,${-element.size/2} ${-element.size/2},${element.size/2} ${element.size/2},${element.size/2}`;
-                        svgContent += `<polygon points="${points}" fill="${element.color}" opacity="${element.opacity}" transform="${transform}"/>`;
-                        break;
-                    case 'line':
-                        svgContent += `<line x1="${-element.size/2}" y1="0" x2="${element.size/2}" y2="0" stroke="${element.color}" stroke-width="4" opacity="${element.opacity}" transform="${transform}"/>`;
-                        break;
-                }
-            });
-            
-            // Add text elements
-            const contact = currentConfig.contact;
-            const textElements = [
-                { text: contact.nameEnglish, x: canvas.width * 0.1, y: canvas.height * 0.3, size: 32, weight: 'bold' },
-                { text: contact.nameLocal, x: canvas.width * 0.1, y: canvas.height * 0.45, size: 20, weight: 'normal' },
-                { text: contact.jobTitle, x: canvas.width * 0.1, y: canvas.height * 0.6, size: 18, weight: 'normal' },
-                { text: contact.phone, x: canvas.width * 0.1, y: canvas.height * 0.75, size: 16, weight: 'normal' },
-                { text: contact.email, x: canvas.width * 0.1, y: canvas.height * 0.9, size: 16, weight: 'normal' }
-            ];
-            
-            textElements.forEach((element, index) => {
-                if (element.text) {
-                    const colorIndex = index % currentConfig.colors.length;
-                    svgContent += `<text x="${element.x}" y="${element.y}" font-family="Inter" font-size="${element.size}" font-weight="${element.weight}" fill="${currentConfig.colors[colorIndex].hex}">${element.text}</text>`;
-                }
-            });
-            
-            svgContent += '</svg>';
-            
-            const blob = new Blob([svgContent], { type: 'image/svg+xml' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'business-card.svg';
-            link.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function exportColorPalette() {
-            const paletteData = {
-                colors: currentConfig.colors,
-                exported: new Date().toISOString()
-            };
-            
-            const blob = new Blob([JSON.stringify(paletteData, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'color-palette.json';
-            link.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function exportConfig() {
-            const configData = {
-                ...currentConfig,
-                exported: new Date().toISOString(),
-                version: '1.0'
-            };
-            
-            const blob = new Blob([JSON.stringify(configData, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'business-card-config.json';
-            link.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function importConfig(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const importedConfig = JSON.parse(e.target.result);
-                    
-                    // Validate and merge configuration
-                    if (importedConfig.standard) currentConfig.standard = importedConfig.standard;
-                    if (importedConfig.orientation) currentConfig.orientation = importedConfig.orientation;
-                    if (importedConfig.chaosLevel) currentConfig.chaosLevel = importedConfig.chaosLevel;
-                    if (importedConfig.colors) currentConfig.colors = importedConfig.colors;
-                    if (importedConfig.contact) currentConfig.contact = { ...currentConfig.contact, ...importedConfig.contact };
-                    
-                    // Update UI
-                    document.getElementById('cardStandardSelect').value = currentConfig.standard;
-                    document.getElementById('orientationToggle').checked = currentConfig.orientation === 'portrait';
-                    document.getElementById('orientationLabel').textContent = 
-                        currentConfig.orientation.charAt(0).toUpperCase() + currentConfig.orientation.slice(1);
-                    document.getElementById('chaosSlider').value = currentConfig.chaosLevel;
-                    document.getElementById('chaosValue').textContent = currentConfig.chaosLevel + '%';
-                    
-                    // Update contact fields
-                    document.getElementById('nameEnglish').value = currentConfig.contact.nameEnglish;
-                    document.getElementById('nameLocal').value = currentConfig.contact.nameLocal;
-                    document.getElementById('jobTitle').value = currentConfig.contact.jobTitle;
-                    document.getElementById('phone').value = currentConfig.contact.phone;
-                    document.getElementById('email').value = currentConfig.contact.email;
-                    
-                    // Regenerate card
-                    displayColorPalette();
-                    setupCanvas();
-                    generateCard();
-                    
-                } catch (error) {
-                    alert('Error importing configuration: ' + error.message);
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        // Mobile touch support
-        let touchStartX = 0;
-        let touchStartY = 0;
-
-        canvas.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-        });
-
-        canvas.addEventListener('touchmove', function(e) {
-            e.preventDefault();
-        });
-
-        canvas.addEventListener('touchend', function(e) {
-            e.preventDefault();
-            const touchEndX = e.changedTouches[0].clientX;
-            const touchEndY = e.changedTouches[0].clientY;
-            
-            const deltaX = touchEndX - touchStartX;
-            const deltaY = touchEndY - touchStartY;
-            
-            // Simple swipe detection
-            if (Math.abs(deltaX) > 50 || Math.abs(deltaY) > 50) {
-                generateChaos();
-            }
-        });
-
-        // Window resize handler
-        window.addEventListener('resize', function() {
-            setTimeout(() => {
-                setupCanvas();
-                generateCard();
-            }, 100);
-        });
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey || e.metaKey) {
-                switch(e.key) {
-                    case 'g':
-                        e.preventDefault();
-                        generateCard();
-                        break;
-                    case 'r':
-                        e.preventDefault();
-                        generateChaos();
-                        break;
-                    case 's':
-                        e.preventDefault();
-                        exportCard('png');
-                        break;
-                }
-            }
-        });
     </script>
 </body>
 </html>
