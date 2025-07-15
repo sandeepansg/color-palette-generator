@@ -1,3 +1,47 @@
+        function drawCircle(element) {
+            ctx.beginPath();
+            ctx.arc(0, 0, element.size / 2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawSquare(element) {
+            ctx.fillRect(-element.size / 2, -element.size / 2, element.size, element.size);
+        }
+
+        function drawTriangle(element) {
+            ctx.beginPath();
+            ctx.moveTo(0, -element.size / 2);
+            ctx.lineTo(-element.size / 2, element.size / 2);
+            ctx.lineTo(element.size / 2, element.size / 2);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawLine(element) {
+            ctx.strokeStyle = element.color;
+            ctx.lineWidth = element.size / 10;
+            ctx.beginPath();
+            ctx.moveTo(-element.size / 2, 0);
+            ctx.lineTo(element.size / 2, 0);
+            ctx.stroke();
+        }
+
+        function drawOrganicShape(element) {
+            ctx.beginPath();
+            ctx.moveTo(element.bezierPoints[0].x, element.bezierPoints[0].y);
+            
+            for (let i = 1; i < element.bezierPoints.length; i++) {
+                const cp1 = element.bezierPoints[i - 1];
+                const cp2 = element.bezierPoints[i];
+                const end = element.bezierPoints[(i + 1) % element.bezierPoints.length];
+                
+                ctx.bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, end.x, end.y);
+            }
+            
+            ctx.closePath();
+            ctx.fill();
+        }
+
         function drawHexagon(element) {
             ctx.beginPath();
             for (let i = 0; i < 6; i++) {
