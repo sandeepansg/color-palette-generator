@@ -596,3 +596,522 @@
             return rgbToHex(newR, newG, newB);
         }
 
+        // Canvas functions
+        function initializeCanvas() {
+            canvas = document.getElementById('businessCard');
+            ctx = canvas.getContext('2d');
+            updateCanvasDimensions();
+            generateWCAGPalette();
+            setupEventListeners();
+            setupKeyboardShortcuts();
+            setupDragAndDrop();
+        }
+
+        function updateCanvasDimensions() {
+            const dimensions = CARD_DIMENSIONS[currentConfig.standard][currentConfig.orientation];
+            canvas.width = dimensions.width;
+            canvas.height = dimensions.height;
+        }
+
+        function generateCard() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw components in order
+            drawBackground();
+            generateBackgroundElements();
+            drawLogoArea();
+            drawContactInfo();
+            drawBorder();
+        }
+
+        function drawBackground() {
+            // Create gradient background
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, '#ffffff');
+            gradient.addColorStop(1, '#f8f9fa');
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function generateBackgroundElements() {
+            currentConfig.elements = [];
+            const elementCount = randomInt(8, 15);
+            
+            for (let i = 0; i < elementCount; i++) {
+                const element = {
+                    type: randomChoice(SHAPE_TYPES),
+                    x: randomFloat(0, canvas.width),
+                    y: randomFloat(0, canvas.height),
+                    size: randomFloat(20, 100),
+                    color: randomChoice(currentConfig.colorPalette).hex,
+                    opacity: randomFloat(0.1, 0.3),
+                    rotation: randomFloat(0, 360),
+                    bezierPoints: generateBezierPoints(),
+                    spikes: randomInt(3, 8),
+                    amplitude: randomFloat(10, 50)
+                };
+                
+                // Apply chaos level offset
+                const chaosOffset = (currentConfig.chaosLevel / 100) * 50;
+                element.x += randomFloat(-chaosOffset, chaosOffset);
+                element.y += randomFloat(-chaosOffset, chaosOffset);
+                
+                currentConfig.elements.push(element);
+                drawElement(element);
+            }
+        }
+
+        function generateBezierPoints() {
+            const points = [];
+            for (let i = 0; i < 4; i++) {
+                points.push({
+                    x: randomFloat(-50, 50),
+                    y: randomFloat(-50, 50)
+                });
+            }
+            return points;
+        }
+
+        function drawElement(element) {
+            ctx.save();
+            ctx.translate(element.x, element.y);
+            ctx.rotate(element.rotation * Math.PI / 180);
+            ctx.fillStyle = element.color;
+            ctx.globalAlpha = element.opacity;
+            
+            switch (element.type) {
+                case 'circle':
+                    drawCircle(element);
+                    break;
+                case 'square':
+                    drawSquare(element);
+                    break;
+                case 'triangle':
+                    drawTriangle(element);
+                    break;
+                case 'line':
+                    drawLine(element);
+                    break;
+                case 'organic':
+                    drawOrganicShape(element);
+                    break;
+                case 'hexagon':
+                    drawHexagon(element);
+                    break;
+                case 'star':
+                    drawStar(element);
+                    break;
+                case 'wave':
+                    drawWave(element);
+                    break;
+            }
+            
+            ctx.restore();
+        }
+
+        function drawCircle(element) {
+            ctx.beginPath();
+            ctx.arc(0, 0, element.size / 2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawSquare(element) {
+            ctx.fillRect(-element.size / 2, -element.size / 2, element.size, element.size);
+        }
+
+        function drawTriangle(element) {
+            ctx.beginPath();
+            ctx.moveTo(0, -element.size / 2);
+            ctx.lineTo(-element.size / 2, element.size / 2);
+            ctx.lineTo(element.size / 2, element.size / 2);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawLine(element) {
+            ctx.strokeStyle = element.color;
+            ctx.lineWidth = element.size / 10;
+            ctx.beginPath();
+            ctx.moveTo(-element.size / 2, 0);
+            ctx.lineTo(element.size / 2, 0);
+            ctx.stroke();
+        }
+
+        function drawOrganicShape(element) {
+            ctx.beginPath();
+            ctx.moveTo(element.bezierPoints[0].x, element.bezierPoints[0].y);
+            
+            for (let i = 1; i < element.bezierPoints.length; i++) {
+                const cp1 = element.bezierPoints[i - 1];
+                const cp2 = element.bezierPoints[i];
+                const end = element.bezierPoints[(i + 1) % element.bezierPoints.length];
+                
+                ctx.bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, end.x, end.y);
+            }
+            
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawHexagon(element) {
+            ctx.beginPath();
+            for (let i = 0; i < 6; i++) {
+                const angle = (Math.PI / 3) * i;
+                const x = Math.cos(angle) * element.size / 2;
+                const y = Math.sin(angle) * element.size / 2;
+                
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawStar(element) {
+            ctx.beginPath();
+            for (let i = 0; i < element.spikes * 2; i++) {
+                const angle = (Math.PI / element.spikes) * i;
+                const radius = i % 2 === 0 ? element.size / 2 : element.size / 4;
+                const x = Math.cos(angle) * radius;
+                const y = Math.sin(angle) * radius;
+                
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawWave(element) {
+            ctx.beginPath();
+            ctx.moveTo(-element.size / 2, 0);
+            
+            for (let x = -element.size / 2; x <= element.size / 2; x += 5) {
+                const y = Math.sin((x / element.size) * Math.PI * 2) * element.amplitude;
+                ctx.lineTo(x, y);
+            }
+            
+            ctx.strokeStyle = element.color;
+            ctx.lineWidth = element.size / 20;
+            ctx.stroke();
+        }
+
+        function drawContactInfo() {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const chaosOffset = currentConfig.chaosLevel / 100 * 20;
+            
+            // Primary group (name and title)
+            const primaryGroup = [
+                { 
+                    text: currentConfig.contact.nameEnglish, 
+                    fontSize: Math.min(canvas.width / 25, 32), 
+                    fontWeight: 'bold',
+                    font: currentConfig.typography.primaryFont
+                },
+                { 
+                    text: currentConfig.contact.nameLocal, 
+                    fontSize: Math.min(canvas.width / 35, 24),
+                    fontWeight: 'normal',
+                    font: currentConfig.typography.primaryFont
+                },
+                { 
+                    text: currentConfig.contact.jobTitle, 
+                    fontSize: Math.min(canvas.width / 40, 20),
+                    fontWeight: '500',
+                    font: currentConfig.typography.accentFont
+                }
+            ];
+            
+            // Secondary group (contact details)
+            const secondaryGroup = [
+                { 
+                    text: currentConfig.contact.phone, 
+                    fontSize: Math.min(canvas.width / 50, 16),
+                    fontWeight: 'normal',
+                    font: currentConfig.typography.secondaryFont
+                },
+                { 
+                    text: currentConfig.contact.email, 
+                    fontSize: Math.min(canvas.width / 50, 16),
+                    fontWeight: 'normal',
+                    font: currentConfig.typography.secondaryFont
+                }
+            ];
+            
+            // Draw groups with chaos-based positioning
+            drawTextGroup(primaryGroup, centerX, centerY - chaosOffset, chaosOffset);
+            
+            drawTextGroup(secondaryGroup, centerX, centerY + 150, chaosOffset);
+        }
+
+        function drawTextGroup(textItems, centerX, centerY, chaosOffset) {
+            let yOffset = 0;
+            textItems.forEach((item, index) => {
+                if (item.text) {
+                    const chaosX = randomFloat(-chaosOffset, chaosOffset);
+                    const chaosY = randomFloat(-chaosOffset/2, chaosOffset/2);
+                    
+                    ctx.save();
+                    ctx.font = `${item.fontWeight} ${item.fontSize}px ${item.font}`;
+                    ctx.fillStyle = currentConfig.colorPalette[0]?.hex || '#2c3e50';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    
+                    ctx.fillText(item.text, centerX + chaosX, centerY + yOffset + chaosY);
+                    ctx.restore();
+                    
+                    yOffset += item.fontSize + 10;
+                }
+            });
+        }
+
+        function drawLogoArea() {
+            const logoSize = Math.min(canvas.width, canvas.height) * 0.15;
+            const logoX = canvas.width * 0.85 - logoSize/2;
+            const logoY = canvas.height * 0.15;
+            
+            ctx.save();
+            ctx.translate(logoX, logoY);
+            ctx.fillStyle = currentConfig.colorPalette[1]?.hex || '#34495e';
+            ctx.globalAlpha = 0.7;
+            
+            // Create abstract geometric logo
+            drawHexagon({ size: logoSize, x: 0, y: 0 });
+            
+            ctx.restore();
+        }
+
+        function drawBorder() {
+            ctx.strokeStyle = currentConfig.colorPalette[0]?.hex || '#2c3e50';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
+        }
+
+        function generateWCAGPalette() {
+            currentConfig.colorPalette = [];
+            
+            // Generate a harmonious color palette
+            const baseHue = randomInt(0, 360);
+            const saturation = randomInt(60, 80);
+            const lightness = randomInt(30, 70);
+            
+            // Generate 5 colors using color theory
+            for (let i = 0; i < 5; i++) {
+                const hue = (baseHue + i * 72) % 360; // Pentad harmony
+                const color = hslToHex(hue, saturation, lightness);
+                const contrast = calculateContrast(color, '#ffffff');
+                
+                currentConfig.colorPalette.push({
+                    hex: color,
+                    name: `Color ${i + 1}`,
+                    wcag: getWCAGRating(contrast),
+                    contrast: contrast
+                });
+            }
+            
+            updateColorSwatches();
+        }
+
+        function updateColorSwatches() {
+            const container = document.getElementById('colorSwatches');
+            container.innerHTML = '';
+            
+            currentConfig.colorPalette.forEach((color, index) => {
+                const swatch = document.createElement('div');
+                swatch.className = 'color-swatch';
+                swatch.style.backgroundColor = color.hex;
+                swatch.title = `${color.name} (${color.wcag})`;
+                
+                // Add WCAG badge
+                const badge = document.createElement('div');
+                badge.className = `wcag-badge ${color.wcag.toLowerCase()}`;
+                badge.textContent = color.wcag;
+                swatch.appendChild(badge);
+                
+                swatch.addEventListener('click', () => {
+                    document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+                    swatch.classList.add('selected');
+                });
+                
+                container.appendChild(swatch);
+            });
+        }
+
+        function setupEventListeners() {
+            // Input field updates
+            ['nameEnglish', 'nameLocal', 'jobTitle', 'phone', 'email'].forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.addEventListener('input', (e) => {
+                        currentConfig.contact[id] = e.target.value;
+                        generateCard();
+                    });
+                }
+            });
+            
+            // Control buttons
+            document.getElementById('generateBtn').addEventListener('click', generateCard);
+            document.getElementById('chaosBtn').addEventListener('click', () => {
+                currentConfig.chaosLevel = randomInt(0, 100);
+                document.getElementById('chaosLevel').value = currentConfig.chaosLevel;
+                document.getElementById('chaosValue').textContent = currentConfig.chaosLevel;
+                generateCard();
+            });
+            
+            // Color palette buttons
+            document.getElementById('generatePalette').addEventListener('click', generateWCAGPalette);
+            document.getElementById('randomPalette').addEventListener('click', () => {
+                currentConfig.colorPalette = randomChoice([BASE_COLORS, BASE_COLORS, BASE_COLORS]).slice(0, 5);
+                updateColorSwatches();
+                generateCard();
+            });
+            
+            // Settings updates
+            document.getElementById('standard').addEventListener('change', (e) => {
+                currentConfig.standard = e.target.value;
+                updateCanvasDimensions();
+                generateCard();
+            });
+            
+            document.getElementById('orientation').addEventListener('change', (e) => {
+                currentConfig.orientation = e.target.value;
+                updateCanvasDimensions();
+                generateCard();
+            });
+            
+            document.getElementById('chaosLevel').addEventListener('input', (e) => {
+                currentConfig.chaosLevel = parseInt(e.target.value);
+                document.getElementById('chaosValue').textContent = currentConfig.chaosLevel;
+                generateCard();
+            });
+
+            // Config save/load
+            document.getElementById('saveConfigBtn').addEventListener('click', saveConfig);
+            document.getElementById('loadConfigBtn').addEventListener('click', () => {
+                document.getElementById('configLoader').click();
+            });
+            
+            document.getElementById('configLoader').addEventListener('change', loadConfig);
+        }
+
+        function setupDragAndDrop() {
+            let isDragging = false;
+            let dragElement = null;
+            
+            canvas.addEventListener('mousedown', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                // Simple element selection
+                const element = currentConfig.elements.find(el => 
+                    Math.abs(el.x - x) < 50 && Math.abs(el.y - y) < 50
+                );
+                
+                if (element) {
+                    isDragging = true;
+                    dragElement = element;
+                    canvas.style.cursor = 'grabbing';
+                }
+            });
+            
+            canvas.addEventListener('mousemove', (e) => {
+                if (isDragging && dragElement) {
+                    const rect = canvas.getBoundingClientRect();
+                    dragElement.x = e.clientX - rect.left;
+                    dragElement.y = e.clientY - rect.top;
+                    generateCard();
+                }
+            });
+            
+            canvas.addEventListener('mouseup', () => {
+                isDragging = false;
+                dragElement = null;
+                canvas.style.cursor = 'grab';
+            });
+        }
+
+        function saveConfig() {
+            const configData = JSON.stringify(currentConfig, null, 2);
+            const blob = new Blob([configData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'business-card-config.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Configuration saved successfully!', 'success');
+        }
+
+        function loadConfig(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const config = JSON.parse(e.target.result);
+                    Object.assign(currentConfig, config);
+                    
+                    // Update UI elements
+                    document.getElementById('nameEnglish').value = currentConfig.contact.nameEnglish;
+                    document.getElementById('nameLocal').value = currentConfig.contact.nameLocal;
+                    document.getElementById('jobTitle').value = currentConfig.contact.jobTitle;
+                    document.getElementById('phone').value = currentConfig.contact.phone;
+                    document.getElementById('email').value = currentConfig.contact.email;
+                    document.getElementById('standard').value = currentConfig.standard;
+                    document.getElementById('orientation').value = currentConfig.orientation;
+                    document.getElementById('chaosLevel').value = currentConfig.chaosLevel;
+                    document.getElementById('chaosValue').textContent = currentConfig.chaosLevel;
+                    
+                    updateCanvasDimensions();
+                    updateColorSwatches();
+                    generateCard();
+                    
+                    showNotification('Configuration loaded successfully!', 'success');
+                } catch (error) {
+                    showNotification('Error loading configuration file', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Initialize the application
+        window.addEventListener('DOMContentLoaded', () => {
+            initializeCanvas();
+            generateCard();
+        });
+    </script>
+</body>
+</html>
