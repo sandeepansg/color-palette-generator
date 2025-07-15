@@ -3,8 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dadaism Business Card Creator</title>
+    <title>Visual Identity Business Card Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tabler-icons@1.74.0/tabler-sprite.svg" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --accent-color: #06b6d4;
+            --background-color: #f8fafc;
+            --surface-color: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --border-radius: 12px;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,453 +31,669 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
         }
 
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+            padding: 2rem;
         }
 
-        .header {
-            background: linear-gradient(135deg, #ff6b6b, #feca57);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            font-weight: 300;
-            letter-spacing: 2px;
-        }
-
-        .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                padding: 1rem;
+            }
         }
 
         .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            padding: 40px;
-        }
-
-        .controls-section {
-            background: #f8f9fa;
-            padding: 30px;
-            border-radius: 15px;
-        }
-
-        .controls-section h2 {
-            color: #333;
-            margin-bottom: 25px;
-            font-size: 1.5rem;
-        }
-
-        .control-group {
-            margin-bottom: 25px;
-        }
-
-        .control-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 500;
-        }
-
-        .control-group input,
-        .control-group select,
-        .control-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .control-group input:focus,
-        .control-group select:focus,
-        .control-group textarea:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .control-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .toggle-group {
             display: flex;
-            gap: 15px;
-            margin-bottom: 25px;
+            flex-direction: column;
+            gap: 2rem;
         }
 
-        .toggle-btn {
-            flex: 1;
-            padding: 12px;
-            background: #e9ecef;
+        .card {
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .canvas-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            min-height: 400px;
+        }
+
+        #cardCanvas {
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            background: white;
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .controls-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .button {
+            padding: 0.75rem 1.5rem;
             border: none;
             border-radius: 8px;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1rem;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
         }
 
-        .toggle-btn.active {
-            background: #667eea;
+        .button-primary {
+            background: var(--primary-color);
             color: white;
+        }
+
+        .button-primary:hover {
+            background: #5856eb;
+            transform: translateY(-1px);
+        }
+
+        .button-secondary {
+            background: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .button-secondary:hover {
+            background: #d1d5db;
+        }
+
+        .button-accent {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .button-accent:hover {
+            background: #0891b2;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
         .color-palette {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
-            margin-bottom: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1rem;
         }
 
-        .color-item {
+        .color-swatch {
             aspect-ratio: 1;
             border-radius: 8px;
+            box-shadow: var(--shadow);
             cursor: pointer;
-            transition: transform 0.2s ease;
-            border: 3px solid transparent;
+            transition: transform 0.2s;
+            position: relative;
+            overflow: hidden;
         }
 
-        .color-item:hover {
-            transform: scale(1.1);
+        .color-swatch:hover {
+            transform: scale(1.05);
         }
 
-        .color-item.selected {
-            border-color: #333;
-            transform: scale(1.15);
+        .color-swatch .color-code {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 0.65rem;
+            text-align: center;
+            padding: 2px;
+            font-family: 'Courier New', monospace;
         }
 
-        .preview-section {
+        .debug-console {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .debug-console .debug-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.25rem;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .status-success { background: var(--success-color); }
+        .status-warning { background: var(--warning-color); }
+        .status-error { background: var(--error-color); }
+
+        .export-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid #dc2626;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .dadaist-text {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        .bilingual-text {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            gap: 0.25rem;
         }
 
-        .preview-section h2 {
-            color: #333;
-            margin-bottom: 25px;
-            font-size: 1.5rem;
-        }
-
-        .card-preview {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            margin-bottom: 30px;
-            overflow: hidden;
-            transition: transform 0.3s ease;
-        }
-
-        .card-preview:hover {
-            transform: translateY(-5px);
-        }
-
-        #businessCard {
-            display: block;
-            border-radius: 15px;
-        }
-
-        .export-controls {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .export-btn {
-            padding: 12px 24px;
-            background: #28a745;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .export-btn:hover {
-            background: #218838;
-            transform: translateY(-2px);
-        }
-
-        .generate-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #ff6b6b, #feca57);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.1rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            margin-top: 20px;
-        }
-
-        .generate-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .language-select {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+        .bilingual-text .local {
+            font-size: 0.9em;
+            opacity: 0.8;
         }
 
         @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-                gap: 30px;
-                padding: 20px;
+            .container {
+                padding: 0.5rem;
             }
-
-            .header h1 {
-                font-size: 2rem;
+            
+            .card {
+                padding: 1rem;
             }
-
-            .toggle-group {
-                flex-direction: column;
+            
+            .canvas-container {
+                padding: 1rem;
+                min-height: 300px;
             }
-
-            .export-controls {
-                flex-direction: column;
-            }
-        }
-
-        .debug-info {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            font-family: monospace;
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .accessibility-text {
-            position: absolute;
-            left: -9999px;
-            width: 1px;
-            height: 1px;
-            overflow: hidden;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header class="header">
-            <h1>Dadaism Business Card Creator</h1>
-            <p>Create artistic business cards with chaos and beauty</p>
-        </header>
-
-        <main class="main-content">
-            <section class="controls-section">
-                <h2>Design Controls</h2>
+        <div class="main-content">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="card-title">Visual Identity Business Card Generator</h1>
+                </div>
                 
-                <div class="control-group">
-                    <label for="primaryName">Primary Name (English)</label>
-                    <input type="text" id="primaryName" placeholder="John Doe" value="Arjun Sharma">
+                <div class="canvas-container">
+                    <canvas id="cardCanvas" width="856" height="540"></canvas>
                 </div>
-
-                <div class="control-group">
-                    <label for="primaryLang">Primary Language</label>
-                    <select id="primaryLang">
-                        <option value="en">English</option>
-                        <option value="hi">Hindi (हिंदी)</option>
-                        <option value="bn">Bengali (বাংলা)</option>
-                        <option value="ta">Tamil (தமிழ்)</option>
-                        <option value="te">Telugu (తెలుగు)</option>
-                        <option value="mr">Marathi (मराठी)</option>
-                        <option value="gu">Gujarati (ગુજરાતી)</option>
-                        <option value="kn">Kannada (ಕನ್ನಡ)</option>
-                        <option value="ml">Malayalam (മലയാളം)</option>
-                        <option value="or">Odia (ଓଡ଼ିଆ)</option>
-                        <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
-                        <option value="as">Assamese (অসমীয়া)</option>
-                        <option value="ur">Urdu (اردو)</option>
-                    </select>
-                </div>
-
-                <div class="control-group">
-                    <label for="jobTitle">Job Title</label>
-                    <input type="text" id="jobTitle" placeholder="Software Engineer" value="Software Engineer">
-                </div>
-
-                <div class="control-group">
-                    <label for="company">Company</label>
-                    <input type="text" id="company" placeholder="Tech Corp" value="Innovation Labs">
-                </div>
-
-                <div class="control-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" placeholder="john@example.com" value="arjun@innovationlabs.com">
-                </div>
-
-                <div class="control-group">
-                    <label for="phone">Phone</label>
-                    <input type="tel" id="phone" placeholder="+91 98765 43210" value="+91 98765 43210">
-                </div>
-
-                <div class="control-group">
-                    <label for="website">Website</label>
-                    <input type="url" id="website" placeholder="https://example.com" value="https://innovationlabs.com">
-                </div>
-
-                <div class="control-group">
-                    <label for="address">Address</label>
-                    <textarea id="address" placeholder="123 Tech Street, City, Country">Tech Park, Sector 5, Bangalore, India</textarea>
-                </div>
-
-                <div class="toggle-group">
-                    <button class="toggle-btn active" id="orientationPortrait" onclick="setOrientation('portrait')">Portrait</button>
-                    <button class="toggle-btn" id="orientationLandscape" onclick="setOrientation('landscape')">Landscape</button>
-                </div>
-
-                <div class="toggle-group">
-                    <button class="toggle-btn active" id="sizeISO" onclick="setSize('ISO')">ISO Standard</button>
-                    <button class="toggle-btn" id="sizeIndian" onclick="setSize('Indian')">Indian Standard</button>
-                </div>
-
-                <div class="control-group">
-                    <label>Color Palette</label>
-                    <div class="color-palette" id="colorPalette">
-                        <!-- Colors will be generated here -->
+                
+                <div class="debug-console">
+                    <div class="debug-item">
+                        <span>Screen Resolution:</span>
+                        <span id="screenResolution">-</span>
+                    </div>
+                    <div class="debug-item">
+                        <span>Device Type:</span>
+                        <span id="deviceType">-</span>
+                    </div>
+                    <div class="debug-item">
+                        <span>Orientation:</span>
+                        <span id="currentOrientation">-</span>
+                    </div>
+                    <div class="debug-item">
+                        <span>Card Standard:</span>
+                        <span id="cardStandard">-</span>
+                    </div>
+                    <div class="debug-item">
+                        <span>WCAG Compliance:</span>
+                        <span id="wcagStatus">-</span>
                     </div>
                 </div>
+            </div>
 
-                <button class="generate-btn" onclick="generateCard()">Generate New Design</button>
-            </section>
-
-            <section class="preview-section">
-                <h2>Card Preview</h2>
-                <div class="card-preview">
-                    <canvas id="businessCard" width="600" height="400"></canvas>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Export Options</h2>
                 </div>
-
-                <div class="export-controls">
-                    <button class="export-btn" onclick="exportCard('png')">Export PNG</button>
-                    <button class="export-btn" onclick="exportCard('jpeg')">Export JPEG</button>
-                    <button class="export-btn" onclick="exportCard('pdf')">Export PDF</button>
+                
+                <div class="export-options">
+                    <button class="button button-primary" onclick="exportCard('pdf')">
+                        Export PDF
+                    </button>
+                    <button class="button button-secondary" onclick="exportCard('png')">
+                        Export PNG
+                    </button>
+                    <button class="button button-accent" onclick="exportCard('svg')">
+                        Export SVG
+                    </button>
+                    <button class="button button-secondary" onclick="exportColorPalette()">
+                        Export Palette
+                    </button>
                 </div>
-
-                <div class="debug-info" id="debugInfo">
-                    <strong>Debug Info:</strong><br>
-                    Orientation: <span id="debugOrientation">portrait</span><br>
-                    Size: <span id="debugSize">ISO Standard</span><br>
-                    Dimensions: <span id="debugDimensions">85.6 × 53.98 mm</span><br>
-                    Colors: <span id="debugColors">Generated</span>
+                
+                <div class="form-group">
+                    <label for="dpiSelect">Export DPI:</label>
+                    <select id="dpiSelect">
+                        <option value="300">300 DPI</option>
+                        <option value="600">600 DPI</option>
+                        <option value="1200">1200 DPI</option>
+                    </select>
                 </div>
-            </section>
-        </main>
+            </div>
+        </div>
+
+        <div class="controls-panel">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Card Settings</h2>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cardStandardSelect">Card Standard:</label>
+                    <select id="cardStandardSelect" onchange="updateCardStandard()">
+                        <option value="ISO-7810">ISO-7810/ID-1 (85.60 × 53.98 mm)</option>
+                        <option value="Indian">Indian Standard (55 × 90 mm)</option>
+                    </select>
+                </div>
+                
+                <div class="toggle-switch">
+                    <label>Orientation:</label>
+                    <div class="switch">
+                        <input type="checkbox" id="orientationToggle" onchange="toggleOrientation()">
+                        <span class="slider"></span>
+                    </div>
+                    <span id="orientationLabel">Landscape</span>
+                </div>
+                
+                <div class="button-group">
+                    <button class="button button-primary" onclick="randomizeCard()">
+                        🎲 Randomize
+                    </button>
+                    <button class="button button-secondary" onclick="generateCard()">
+                        🎨 Generate
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Contact Information</h2>
+                </div>
+                
+                <div class="form-group">
+                    <label for="nameEnglish">Name (English):</label>
+                    <input type="text" id="nameEnglish" value="Arjun Patel" onchange="updateContactInfo()">
+                </div>
+                
+                <div class="form-group">
+                    <label for="nameLocal">Name (Local):</label>
+                    <input type="text" id="nameLocal" value="अर्जुन पटेल" onchange="updateContactInfo()">
+                </div>
+                
+                <div class="form-group">
+                    <label for="jobTitle">Job Title:</label>
+                    <input type="text" id="jobTitle" value="Digital Designer" onchange="updateContactInfo()">
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone:</label>
+                    <input type="text" id="phone" value="+91-98765-43210" onchange="updateContactInfo()">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" value="arjun.patel@example.com" onchange="updateContactInfo()">
+                </div>
+                
+                <div class="form-group">
+                    <label for="address">Address:</label>
+                    <textarea id="address" rows="2" onchange="updateContactInfo()">Mumbai, Maharashtra, India</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="company">Company:</label>
+                    <input type="text" id="company" value="Creative Studio" onchange="updateContactInfo()">
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Color Palette</h2>
+                </div>
+                
+                <div class="color-palette" id="colorPalette">
+                    <!-- Color swatches will be generated here -->
+                </div>
+                
+                <div class="button-group">
+                    <button class="button button-secondary" onclick="generateNewPalette()">
+                        🎨 New Palette
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Configuration</h2>
+                </div>
+                
+                <div class="button-group">
+                    <button class="button button-secondary" onclick="exportConfig()">
+                        💾 Export Config
+                    </button>
+                    <button class="button button-secondary" onclick="document.getElementById('configImport').click()">
+                        📁 Import Config
+                    </button>
+                </div>
+                
+                <input type="file" id="configImport" accept=".json" style="display: none;" onchange="importConfig(event)">
+            </div>
+        </div>
     </div>
 
+    <!-- Include required libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
     <script>
-        // Global state
-        let currentState = {
-            orientation: 'portrait',
-            size: 'ISO',
+        // Global variables
+        let currentConfig = {
+            standard: 'ISO-7810',
+            orientation: 'landscape',
             colors: [],
-            content: {}
+            contact: {
+                nameEnglish: 'Arjun Patel',
+                nameLocal: 'अर्जुन पटेल',
+                jobTitle: 'Digital Designer',
+                phone: '+91-98765-43210',
+                email: 'arjun.patel@example.com',
+                address: 'Mumbai, Maharashtra, India',
+                company: 'Creative Studio'
+            },
+            logo: null,
+            textures: []
         };
 
-        // Name mappings for different languages
-        const nameTranslations = {
-            'Arjun Sharma': {
-                en: 'Arjun Sharma',
-                hi: 'अर्जुन शर्मा',
-                bn: 'অর্জুন শর্মা',
-                ta: 'அர்ஜுன் ஷர்மா',
-                te: 'అర్జున్ శర్మ',
-                mr: 'अर्जुन शर्मा',
-                gu: 'અર્જુન શર્મા',
-                kn: 'ಅರ್ಜುನ್ ಶರ್ಮಾ',
-                ml: 'അർജുൻ ശർമ്മ',
-                or: 'ଅର୍ଜୁନ ଶର୍ମା',
-                pa: 'ਅਰਜੁਨ ਸ਼ਰਮਾ',
-                as: 'অৰ্জুন শৰ্মা',
-                ur: 'ارجن شرما'
-            },
-            'Priya Patel': {
-                en: 'Priya Patel',
-                hi: 'प्रिया पटेल',
-                bn: 'প্রিয়া পটেল',
-                ta: 'பிரியா பட்டேல்',
-                te: 'ప్రియా పటేల్',
-                mr: 'प्रिया पटेल',
-                gu: 'પ્રિયા પટેલ',
-                kn: 'ಪ್ರಿಯಾ ಪಟೇಲ್',
-                ml: 'പ്രിയ പട്ടേൽ',
-                or: 'ପ୍ରିୟା ପଟେଲ',
-                pa: 'ਪ੍ਰਿਯਾ ਪਟੇਲ',
-                as: 'প্ৰিয়া পটেল',
-                ur: 'پریا پٹیل'
-            }
+        const cardStandards = {
+            'ISO-7810': { width: 85.60, height: 53.98, unit: 'mm' },
+            'Indian': { width: 55, height: 90, unit: 'mm' }
         };
 
-        // Card dimensions
-        const cardDimensions = {
-            ISO: {
-                portrait: { width: 600, height: 378 },
-                landscape: { width: 378, height: 600 },
-                mm: { width: 85.6, height: 53.98 }
-            },
-            Indian: {
-                portrait: { width: 400, height: 650 },
-                landscape: { width: 650, height: 400 },
-                mm: { width: 55, height: 90 }
-            }
-        };
+        const forbiddenColors = [
+            '#000000', '#FFFFFF', '#FF0000', '#00FF00', 
+            '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF'
+        ];
+
+        let canvas, ctx;
+        let deviceInfo = {};
 
         // Initialize the application
-        function init() {
-            generateDadaismColors();
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            // Check minimum requirements
+            if (!checkMinimumRequirements()) {
+                showError('Your screen resolution is too small. Minimum 320x568 required.');
+                return;
+            }
+
+            // Initialize canvas
+            canvas = document.getElementById('cardCanvas');
+            ctx = canvas.getContext('2d');
+
+            // Detect device information
+            detectDevice();
+            
+            // Generate initial palette
+            generateNewPalette();
+            
+            // Setup canvas
+            setupCanvas();
+            
+            // Generate initial card
             generateCard();
-            updateDebugInfo();
+            
+            // Update debug console
+            updateDebugConsole();
+            
+            // Setup orientation change listener
+            window.addEventListener('orientationchange', handleOrientationChange);
+            window.addEventListener('resize', handleOrientationChange);
         }
 
-        // Generate Dadaism-inspired color palette
-        function generateDadaismColors() {
-            const colors = [];
-            const baseHue = Math.random() * 360;
+        function checkMinimumRequirements() {
+            const minWidth = 320;
+            const minHeight = 568;
+            return window.screen.width >= minWidth && window.screen.height >= minHeight;
+        }
+
+        function detectDevice() {
+            deviceInfo = {
+                screenWidth: window.screen.width,
+                screenHeight: window.screen.height,
+                pixelRatio: window.devicePixelRatio || 1,
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                mobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+                touchSupport: 'ontouchstart' in window,
+                cores: navigator.hardwareConcurrency || 4,
+                memory: navigator.deviceMemory || 4
+            };
+
+            // Detect device type
+            if (deviceInfo.mobile) {
+                deviceInfo.type = 'Mobile';
+            } else if (window.screen.width <= 1024) {
+                deviceInfo.type = 'Tablet';
+            } else {
+                deviceInfo.type = 'Desktop';
+            }
+        }
+
+        function setupCanvas() {
+            const standard = cardStandards[currentConfig.standard];
+            const dpi = 300;
             
-            for (let i = 0; i < 5; i++) {
-                const hue = (baseHue + (i * 72)) % 360;
-                const saturation = 40 + Math.random() * 40; // 40-80%
-                const lightness = 30 + Math.random() * 40;  // 30-70%
-                
-                colors.push({
-                    hsl: `hsl(${hue}, ${saturation}%, ${lightness}%)`,
-                    hex: hslToHex(hue, saturation, lightness)
-                });
+            if (currentConfig.orientation === 'landscape') {
+                canvas.width = mmToPx(standard.width, dpi);
+                canvas.height = mmToPx(standard.height, dpi);
+            } else {
+                canvas.width = mmToPx(standard.height, dpi);
+                canvas.height = mmToPx(standard.width, dpi);
             }
             
-            currentState.colors = colors;
-            renderColorPalette();
+            // Scale canvas for display
+            const maxWidth = Math.min(600, window.innerWidth - 100);
+            const scale = maxWidth / canvas.width;
+            canvas.style.width = canvas.width * scale + 'px';
+            canvas.style.height = canvas.height * scale + 'px';
         }
 
-        // Convert HSL to Hex
+        function mmToPx(mm, dpi) {
+            return Math.round((mm * dpi) / 25.4);
+        }
+
+        function generateNewPalette() {
+            currentConfig.colors = [];
+            for (let i = 0; i < 8; i++) {
+                let color;
+                do {
+                    color = generateRandomColor();
+                } while (isPureForbiddenColor(color));
+                currentConfig.colors.push(color);
+            }
+            displayColorPalette();
+        }
+
+        function generateRandomColor() {
+            const hue = Math.floor(Math.random() * 360);
+            const saturation = Math.floor(Math.random() * 40) + 40; // 40-80%
+            const lightness = Math.floor(Math.random() * 40) + 30; // 30-70%
+            return hslToHex(hue, saturation, lightness);
+        }
+
+        function isPureForbiddenColor(color) {
+            return forbiddenColors.includes(color.toUpperCase());
+        }
+
         function hslToHex(h, s, l) {
             l /= 100;
             const a = s * Math.min(l, 1 - l) / 100;
@@ -470,364 +705,502 @@
             return `#${f(0)}${f(8)}${f(4)}`;
         }
 
-        // Render color palette
-        function renderColorPalette() {
-            const palette = document.getElementById('colorPalette');
-            palette.innerHTML = '';
+        function displayColorPalette() {
+            const paletteContainer = document.getElementById('colorPalette');
+            paletteContainer.innerHTML = '';
             
-            currentState.colors.forEach((color, index) => {
-                const colorDiv = document.createElement('div');
-                colorDiv.className = 'color-item';
-                colorDiv.style.backgroundColor = color.hsl;
-                colorDiv.onclick = () => selectColor(index);
-                palette.appendChild(colorDiv);
+            currentConfig.colors.forEach((color, index) => {
+                const swatch = document.createElement('div');
+                swatch.className = 'color-swatch';
+                swatch.style.backgroundColor = color;
+                swatch.innerHTML = `<div class="color-code">${color}</div>`;
+                swatch.onclick = () => selectColor(color, index);
+                paletteContainer.appendChild(swatch);
             });
         }
 
-        // Select color
-        function selectColor(index) {
-            document.querySelectorAll('.color-item').forEach(item => {
-                item.classList.remove('selected');
-            });
-            document.querySelectorAll('.color-item')[index].classList.add('selected');
-            generateCard();
+        function selectColor(color, index) {
+            console.log(`Selected color ${index}: ${color}`);
+            // Could implement color editing here
         }
 
-        // Set orientation
-        function setOrientation(orientation) {
-            currentState.orientation = orientation;
-            
-            document.querySelectorAll('.toggle-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            if (orientation === 'portrait') {
-                document.getElementById('orientationPortrait').classList.add('active');
-            } else {
-                document.getElementById('orientationLandscape').classList.add('active');
-            }
-            
-            generateCard();
-            updateDebugInfo();
-        }
-
-        // Set size
-        function setSize(size) {
-            currentState.size = size;
-            
-            document.querySelectorAll('.toggle-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            if (size === 'ISO') {
-                document.getElementById('sizeISO').classList.add('active');
-            } else {
-                document.getElementById('sizeIndian').classList.add('active');
-            }
-            
-            generateCard();
-            updateDebugInfo();
-        }
-
-        // Generate business card
         function generateCard() {
-            const canvas = document.getElementById('businessCard');
-            const ctx = canvas.getContext('2d');
-            
-            // Get dimensions
-            const dimensions = cardDimensions[currentState.size][currentState.orientation];
-            canvas.width = dimensions.width;
-            canvas.height = dimensions.height;
+            if (!ctx) return;
             
             // Clear canvas
-            ctx.fillStyle = '#ffffff';
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw background
+            drawBackground();
+            
+            // Draw dadaist elements
+            drawDadaistElements();
+            
+            // Draw company logo area
+            drawLogoArea();
+            
+            // Draw contact information
+            drawContactInfo();
+            
+            // Draw decorative elements
+            drawDecorations();
+            
+            // Update debug console
+            updateDebugConsole();
+        }
+
+        function drawBackground() {
+            const colors = currentConfig.colors;
+            if (colors.length < 2) return;
+            
+            // Create gradient background
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, colors[0]);
+            gradient.addColorStop(0.5, colors[1]);
+            gradient.addColorStop(1, colors[2] || colors[0]);
+            
+            ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // Get form data
-            const formData = getFormData();
-            
-            // Draw background with Dadaism elements
-            drawDadaismBackground(ctx, canvas.width, canvas.height);
-            
-            // Draw content
-            drawCardContent(ctx, formData, canvas.width, canvas.height);
-            
-            updateDebugInfo();
         }
 
-        // Get form data
-        function getFormData() {
-            const primaryName = document.getElementById('primaryName').value;
-            const primaryLang = document.getElementById('primaryLang').value;
+        function drawDadaistElements() {
+            const colors = currentConfig.colors;
+            if (colors.length < 4) return;
             
-            return {
-                primaryName: primaryName,
-                translatedName: getTranslatedName(primaryName, primaryLang),
-                jobTitle: document.getElementById('jobTitle').value,
-                company: document.getElementById('company').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                website: document.getElementById('website').value,
-                address: document.getElementById('address').value,
-                primaryLang: primaryLang
-            };
-        }
-
-        // Get translated name
-        function getTranslatedName(name, lang) {
-            if (nameTranslations[name] && nameTranslations[name][lang]) {
-                return nameTranslations[name][lang];
-            }
-            return name; // Fallback to original name
-        }
-
-        // Draw Dadaism background
-        function drawDadaismBackground(ctx, width, height) {
-            // Create abstract shapes
-            for (let i = 0; i < 8; i++) {
-                const color = currentState.colors[Math.floor(Math.random() * currentState.colors.length)];
-                ctx.fillStyle = color.hsl;
-                ctx.globalAlpha = 0.6;
+            // Draw random geometric shapes
+            for (let i = 0; i < 5; i++) {
+                ctx.save();
+                ctx.globalAlpha = 0.3;
+                ctx.fillStyle = colors[i % colors.length];
                 
-                // Random shape
-                const shapeType = Math.floor(Math.random() * 3);
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                const size = Math.random() * 100 + 20;
                 
-                if (shapeType === 0) {
-                    // Circle
-                    const x = Math.random() * width;
-                    const y = Math.random() * height;
-                    const radius = Math.random() * 50 + 20;
-                    
+                if (Math.random() > 0.5) {
+                    // Draw circle
                     ctx.beginPath();
-                    ctx.arc(x, y, radius, 0, Math.PI * 2);
+                    ctx.arc(x, y, size, 0, Math.PI * 2);
                     ctx.fill();
-                } else if (shapeType === 1) {
-                    // Rectangle
-                    const x = Math.random() * width;
-                    const y = Math.random() * height;
-                    const w = Math.random() * 100 + 30;
-                    const h = Math.random() * 100 + 30;
-                    
-                    ctx.fillRect(x, y, w, h);
                 } else {
-                    // Triangle
-                    const x = Math.random() * width;
-                    const y = Math.random() * height;
-                    const size = Math.random() * 60 + 30;
-                    
-                    ctx.beginPath();
-                    ctx.moveTo(x, y);
-                    ctx.lineTo(x + size, y);
-                    ctx.lineTo(x + size/2, y + size);
-                    ctx.closePath();
-                    ctx.fill();
+                    // Draw rectangle
+                    ctx.fillRect(x, y, size, size);
                 }
+                
+                ctx.restore();
             }
-            
-            ctx.globalAlpha = 1;
         }
 
-        // Draw card content
-        function drawCardContent(ctx, data, width, height) {
-            ctx.fillStyle = '#333333';
+        function drawLogoArea() {
+            const colors = currentConfig.colors;
+            if (colors.length < 3) return;
+            
+            // Draw logo placeholder
+            const logoSize = Math.min(canvas.width, canvas.height) * 0.2;
+            const logoX = canvas.width * 0.05;
+            const logoY = canvas.height * 0.05;
+            
+            ctx.fillStyle = colors[3];
+            ctx.fillRect(logoX, logoY, logoSize, logoSize);
+            
+            // Draw logo text
+            ctx.fillStyle = getContrastColor(colors[3]);
+            ctx.font = `${logoSize * 0.15}px Inter`;
+            ctx.textAlign = 'center';
+            ctx.fillText('LOGO', logoX + logoSize / 2, logoY + logoSize / 2);
+        }
+
+        function drawContactInfo() {
+            const colors = currentConfig.colors;
+            const contact = currentConfig.contact;
+            
+            // Calculate text area
+            const textX = canvas.width * 0.35;
+            const textY = canvas.height * 0.15;
+            const textWidth = canvas.width * 0.6;
+            
+            // Draw semi-transparent background for text
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.fillRect(textX - 10, textY - 10, textWidth + 20, canvas.height * 0.7);
+            
+            // Draw text
+            ctx.fillStyle = colors[4] || '#333333';
             ctx.textAlign = 'left';
             
-            const isPortrait = currentState.orientation === 'portrait';
-            const padding = 30;
+            let currentY = textY + 20;
+            const lineHeight = canvas.height * 0.08;
             
-            // Main name
-            ctx.font = 'bold 24px Arial';
-            ctx.fillText(data.primaryName, padding, padding + 30);
+            // Name (English)
+            ctx.font = `bold ${lineHeight * 0.7}px Inter`;
+            ctx.fillText(contact.nameEnglish, textX, currentY);
+            currentY += lineHeight * 0.5;
             
-            // Translated name (if different)
-            if (data.translatedName !== data.primaryName) {
-                ctx.font = '18px Arial';
-                ctx.fillText(data.translatedName, padding, padding + 60);
-            }
+            // Name (Local)
+            ctx.font = `${lineHeight * 0.5}px Inter`;
+            ctx.fillStyle = colors[5] || '#666666';
+            ctx.fillText(contact.nameLocal, textX, currentY);
+            currentY += lineHeight;
             
-            // Job title and company
-            ctx.font = '16px Arial';
-            ctx.fillStyle = '#666666';
-            const jobY = data.translatedName !== data.primaryName ? padding + 90 : padding + 70;
-            ctx.fillText(`${data.jobTitle} at ${data.company}`, padding, jobY);
+            // Job Title
+            ctx.font = `${lineHeight * 0.4}px Inter`;
+            ctx.fillStyle = colors[6] || '#555555';
+            ctx.fillText(contact.jobTitle, textX, currentY);
+            currentY += lineHeight * 0.8;
             
-            // Contact information
-            ctx.font = '14px Arial';
-            ctx.fillStyle = '#555555';
-            
-            let contactY = jobY + 40;
-            const lineHeight = 20;
-            
-            if (data.email) {
-                ctx.fillText(`Email: ${data.email}`, padding, contactY);
-                contactY += lineHeight;
-            }
-            
-            if (data.phone) {
-                ctx.fillText(`Phone: ${data.phone}`, padding, contactY);
-                contactY += lineHeight;
-            }
-            
-            if (data.website) {
-                ctx.fillText(`Web: ${data.website}`, padding, contactY);
-                contactY += lineHeight;
-            }
-            
-            // Address (multi-line)
-            if (data.address) {
-                const addressLines = data.address.split('\n');
-                addressLines.forEach(line => {
-                    ctx.fillText(line, padding, contactY);
-                    contactY += lineHeight;
-                });
-            }
-            
-            // Add decorative elements
-            drawDecorativeElements(ctx, width, height);
+            // Contact details
+            ctx.font = `${lineHeight * 0.35}px Inter`;
+            ctx.fillStyle = colors[7] || '#444444';
+            ctx.fillText(contact.phone, textX, currentY);
+            currentY += lineHeight * 0.6;
+            ctx.fillText(contact.email, textX, currentY);
+            currentY += lineHeight * 0.6;
+            ctx.fillText(contact.address, textX, currentY);
+            currentY += lineHeight * 0.6;
+            ctx.fillText(contact.company, textX, currentY);
         }
 
-        // Draw decorative elements
-        function drawDecorativeElements(ctx, width, height) {
-            // Add some small decorative shapes
-            for (let i = 0; i < 3; i++) {
-                const color = currentState.colors[Math.floor(Math.random() * currentState.colors.length)];
-                ctx.fillStyle = color.hsl;
-                ctx.globalAlpha = 0.8;
+        function drawDecorations() {
+            const colors = currentConfig.colors;
+            
+            // Draw decorative border
+            ctx.strokeStyle = colors[0];
+            ctx.lineWidth = 3;
+            ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
+            
+            // Draw corner decorations
+            for (let i = 0; i < 4; i++) {
+                const x = i % 2 === 0 ? 20 : canvas.width - 20;
+                const y = i < 2 ? 20 : canvas.height - 20;
                 
-                const x = width - 100 + Math.random() * 50;
-                const y = 50 + Math.random() * 100;
-                const size = 5 + Math.random() * 10;
-                
+                ctx.fillStyle = colors[i % colors.length];
                 ctx.beginPath();
-                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.arc(x, y, 10, 0, Math.PI * 2);
                 ctx.fill();
             }
-            
-            ctx.globalAlpha = 1;
         }
 
-        // Export card
-        function exportCard(format) {
-            const canvas = document.getElementById('businessCard');
-            
-            if (format === 'png' || format === 'jpeg') {
-                const link = document.createElement('a');
-                link.download = `business-card.${format}`;
-                link.href = canvas.toDataURL(`image/${format}`);
-                link.click();
-            } else if (format === 'pdf') {
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF();
-                
-                const imgData = canvas.toDataURL('image/png');
-                const imgWidth = 85.6; // mm
-                const imgHeight = 53.98; // mm
-                
-                pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-                pdf.save('business-card.pdf');
-            }
+        function getContrastColor(hexColor) {
+            const r = parseInt(hexColor.substr(1, 2), 16);
+            const g = parseInt(hexColor.substr(3, 2), 16);
+            const b = parseInt(hexColor.substr(5, 2), 16);
+            const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            return luminance > 0.5 ? '#000000' : '#FFFFFF';
         }
 
-        // Update debug info
-        function updateDebugInfo() {
-            const dimensions = cardDimensions[currentState.size];
-            document.getElementById('debugOrientation').textContent = currentState.orientation;
-            document.getElementById('debugSize').textContent = currentState.size === 'ISO' ? 'ISO Standard' : 'Indian Standard';
-            document.getElementById('debugDimensions').textContent = `${dimensions.mm.width} × ${dimensions.mm.height} mm`;
-            document.getElementById('debugColors').textContent = `${currentState.colors.length} colors generated`;
-        }
-
-        // Add event listeners for real-time updates
-        document.addEventListener('DOMContentLoaded', function() {
-            init();
-            
-            // Add input event listeners
-            const inputs = ['primaryName', 'primaryLang', 'jobTitle', 'company', 'email', 'phone', 'website', 'address'];
-            inputs.forEach(id => {
-                document.getElementById(id).addEventListener('input', generateCard);
-            });
-            
-            document.getElementById('primaryLang').addEventListener('change', generateCard);
-        });
-
-        // WCAG contrast calculation
         function calculateContrast(color1, color2) {
-            const luminance1 = getLuminance(color1);
-            const luminance2 = getLuminance(color2);
-            
-            const brightest = Math.max(luminance1, luminance2);
-            const darkest = Math.min(luminance1, luminance2);
-            
+            const lum1 = getLuminance(color1);
+            const lum2 = getLuminance(color2);
+            const brightest = Math.max(lum1, lum2);
+            const darkest = Math.min(lum1, lum2);
             return (brightest + 0.05) / (darkest + 0.05);
         }
 
         function getLuminance(color) {
             const rgb = hexToRgb(color);
-            if (!rgb) return 0;
-            
-            const [r, g, b] = [rgb.r, rgb.g, rgb.b].map(c => {
+            const [r, g, b] = rgb.map(c => {
                 c = c / 255;
                 return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
             });
-            
             return 0.2126 * r + 0.7152 * g + 0.0722 * b;
         }
 
         function hexToRgb(hex) {
             const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-            return result ? {
-                r: parseInt(result[1], 16),
-                g: parseInt(result[2], 16),
-                b: parseInt(result[3], 16)
-            } : null;
+            return result ? [
+                parseInt(result[1], 16),
+                parseInt(result[2], 16),
+                parseInt(result[3], 16)
+            ] : null;
         }
 
-        // Accessibility announcements
-        function announceToScreenReader(message) {
-            const announcement = document.createElement('div');
-            announcement.setAttribute('aria-live', 'polite');
-            announcement.setAttribute('aria-atomic', 'true');
-            announcement.className = 'accessibility-text';
-            announcement.textContent = message;
-            
-            document.body.appendChild(announcement);
-            setTimeout(() => document.body.removeChild(announcement), 1000);
+        function updateCardStandard() {
+            const select = document.getElementById('cardStandardSelect');
+            currentConfig.standard = select.value;
+            setupCanvas();
+            generateCard();
         }
 
-        // Add keyboard navigation
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                if (e.target.classList.contains('toggle-btn')) {
-                    e.target.click();
-                    e.preventDefault();
+        function toggleOrientation() {
+            const toggle = document.getElementById('orientationToggle');
+            const label = document.getElementById('orientationLabel');
+            
+            if (toggle.checked) {
+                currentConfig.orientation = 'portrait';
+                label.textContent = 'Portrait';
+            } else {
+                currentConfig.orientation = 'landscape';
+                label.textContent = 'Landscape';
+            }
+            
+            setupCanvas();
+            generateCard();
+        }
+
+        function handleOrientationChange() {
+            setTimeout(() => {
+                detectDevice();
+                setupCanvas();
+                generateCard();
+                updateDebugConsole();
+            }, 100);
+        }
+
+        function updateContactInfo() {
+            currentConfig.contact = {
+                nameEnglish: document.getElementById('nameEnglish').value,
+                nameLocal: document.getElementById('nameLocal').value,
+                jobTitle: document.getElementById('jobTitle').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                address: document.getElementById('address').value,
+                company: document.getElementById('company').value
+            };
+            generateCard();
+        }
+
+        function randomizeCard() {
+            // Randomize colors
+            generateNewPalette();
+            
+            // Randomize contact info with Indian names
+            const indianNames = [
+                { english: 'Arjun Patel', local: 'अर्जुन पटेल' },
+                { english: 'Priya Sharma', local: 'प्रिया शर्मा' },
+                { english: 'Kiran Kumar', local: 'किरण कुमार' },
+                { english: 'Anita Singh', local: 'अनीता सिंह' },
+                { english: 'Raj Gupta', local: 'राज गुप्ता' },
+                { english: 'Maya Joshi', local: 'माया जोशी' }
+            ];
+            
+            const jobTitles = [
+                'Digital Designer', 'Software Engineer', 'Marketing Manager',
+                'Creative Director', 'Data Analyst', 'Product Manager'
+            ];
+            
+            const companies = [
+                'Tech Solutions', 'Creative Studio', 'Digital Agency',
+                'Innovation Labs', 'Design House', 'Tech Ventures'
+            ];
+            
+            const cities = [
+                'Mumbai, Maharashtra', 'Delhi, Delhi', 'Bangalore, Karnataka',
+                'Chennai, Tamil Nadu', 'Pune, Maharashtra', 'Hyderabad, Telangana'
+            ];
+            
+            const randomName = indianNames[Math.floor(Math.random() * indianNames.length)];
+            const randomTitle = jobTitles[Math.floor(Math.random() * jobTitles.length)];
+            const randomCompany = companies[Math.floor(Math.random() * companies.length)];
+            const randomCity = cities[Math.floor(Math.random() * cities.length)];
+            
+            // Update form fields
+            document.getElementById('nameEnglish').value = randomName.english;
+            document.getElementById('nameLocal').value = randomName.local;
+            document.getElementById('jobTitle').value = randomTitle;
+            document.getElementById('company').value = randomCompany;
+            document.getElementById('address').value = randomCity + ', India';
+            
+            // Update config
+            updateContactInfo();
+        }
+
+        function updateDebugConsole() {
+            document.getElementById('screenResolution').textContent = 
+                `${deviceInfo.screenWidth}x${deviceInfo.screenHeight} (${deviceInfo.pixelRatio}x)`;
+            document.getElementById('deviceType').textContent = deviceInfo.type;
+            document.getElementById('currentOrientation').textContent = currentConfig.orientation;
+            document.getElementById('cardStandard').textContent = currentConfig.standard;
+            
+            // Calculate WCAG compliance
+            let wcagCompliant = 0;
+            let totalChecks = 0;
+            
+            for (let i = 0; i < currentConfig.colors.length - 1; i++) {
+                for (let j = i + 1; j < currentConfig.colors.length; j++) {
+                    const contrast = calculateContrast(currentConfig.colors[i], currentConfig.colors[j]);
+                    totalChecks++;
+                    if (contrast >= 4.5) wcagCompliant++;
                 }
             }
-        });
+            
+            const complianceRate = totalChecks > 0 ? (wcagCompliant / totalChecks * 100).toFixed(1) : 0;
+            document.getElementById('wcagStatus').innerHTML = 
+                `<span class="status-indicator ${complianceRate >= 70 ? 'status-success' : complianceRate >= 50 ? 'status-warning' : 'status-error'}"></span>${complianceRate}%`;
+        }
 
-        // Performance monitoring
-        const performanceMonitor = {
-            startTime: null,
+        function exportCard(format) {
+            const dpi = parseInt(document.getElementById('dpiSelect').value);
             
-            start() {
-                this.startTime = performance.now();
-            },
-            
-            end(operation) {
-                if (this.startTime) {
-                    const duration = performance.now() - this.startTime;
-                    console.log(`${operation} took ${duration.toFixed(2)}ms`);
-                    this.startTime = null;
-                }
+            switch (format.toLowerCase()) {
+                case 'pdf':
+                    exportToPDF();
+                    break;
+                case 'png':
+                    exportToPNG(dpi);
+                    break;
+                case 'svg':
+                    exportToSVG();
+                    break;
             }
-        };
+        }
 
-        // Add performance monitoring to card generation
-        const originalGenerateCard = generateCard;
-        generateCard = function() {
-            performanceMonitor.start();
-            originalGenerateCard();
-            performanceMonitor.end('Card generation');
-        };
+        function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const standard = cardStandards[currentConfig.standard];
+            
+            const orientation = currentConfig.orientation === 'landscape' ? 'l' : 'p';
+            const pdf = new jsPDF({
+                orientation: orientation,
+                unit: 'mm',
+                format: [standard.width, standard.height]
+            });
+            
+            const imgData = canvas.toDataURL('image/png');
+            if (currentConfig.orientation === 'landscape') {
+                pdf.addImage(imgData, 'PNG', 0, 0, standard.width, standard.height);
+            } else {
+                pdf.addImage(imgData, 'PNG', 0, 0, standard.height, standard.width);
+            }
+            
+            pdf.save('business-card.pdf');
+        }
+
+        function exportToPNG(dpi) {
+            canvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `business-card-${dpi}dpi.png`;
+                a.click();
+                URL.revokeObjectURL(url);
+            }, 'image/png');
+        }
+
+        function exportToSVG() {
+            // For SVG export, we'll create a simple SVG representation
+            const standard = cardStandards[currentConfig.standard];
+            const width = currentConfig.orientation === 'landscape' ? standard.width : standard.height;
+            const height = currentConfig.orientation === 'landscape' ? standard.height : standard.width;
+            
+            const svg = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="${width}mm" height="${height}mm" viewBox="0 0 ${width} ${height}">
+                    <rect width="100%" height="100%" fill="${currentConfig.colors[0] || '#ffffff'}"/>
+                    <text x="10" y="20" font-family="Arial" font-size="4" fill="${currentConfig.colors[1] || '#000000'}">
+                        ${currentConfig.contact.nameEnglish}
+                    </text>
+                    <text x="10" y="30" font-family="Arial" font-size="3" fill="${currentConfig.colors[2] || '#000000'}">
+                        ${currentConfig.contact.jobTitle}
+                    </text>
+                </svg>
+            `;
+            
+            const blob = new Blob([svg], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'business-card.svg';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportColorPalette() {
+            const paletteCanvas = document.createElement('canvas');
+            paletteCanvas.width = 800;
+            paletteCanvas.height = 200;
+            const paletteCtx = paletteCanvas.getContext('2d');
+            
+            const swatchWidth = 800 / currentConfig.colors.length;
+            
+            currentConfig.colors.forEach((color, index) => {
+                const x = index * swatchWidth;
+                
+                // Draw color swatch
+                paletteCtx.fillStyle = color;
+                paletteCtx.fillRect(x, 0, swatchWidth, 150);
+                
+                // Draw hex code
+                paletteCtx.fillStyle = getContrastColor(color);
+                paletteCtx.font = '14px monospace';
+                paletteCtx.textAlign = 'center';
+                paletteCtx.fillText(color, x + swatchWidth / 2, 170);
+            });
+            
+            paletteCanvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'color-palette.png';
+                a.click();
+                URL.revokeObjectURL(url);
+            }, 'image/png');
+        }
+
+        function exportConfig() {
+            const config = {
+                ...currentConfig,
+                timestamp: new Date().toISOString(),
+                version: '1.0'
+            };
+            
+            const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'business-card-config.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importConfig(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const config = JSON.parse(e.target.result);
+                    currentConfig = { ...currentConfig, ...config };
+                    
+                    // Update form fields
+                    document.getElementById('nameEnglish').value = currentConfig.contact.nameEnglish;
+                    document.getElementById('nameLocal').value = currentConfig.contact.nameLocal;
+                    document.getElementById('jobTitle').value = currentConfig.contact.jobTitle;
+                    document.getElementById('phone').value = currentConfig.contact.phone;
+                    document.getElementById('email').value = currentConfig.contact.email;
+                    document.getElementById('address').value = currentConfig.contact.address;
+                    document.getElementById('company').value = currentConfig.contact.company;
+                    
+                    // Update card standard
+                    document.getElementById('cardStandardSelect').value = currentConfig.standard;
+                    
+                    // Update orientation
+                    const orientationToggle = document.getElementById('orientationToggle');
+                    orientationToggle.checked = currentConfig.orientation === 'portrait';
+                    document.getElementById('orientationLabel').textContent = 
+                        currentConfig.orientation === 'portrait' ? 'Portrait' : 'Landscape';
+                    
+                    // Regenerate card
+                    displayColorPalette();
+                    setupCanvas();
+                    generateCard();
+                    
+                    alert('Configuration imported successfully!');
+                } catch (error) {
+                    alert('Error importing configuration: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = message;
+            document.body.prepend(errorDiv);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
     </script>
 </body>
 </html>
