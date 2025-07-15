@@ -1,265 +1,237 @@
-# Dadaist Business Card Generator - Design Document
+# Dadaist Business Card Generator - Technical Specification
 
-## Project Overview
+## Overview
+A modern web application for generating printer-friendly business cards with Dadaist design elements. The cards feature minimal color palettes with WCAG compliance checking and creative layouts while maintaining readability.
 
-A web-based business card generator that creates avant-garde, Dadaist-inspired designs while maintaining professional functionality and accessibility standards. The project combines the chaotic, anti-rational aesthetics of Dadaism with modern web technologies and WCAG compliance.
+## Core Features
 
-## Design Philosophy
+### 1. Card Design System
+- **Background**: White/transparent for printer compatibility
+- **Colors**: 3-7 color palette with flat/textured appearance
+- **Typography**: Legible but creatively positioned text elements
+- **Layout**: Misaligned elements following Dadaist principles while maintaining readability
 
-### Core Dadaist Principles
-- **Anti-rational Layout**: Text and elements positioned using controlled randomness
-- **Typographic Chaos**: Mixed fonts, sizes, and orientations
-- **Collage Aesthetic**: Overlapping elements, torn paper effects, abstract shapes
-- **Contradiction**: Professional information presented in deliberately unprofessional layouts
-- **Fragmentation**: Breaking traditional business card conventions
+### 2. Standard Card Formats
+- **ISO-7810/ID-1**: 85.60 × 53.98 mm (standard business card)
+- **Indian Standard**: 55 × 90 mm
+- **Orientation**: Portrait/Landscape toggle
 
-### Visual Language Inspiration
-Based on the provided images:
-1. **Abstract Geometric Shapes**: Organic forms, irregular patterns, scattered elements
-2. **Layered Composition**: Multiple overlapping visual planes
-3. **Typographic Experimentation**: The "DA DA DUM" repetitive text patterns
-4. **Color Blocking**: Bold, contrasting color areas
-5. **Textural Elements**: Simulated paper tears, brush strokes, collage fragments
+### 3. Contact Information Management
+- Primary name field (English/Latin characters)
+- Secondary name field (Bengali/local script)
+- Job title
+- Phone number
+- Email address
+- Dynamic positioning with controlled chaos
 
-## Technical Architecture
+### 4. Color Palette System
+- **Palette Size**: Minimum 3, maximum 7 colors
+- **WCAG Compliance**: Only checked for overlapping/intersecting elements
+- **Color Generation**: Random and curated palette options
+- **Display**: Color swatches with hex values
+- **Background Handling**: No background color compliance (white/transparent)
 
-### Core Technologies
-- **HTML5 Canvas**: For dynamic card generation and pixel manipulation
-- **CSS3**: Advanced animations, transforms, and responsive design
-- **JavaScript**: Dadaist algorithms, color theory, and export functionality
-- **Web APIs**: File handling, color manipulation, device detection
+### 5. Chaos Control System
+- **Chaos Level**: 0-100% slider controlling randomness
+- **Element Positioning**: Controlled misalignment
+- **Rotation**: Subtle text and shape rotation
+- **Texture**: Optional texture overlay
 
-### Responsive Design Strategy
-- **Mobile-First Approach**: Optimized for touch interactions
-- **Orientation Agnostic**: Seamless landscape/portrait transitions
-- **Adaptive Canvas**: Dynamic sizing based on device capabilities
-- **Performance Optimization**: Efficient rendering for resource-constrained devices
+### 6. Export Functionality
+- **Formats**: PNG, PDF, SVG
+- **Resolution**: 300, 600, 1200 DPI options
+- **Print Ready**: Optimized for professional printing
 
-## Feature Specifications
-
-### 1. Dadaist Layout Engine
-
-#### Chaos Algorithms
-```javascript
-// Pseudo-code for Dadaist positioning
-function generateDadaistLayout(elements) {
-    const zones = createConflictingZones();
-    const antiPatterns = generateAntiRationalGrid();
-    
-    elements.forEach(element => {
-        element.position = calculateChaoticPosition(zones, antiPatterns);
-        element.rotation = Math.random() * 360;
-        element.scale = 0.7 + Math.random() * 0.6;
-    });
-}
-```
-
-#### Typography System
-- **Font Mixing**: Combination of serif, sans-serif, and display fonts
-- **Size Chaos**: Intentionally inconsistent text sizing
-- **Orientation Variety**: Text at multiple angles (0°, 45°, 90°, 135°, etc.)
-- **Weight Contrast**: Mixing bold, regular, and light weights
-
-### 2. WCAG Compliant Color Palette Generator
-
-#### Color Theory Implementation
-```javascript
-class WCAGColorPalette {
-    constructor() {
-        this.minContrast = 4.5; // AA standard
-        this.preferredContrast = 7.0; // AAA standard
-    }
-    
-    generateDadaistPalette() {
-        const baseColors = this.generateHarmoniousBase();
-        const contrastPairs = this.ensureWCAGCompliance(baseColors);
-        return this.addDadaistVariations(contrastPairs);
-    }
-}
-```
-
-#### Accessibility Features
-- **Contrast Ratio Calculator**: Real-time WCAG compliance checking
-- **Color Blindness Simulation**: Deuteranopia, Protanopia, Tritanopia support
-- **Alternative Text**: Comprehensive alt-text for all visual elements
-- **High Contrast Mode**: Optional enhanced contrast theme
-
-### 3. Dynamic Element Generation
-
-#### Abstract Shape Library
-- **Organic Forms**: Blob-like shapes using Bézier curves
-- **Geometric Fragments**: Torn paper effects, irregular polygons
-- **Texture Overlays**: Simulated paint splatters, ink blots
-- **Collage Elements**: Vintage paper textures, newspaper clippings
-
-#### Animation System
-- **Micro-interactions**: Subtle hover effects maintaining Dadaist aesthetic
-- **Loading Animations**: Chaotic but purposeful loading states
-- **Transition Effects**: Smooth morphing between card variations
-
-### 4. Professional Information Integration
-
-#### Content Hierarchy (Dadaist Approach)
-1. **Name**: Fragmented across multiple locations
-2. **Title**: Rotated, scaled, or partially obscured
-3. **Contact Info**: Scattered but readable
-4. **Company**: Integrated into abstract elements
-
-#### Multilingual Support
-- **Primary Language**: English (or user-selected)
-- **Secondary Language**: Local script support (Devanagari, etc.)
-- **Font Fallbacks**: Comprehensive font stack for international characters
-
-## User Interface Design
-
-### Control Panel Layout
-```
-├── Card Preview (60% width)
-│   ├── Interactive Canvas
-│   ├── Real-time Updates
-│   └── Zoom/Pan Controls
-│
-├── Generation Controls (40% width)
-│   ├── Chaos Level Slider
-│   ├── Color Palette Section
-│   ├── Typography Controls
-│   ├── Element Density
-│   └── Export Options
-```
-
-### Mobile Interface Adaptations
-- **Collapsible Panels**: Accordion-style controls
-- **Gesture Support**: Pinch-to-zoom, swipe navigation
-- **Touch-Optimized**: Larger touch targets, haptic feedback
-- **Orientation Handling**: Seamless landscape/portrait switching
-
-## Color Palette System
-
-### Palette Generation Algorithm
-```javascript
-class DadaistColorGenerator {
-    generatePalette(baseHue, chaosLevel) {
-        const colors = [];
-        
-        // Generate base triadic harmony
-        const harmonicColors = this.generateTriadic(baseHue);
-        
-        // Add chaotic variations
-        const chaoticColors = this.addChaos(harmonicColors, chaosLevel);
-        
-        // Ensure WCAG compliance
-        const compliantColors = this.ensureAccessibility(chaoticColors);
-        
-        return compliantColors;
-    }
-}
-```
-
-### Color Categories
-1. **Primary**: Dominant background colors
-2. **Secondary**: Text and important elements
-3. **Accent**: Highlights and call-to-action elements
-4. **Neutral**: Supporting elements and backgrounds
-5. **Chaos**: Intentionally disruptive colors for Dadaist effects
-
-### Accessibility Features
-- **Contrast Validation**: Real-time WCAG AA/AAA compliance
-- **Color Blindness Testing**: Simulate various color vision deficiencies
-- **High Contrast Mode**: Alternative palette for enhanced readability
-- **Semantic Color Coding**: Meaningful color associations
-
-## Export and Integration
-
-### Export Formats
-1. **PDF**: Vector-based, print-ready (300/600/1200 DPI)
-2. **PNG**: Raster format with transparency support
-3. **SVG**: Scalable vector graphics for web use
-4. **JSON**: Configuration export for reproduction
-
-### Print Specifications
-- **Standard Sizes**: ISO-7810, Indian Standard, custom dimensions
-- **Bleed Areas**: 3mm bleed for professional printing
-- **Color Profiles**: CMYK conversion for offset printing
-- **Resolution**: Scalable from 150 DPI (web) to 1200 DPI (professional)
+### 7. Configuration Management
+- **Export Config**: Save current settings as JSON
+- **Import Config**: Load previously saved configurations
+- **Palette Export**: Export color palettes separately
 
 ## Technical Implementation
 
-### Canvas Rendering Pipeline
-```javascript
-class DadaistRenderer {
-    render(card, config) {
-        this.clearCanvas();
-        this.drawBackground(config.colors);
-        this.drawAbstractElements(config.chaos);
-        this.drawTextElements(config.typography);
-        this.drawContactInfo(config.contact);
-        this.applyFilters(config.effects);
-    }
-}
+### Canvas System
+- HTML5 Canvas for rendering
+- Only use modern and stable web frameworks and standards that are released uoder open-source licenses
+- High-DPI support with scaling
+- Responsive design for mobile/desktop
+- Touch interaction support
+
+### Color Management
+- HSL to Hex conversion
+- Contrast ratio calculations
+- WCAG 2.1 compliance checking for neighbouring elements
+- Luminance calculations
+
+### Typography System
+- Only use fonts that are released under open source licenses
+- Multiple font families (Inter, Courier Prime, Bebas Neue)
+- Dynamic font sizing
+- Text rotation and positioning
+- Multi-language support
+
+### Shape Generation
+- Geometric shapes (circles, squares, triangles)
+- Organic/abstract shapes
+- Controlled randomness
+- Texture generation
+
+### Mobile Optimization
+- Touch event handling
+- Orientation change detection
+- Responsive layout
+- Performance optimization
+
+## User Interface Components
+
+### Main Canvas Area
+- Card preview with real-time updates
+- Zoom and pan functionality
+- Touch interaction for mobile
+
+### Control Panel
+- Chaos level slider
+- Card standard selection
+- Orientation toggle
+- Generate/Reset buttons
+
+### Contact Information Panel
+- Text input fields for all contact details
+- Real-time preview updates
+- Validation for email/phone formats
+
+### Color Palette Panel
+- Color swatch grid
+- WCAG compliance indicators
+- Palette generation controls
+- Color selection interface
+
+### Export Panel
+- Format selection (PNG/PDF/SVG)
+- DPI/quality settings
+- Export buttons
+- Configuration save/load
+
+## Default Configuration
+
+### Contact Information
+- **Name**: Sandeepan Sengupta
+- **Name (Bengali)**: সন্দীপন (smaller font, underneath)
+- **Job Title**: Imposter
+- **Phone**: +91-72785-93964
+- **Email**: mail@sandeepan.net
+
+### Design Settings
+- **Chaos Level**: 30%
+- **Orientation**: Landscape
+- **Standard**: ISO-7810
+- **Color Palette**: 5 colors maximum
+- **Background**: White
+
+## Performance Considerations
+
+### Canvas Optimization
+- Efficient redraw mechanisms
+- Memory management for high-DPI exports
+- Debounced input handling
+
+### Mobile Performance
+- Touch event optimization
+- Reduced animation complexity
+- Efficient resize handling
+
+## Accessibility Features
+
+### WCAG Compliance
+- Color contrast checking
+- Keyboard navigation support
+- Screen reader compatibility
+- High contrast mode support
+
+### Responsive Design
+- Mobile-first approach
+- Flexible layout system
+- Touch-friendly controls
+- Orientation handling
+
+## Technical Stack
+
+### Frontend
+- HTML5 Canvas API
+- CSS3 with custom properties
+- Vanilla JavaScript (ES6+)
+- Web Fonts API
+
+### Libraries
+- No external dependencies
+- Pure JavaScript implementation
+- Browser-native APIs only
+
+## File Structure
+
+```
+dadaist-card-generator/
+├── index.html (monolithic implementation)
+├── README.md
+└── assets/
+    ├── fonts/
+    └── icons/
 ```
 
-### Performance Optimization
-- **Canvas Pooling**: Reuse canvas contexts for efficiency
-- **Lazy Loading**: Progressive enhancement for complex elements
-- **Memory Management**: Efficient cleanup of temporary objects
-- **Caching**: Store generated elements for quick regeneration
-
-## Development Phases
-
-### Phase 1: Core Foundation (Week 1-2)
-- [ ] Basic HTML structure and responsive layout
-- [ ] Canvas setup and basic rendering
-- [ ] Color palette generation with WCAG compliance
-- [ ] Basic typography system
-
-### Phase 2: Dadaist Engine (Week 3-4)
-- [ ] Chaos algorithms for element positioning
-- [ ] Abstract shape generation
-- [ ] Typography fragmentation system
-- [ ] Animation framework
-
-### Phase 3: Advanced Features (Week 5-6)
-- [ ] Export functionality (PDF, PNG, SVG)
-- [ ] Configuration save/load system
-- [ ] Accessibility enhancements
-- [ ] Mobile optimization
-
-### Phase 4: Polish and Testing (Week 7-8)
-- [ ] Cross-browser compatibility
-- [ ] Performance optimization
-- [ ] User testing and feedback integration
-- [ ] Documentation and deployment
-
-## Testing Strategy
-
-### Accessibility Testing
-- **WCAG Compliance**: Automated and manual testing
-- **Screen Reader**: JAWS, NVDA, VoiceOver compatibility
-- **Color Contrast**: Multiple contrast ratio validators
-- **Keyboard Navigation**: Full keyboard accessibility
-
-### Cross-Platform Testing
-- **Browsers**: Chrome, Firefox, Safari, Edge
-- **Mobile Devices**: iOS, Android, various screen sizes
-- **Operating Systems**: Windows, macOS, Linux
-- **Print Testing**: Various printers and paper types
+## Browser Support
+- Chrome 80+
+- Firefox 75+
+- Safari 13+
+- Edge 80+
+- Mobile browsers (iOS Safari, Chrome Mobile)
 
 ## Future Enhancements
 
 ### Advanced Features
-- **AI-Powered Layouts**: Machine learning for better chaos
-- **Social Media Integration**: Direct sharing capabilities
-- **Batch Generation**: Multiple card variations
-- **Template Library**: Pre-designed Dadaist templates
+- Custom shape uploads
+- Advanced typography controls
+- Batch card generation
+- Template system
 
-### Technology Integration
-- **AR Preview**: Augmented reality card visualization
-- **NFC Integration**: Digital business card capabilities
-- **Blockchain**: Authenticity verification for artists
-- **Voice Control**: Accessibility enhancement
+### Integration Options
+- API for automated generation
+- CMS integration
+- Print service integration
+- Cloud storage support
 
-## Conclusion
+## Testing Requirements
 
-This Dadaist Business Card Generator represents a unique fusion of avant-garde artistic principles with modern web accessibility standards. By maintaining WCAG compliance while embracing chaos and anti-rational design, the project creates a new paradigm for professional identity presentation that is both inclusive and artistically provocative.
+### Unit Tests
+- Color calculation functions
+- Canvas rendering accuracy
+- Configuration save/load
+- Export functionality
 
-The technical architecture supports both creative expression and practical functionality, ensuring that the generated cards are not only visually striking but also professionally viable and accessible to all users.
+### Integration Tests
+- Cross-browser compatibility
+- Mobile device testing
+- Print quality validation
+- Performance benchmarking
+
+## Security Considerations
+
+### Data Handling
+- No server-side data storage
+- Client-side only processing
+- No external API calls
+- Local storage for preferences
+
+### Input Validation
+- Sanitized text inputs
+- File upload validation
+- Configuration import validation
+- Error handling
+
+## Deployment
+
+### Static Hosting
+- CDN compatible
+- No server requirements
+- Progressive Web App capabilities
+- Offline functionality potential
+
+This specification provides a comprehensive guide for implementing a modern, printer-friendly Dadaist business card generator with professional features and creative design elements.
