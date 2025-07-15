@@ -3,25 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visual Identity Business Card Generator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/tabler-icons@1.74.0/tabler-sprite.svg" rel="stylesheet">
+    <title>Dadaist Business Card Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Courier+Prime:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #6366f1;
-            --secondary-color: #8b5cf6;
-            --accent-color: #06b6d4;
-            --background-color: #f8fafc;
+            --primary-color: #1a1a1a;
+            --secondary-color: #f5f5f5;
+            --accent-color: #ff6b6b;
+            --dadaist-red: #e74c3c;
+            --dadaist-blue: #3498db;
+            --dadaist-yellow: #f1c40f;
+            --dadaist-green: #2ecc71;
+            --dadaist-purple: #9b59b6;
+            --dadaist-orange: #e67e22;
+            --background-color: #fafafa;
             --surface-color: #ffffff;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --border-color: #e2e8f0;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --error-color: #ef4444;
-            --border-radius: 12px;
-            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --border-color: #ecf0f1;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
         }
 
         * {
@@ -41,9 +43,9 @@
         .container {
             min-height: 100vh;
             display: grid;
-            grid-template-columns: 1fr 400px;
-            gap: 2rem;
-            padding: 2rem;
+            grid-template-columns: 1fr 380px;
+            gap: 1.5rem;
+            padding: 1.5rem;
         }
 
         @media (max-width: 1024px) {
@@ -57,21 +59,22 @@
         .main-content {
             display: flex;
             flex-direction: column;
-            gap: 2rem;
+            gap: 1.5rem;
         }
 
         .card {
             background: var(--surface-color);
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
-            padding: 2rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
         }
 
         .card-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
 
         .card-title {
@@ -80,29 +83,45 @@
             color: var(--text-primary);
         }
 
+        .dadaist-title {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 2rem;
+            color: var(--dadaist-red);
+            transform: rotate(-2deg);
+            text-shadow: 3px 3px 0px var(--dadaist-blue);
+        }
+
         .canvas-container {
             position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: repeating-linear-gradient(
+                45deg,
+                #f8f9fa 0px,
+                #f8f9fa 20px,
+                #e9ecef 20px,
+                #e9ecef 40px
+            );
             border-radius: var(--border-radius);
             padding: 2rem;
             min-height: 400px;
+            border: 3px dashed var(--dadaist-red);
         }
 
         #cardCanvas {
-            border-radius: 8px;
+            border-radius: 4px;
             box-shadow: var(--shadow-lg);
             background: white;
             max-width: 100%;
             max-height: 100%;
+            border: 2px solid var(--primary-color);
         }
 
         .controls-panel {
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            gap: 1rem;
         }
 
         .form-group {
@@ -114,24 +133,27 @@
         .form-group label {
             font-weight: 500;
             color: var(--text-primary);
+            font-size: 0.9rem;
         }
 
         .form-group input,
         .form-group select,
         .form-group textarea {
             padding: 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 0.875rem;
-            transition: border-color 0.2s;
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
         }
 
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            border-color: var(--dadaist-red);
+            transform: rotate(0.5deg);
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
         }
 
         .toggle-switch {
@@ -144,8 +166,8 @@
         .switch {
             position: relative;
             display: inline-block;
-            width: 50px;
-            height: 24px;
+            width: 60px;
+            height: 28px;
         }
 
         .switch input {
@@ -161,71 +183,82 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #ccc;
+            background: linear-gradient(45deg, var(--dadaist-red), var(--dadaist-blue));
             transition: .4s;
-            border-radius: 24px;
+            border-radius: 28px;
+            border: 2px solid var(--primary-color);
         }
 
         .slider:before {
             position: absolute;
             content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 2px;
             background-color: white;
             transition: .4s;
             border-radius: 50%;
-        }
-
-        input:checked + .slider {
-            background-color: var(--primary-color);
+            border: 2px solid var(--primary-color);
         }
 
         input:checked + .slider:before {
-            transform: translateX(26px);
+            transform: translateX(28px);
         }
 
         .button {
             padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 500;
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 0.875rem;
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
             justify-content: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .button:hover {
+            transform: rotate(-1deg) scale(1.02);
         }
 
         .button-primary {
-            background: var(--primary-color);
+            background: var(--dadaist-red);
             color: white;
         }
 
         .button-primary:hover {
-            background: #5856eb;
-            transform: translateY(-1px);
+            background: var(--dadaist-blue);
         }
 
         .button-secondary {
-            background: var(--border-color);
-            color: var(--text-primary);
+            background: var(--secondary-color);
+            color: var(--primary-color);
         }
 
         .button-secondary:hover {
-            background: #d1d5db;
+            background: var(--dadaist-yellow);
         }
 
         .button-accent {
-            background: var(--accent-color);
+            background: var(--dadaist-purple);
             color: white;
         }
 
         .button-accent:hover {
-            background: #0891b2;
+            background: var(--dadaist-green);
+        }
+
+        .button-chaos {
+            background: linear-gradient(45deg, var(--dadaist-red), var(--dadaist-blue), var(--dadaist-yellow));
+            color: white;
+            text-shadow: 1px 1px 0px black;
         }
 
         .button-group {
@@ -236,49 +269,103 @@
 
         .color-palette {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
             gap: 0.5rem;
             margin-top: 1rem;
         }
 
         .color-swatch {
             aspect-ratio: 1;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             box-shadow: var(--shadow);
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.2s;
             position: relative;
             overflow: hidden;
+            border: 3px solid var(--primary-color);
         }
 
         .color-swatch:hover {
-            transform: scale(1.05);
+            transform: rotate(5deg) scale(1.1);
         }
 
-        .color-swatch .color-code {
+        .color-swatch.selected {
+            border-color: var(--dadaist-red);
+            transform: rotate(-5deg) scale(1.1);
+        }
+
+        .color-swatch .color-info {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
             color: white;
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             text-align: center;
             padding: 2px;
-            font-family: 'Courier New', monospace;
+            font-family: 'Courier Prime', monospace;
+            font-weight: 700;
+        }
+
+        .wcag-indicator {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .wcag-aa { background: var(--dadaist-green); }
+        .wcag-aaa { background: var(--dadaist-blue); }
+        .wcag-fail { background: var(--dadaist-red); }
+
+        .dadaist-controls {
+            background: linear-gradient(135deg, #ff6b6b22, #4ecdc422);
+            border: 2px dashed var(--dadaist-red);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+        }
+
+        .chaos-level {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .chaos-slider {
+            flex: 1;
+            height: 8px;
+            background: linear-gradient(90deg, var(--dadaist-green), var(--dadaist-yellow), var(--dadaist-red));
+            border-radius: 4px;
+            outline: none;
+            appearance: none;
+        }
+
+        .chaos-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid white;
         }
 
         .debug-console {
-            background: #1e293b;
-            color: #e2e8f0;
+            background: var(--primary-color);
+            color: var(--secondary-color);
             padding: 1rem;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.75rem;
+            border-radius: var(--border-radius);
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.8rem;
             margin-top: 1rem;
+            border: 2px solid var(--dadaist-red);
         }
 
-        .debug-console .debug-item {
+        .debug-item {
             display: flex;
             justify-content: space-between;
             margin-bottom: 0.25rem;
@@ -292,66 +379,39 @@
             margin-right: 0.5rem;
         }
 
-        .status-success { background: var(--success-color); }
-        .status-warning { background: var(--warning-color); }
-        .status-error { background: var(--error-color); }
+        .status-success { background: var(--dadaist-green); }
+        .status-warning { background: var(--dadaist-yellow); }
+        .status-error { background: var(--dadaist-red); }
 
-        .export-options {
+        .export-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
             gap: 0.5rem;
             margin-top: 1rem;
         }
 
-        .error-message {
-            background: #fee2e2;
-            color: #dc2626;
-            padding: 1rem;
-            border-radius: 8px;
-            margin: 1rem 0;
-            border-left: 4px solid #dc2626;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--border-color);
-            border-top: 4px solid var(--primary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
         .dadaist-text {
-            font-family: 'Roboto', sans-serif;
-            font-weight: 300;
-            letter-spacing: 0.5px;
+            font-family: 'Courier Prime', monospace;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
-        .bilingual-text {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
+        .manifesto {
+            background: var(--dadaist-yellow);
+            color: var(--primary-color);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.85rem;
+            border: 3px solid var(--primary-color);
+            transform: rotate(-1deg);
+            margin: 1rem 0;
         }
 
-        .bilingual-text .local {
-            font-size: 0.9em;
-            opacity: 0.8;
+        .anti-art {
+            text-decoration: line-through;
+            color: var(--dadaist-red);
         }
 
         @media (max-width: 768px) {
@@ -365,6 +425,16 @@
             
             .canvas-container {
                 padding: 1rem;
+                min-height: 250px;
+            }
+            
+            .dadaist-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (orientation: portrait) {
+            .canvas-container {
                 min-height: 300px;
             }
         }
@@ -375,76 +445,91 @@
         <div class="main-content">
             <div class="card">
                 <div class="card-header">
-                    <h1 class="card-title">Visual Identity Business Card Generator</h1>
+                    <h1 class="dadaist-title">DADAIST CARD GENERATOR</h1>
                 </div>
                 
                 <div class="canvas-container">
                     <canvas id="cardCanvas" width="856" height="540"></canvas>
                 </div>
                 
+                <div class="manifesto">
+                    <strong>DADA MANIFESTO:</strong> Reject <span class="anti-art">traditional</span> design! 
+                    Embrace CHAOS! Business cards are <span class="anti-art">boring</span> - make them ALIVE!
+                </div>
+                
                 <div class="debug-console">
                     <div class="debug-item">
-                        <span>Screen Resolution:</span>
-                        <span id="screenResolution">-</span>
+                        <span>CHAOS LEVEL:</span>
+                        <span id="chaosLevel">50%</span>
                     </div>
                     <div class="debug-item">
-                        <span>Device Type:</span>
+                        <span>ANTI-RATIONALITY:</span>
+                        <span id="antiRationality">ACTIVE</span>
+                    </div>
+                    <div class="debug-item">
+                        <span>CARD STANDARD:</span>
+                        <span id="cardStandard">ISO-7810</span>
+                    </div>
+                    <div class="debug-item">
+                        <span>WCAG COMPLIANCE:</span>
+                        <span id="wcagStatus">-</span>
+                    </div>
+                    <div class="debug-item">
+                        <span>DEVICE:</span>
                         <span id="deviceType">-</span>
                     </div>
                     <div class="debug-item">
-                        <span>Orientation:</span>
+                        <span>ORIENTATION:</span>
                         <span id="currentOrientation">-</span>
-                    </div>
-                    <div class="debug-item">
-                        <span>Card Standard:</span>
-                        <span id="cardStandard">-</span>
-                    </div>
-                    <div class="debug-item">
-                        <span>WCAG Compliance:</span>
-                        <span id="wcagStatus">-</span>
                     </div>
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-header">
-                    <h2 class="card-title">Export Options</h2>
+                    <h2 class="card-title dadaist-text">EXPORT CHAOS</h2>
                 </div>
                 
-                <div class="export-options">
+                <div class="export-grid">
                     <button class="button button-primary" onclick="exportCard('pdf')">
-                        Export PDF
+                        📄 PDF
                     </button>
                     <button class="button button-secondary" onclick="exportCard('png')">
-                        Export PNG
+                        🖼️ PNG
                     </button>
                     <button class="button button-accent" onclick="exportCard('svg')">
-                        Export SVG
+                        🎨 SVG
                     </button>
-                    <button class="button button-secondary" onclick="exportColorPalette()">
-                        Export Palette
+                    <button class="button button-chaos" onclick="exportColorPalette()">
+                        🎭 PALETTE
                     </button>
                 </div>
                 
                 <div class="form-group">
-                    <label for="dpiSelect">Export DPI:</label>
+                    <label for="dpiSelect">EXPORT QUALITY:</label>
                     <select id="dpiSelect">
-                        <option value="300">300 DPI</option>
-                        <option value="600">600 DPI</option>
-                        <option value="1200">1200 DPI</option>
+                        <option value="300">300 DPI - STANDARD</option>
+                        <option value="600">600 DPI - HIGH</option>
+                        <option value="1200">1200 DPI - CHAOS</option>
                     </select>
                 </div>
             </div>
         </div>
 
         <div class="controls-panel">
-            <div class="card">
+            <div class="card dadaist-controls">
                 <div class="card-header">
-                    <h2 class="card-title">Card Settings</h2>
+                    <h2 class="card-title dadaist-text">CHAOS CONTROLS</h2>
+                </div>
+                
+                <div class="chaos-level">
+                    <label>CHAOS:</label>
+                    <input type="range" id="chaosSlider" class="chaos-slider" min="0" max="100" value="50" oninput="updateChaosLevel(this.value)">
+                    <span id="chaosValue">50%</span>
                 </div>
                 
                 <div class="form-group">
-                    <label for="cardStandardSelect">Card Standard:</label>
+                    <label for="cardStandardSelect">CARD STANDARD:</label>
                     <select id="cardStandardSelect" onchange="updateCardStandard()">
                         <option value="ISO-7810">ISO-7810/ID-1 (85.60 × 53.98 mm)</option>
                         <option value="Indian">Indian Standard (55 × 90 mm)</option>
@@ -452,92 +537,91 @@
                 </div>
                 
                 <div class="toggle-switch">
-                    <label>Orientation:</label>
+                    <label class="dadaist-text">ORIENTATION:</label>
                     <div class="switch">
                         <input type="checkbox" id="orientationToggle" onchange="toggleOrientation()">
                         <span class="slider"></span>
                     </div>
-                    <span id="orientationLabel">Landscape</span>
+                    <span id="orientationLabel" class="dadaist-text">LANDSCAPE</span>
                 </div>
                 
                 <div class="button-group">
-                    <button class="button button-primary" onclick="randomizeCard()">
-                        🎲 Randomize
+                    <button class="button button-chaos" onclick="generateChaos()">
+                        🎲 CHAOS!
                     </button>
-                    <button class="button button-secondary" onclick="generateCard()">
-                        🎨 Generate
+                    <button class="button button-primary" onclick="generateCard()">
+                        🎨 GENERATE
+                    </button>
+                    <button class="button button-secondary" onclick="destroyRationality()">
+                        💥 DESTROY
                     </button>
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-header">
-                    <h2 class="card-title">Contact Information</h2>
+                    <h2 class="card-title dadaist-text">PERSONAL CHAOS</h2>
                 </div>
                 
                 <div class="form-group">
-                    <label for="nameEnglish">Name (English):</label>
-                    <input type="text" id="nameEnglish" value="Arjun Patel" onchange="updateContactInfo()">
+                    <label for="nameEnglish">NAME (RATIONAL):</label>
+                    <input type="text" id="nameEnglish" value="DADA" onchange="updateContactInfo()">
                 </div>
                 
                 <div class="form-group">
-                    <label for="nameLocal">Name (Local):</label>
-                    <input type="text" id="nameLocal" value="अर्जुन पटेल" onchange="updateContactInfo()">
+                    <label for="nameLocal">NAME (IRRATIONAL):</label>
+                    <input type="text" id="nameLocal" value="DUM" onchange="updateContactInfo()">
                 </div>
                 
                 <div class="form-group">
-                    <label for="jobTitle">Job Title:</label>
-                    <input type="text" id="jobTitle" value="Digital Designer" onchange="updateContactInfo()">
+                    <label for="jobTitle">ANTI-TITLE:</label>
+                    <input type="text" id="jobTitle" value="CONTEMPORARY FURNITURE" onchange="updateContactInfo()">
                 </div>
                 
                 <div class="form-group">
-                    <label for="phone">Phone:</label>
-                    <input type="text" id="phone" value="+91-98765-43210" onchange="updateContactInfo()">
+                    <label for="phone">COMMUNICATION DEVICE:</label>
+                    <input type="text" id="phone" value="+91-DADA-DADA" onchange="updateContactInfo()">
                 </div>
                 
                 <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" value="arjun.patel@example.com" onchange="updateContactInfo()">
+                    <label for="email">ELECTRONIC CHAOS:</label>
+                    <input type="email" id="email" value="dada@chaos.art" onchange="updateContactInfo()">
                 </div>
                 
                 <div class="form-group">
-                    <label for="address">Address:</label>
-                    <textarea id="address" rows="2" onchange="updateContactInfo()">Mumbai, Maharashtra, India</textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="company">Company:</label>
-                    <input type="text" id="company" value="Creative Studio" onchange="updateContactInfo()">
+                    <label for="company">ANTI-INSTITUTION:</label>
+                    <input type="text" id="company" value="DADAIST COLLECTIVE" onchange="updateContactInfo()">
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-header">
-                    <h2 class="card-title">Color Palette</h2>
+                    <h2 class="card-title dadaist-text">WCAG COLORS</h2>
                 </div>
                 
-                <div class="color-palette" id="colorPalette">
-                    <!-- Color swatches will be generated here -->
-                </div>
+                <div class="color-palette" id="colorPalette"></div>
                 
                 <div class="button-group">
-                    <button class="button button-secondary" onclick="generateNewPalette()">
-                        🎨 New Palette
+                    <button class="button button-primary" onclick="generateWCAGPalette()">
+                        🎨 ACCESSIBLE CHAOS
+                    </button>
+                    <button class="button button-secondary" onclick="generateRandomPalette()">
+                        🎲 RANDOM
                     </button>
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-header">
-                    <h2 class="card-title">Configuration</h2>
+                    <h2 class="card-title dadaist-text">ANTI-CONFIG</h2>
                 </div>
                 
                 <div class="button-group">
                     <button class="button button-secondary" onclick="exportConfig()">
-                        💾 Export Config
+                        💾 SAVE CHAOS
                     </button>
                     <button class="button button-secondary" onclick="document.getElementById('configImport').click()">
-                        📁 Import Config
+                        📁 IMPORT CHAOS
                     </button>
                 </div>
                 
@@ -546,28 +630,22 @@
         </div>
     </div>
 
-    <!-- Include required libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-
     <script>
-        // Global variables
+        // Global configuration
         let currentConfig = {
             standard: 'ISO-7810',
             orientation: 'landscape',
+            chaosLevel: 50,
             colors: [],
             contact: {
-                nameEnglish: 'Arjun Patel',
-                nameLocal: 'अर्जुन पटेल',
-                jobTitle: 'Digital Designer',
-                phone: '+91-98765-43210',
-                email: 'arjun.patel@example.com',
-                address: 'Mumbai, Maharashtra, India',
-                company: 'Creative Studio'
+                nameEnglish: 'DADA',
+                nameLocal: 'DUM',
+                jobTitle: 'CONTEMPORARY FURNITURE',
+                phone: '+91-DADA-DADA',
+                email: 'dada@chaos.art',
+                company: 'DADAIST COLLECTIVE'
             },
-            logo: null,
-            textures: []
+            elements: []
         };
 
         const cardStandards = {
@@ -575,54 +653,44 @@
             'Indian': { width: 55, height: 90, unit: 'mm' }
         };
 
-        const forbiddenColors = [
-            '#000000', '#FFFFFF', '#FF0000', '#00FF00', 
-            '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF'
+        const dadaistTexts = [
+            'DADA', 'DUM', 'DA DA', 'DADADUM', 'ANTI-ART', 'CHAOS',
+            'IRRATIONAL', 'MANIFESTO', 'DESTROY', 'CREATE', 'NONSENSE',
+            'ZURICH', 'BERLIN', 'PARIS', 'CABARET', 'VOLTAIRE'
         ];
 
-        let canvas, ctx;
-        let deviceInfo = {};
+        const dadaistShapes = [
+            'circle', 'square', 'triangle', 'line', 'scribble', 'collage'
+        ];
 
-        // Initialize the application
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeApp();
-        });
+        let canvas, ctx, deviceInfo = {};
+        let selectedColorIndex = 0;
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', initializeApp);
 
         function initializeApp() {
-            // Check minimum requirements
             if (!checkMinimumRequirements()) {
-                showError('Your screen resolution is too small. Minimum 320x568 required.');
+                showError('Screen resolution too small for proper Dadaist chaos!');
                 return;
             }
 
-            // Initialize canvas
             canvas = document.getElementById('cardCanvas');
             ctx = canvas.getContext('2d');
-
-            // Detect device information
+            
             detectDevice();
-            
-            // Generate initial palette
-            generateNewPalette();
-            
-            // Setup canvas
+            generateWCAGPalette();
             setupCanvas();
-            
-            // Generate initial card
             generateCard();
-            
-            // Update debug console
             updateDebugConsole();
             
-            // Setup orientation change listener
+            // Orientation change listeners
             window.addEventListener('orientationchange', handleOrientationChange);
             window.addEventListener('resize', handleOrientationChange);
         }
 
         function checkMinimumRequirements() {
-            const minWidth = 320;
-            const minHeight = 568;
-            return window.screen.width >= minWidth && window.screen.height >= minHeight;
+            return window.screen.width >= 320 && window.screen.height >= 568;
         }
 
         function detectDevice() {
@@ -630,22 +698,12 @@
                 screenWidth: window.screen.width,
                 screenHeight: window.screen.height,
                 pixelRatio: window.devicePixelRatio || 1,
-                userAgent: navigator.userAgent,
-                platform: navigator.platform,
                 mobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
-                touchSupport: 'ontouchstart' in window,
-                cores: navigator.hardwareConcurrency || 4,
-                memory: navigator.deviceMemory || 4
+                touchSupport: 'ontouchstart' in window
             };
-
-            // Detect device type
-            if (deviceInfo.mobile) {
-                deviceInfo.type = 'Mobile';
-            } else if (window.screen.width <= 1024) {
-                deviceInfo.type = 'Tablet';
-            } else {
-                deviceInfo.type = 'Desktop';
-            }
+            
+            deviceInfo.type = deviceInfo.mobile ? 'Mobile' : 
+                             window.screen.width <= 1024 ? 'Tablet' : 'Desktop';
         }
 
         function setupCanvas() {
@@ -660,7 +718,7 @@
                 canvas.height = mmToPx(standard.width, dpi);
             }
             
-            // Scale canvas for display
+            // Scale for display
             const maxWidth = Math.min(600, window.innerWidth - 100);
             const scale = maxWidth / canvas.width;
             canvas.style.width = canvas.width * scale + 'px';
@@ -671,27 +729,48 @@
             return Math.round((mm * dpi) / 25.4);
         }
 
-        function generateNewPalette() {
+        function generateWCAGPalette() {
             currentConfig.colors = [];
-            for (let i = 0; i < 8; i++) {
-                let color;
-                do {
-                    color = generateRandomColor();
-                } while (isPureForbiddenColor(color));
-                currentConfig.colors.push(color);
+            const baseColors = [
+                '#2c3e50', '#34495e', '#7f8c8d', '#95a5a6', '#ecf0f1',
+                '#e74c3c', '#c0392b', '#f39c12', '#e67e22', '#f1c40f',
+                '#27ae60', '#2ecc71', '#16a085', '#1abc9c', '#2980b9',
+                '#3498db', '#9b59b6', '#8e44ad'
+            ];
+            
+            // Generate WCAG compliant combinations
+            for (let i = 0; i < 12; i++) {
+                const color = baseColors[i % baseColors.length];
+                const wcagLevel = getWCAGLevel(color, '#ffffff');
+                currentConfig.colors.push({
+                    hex: color,
+                    wcag: wcagLevel,
+                    contrast: calculateContrast(color, '#ffffff')
+                });
+            }
+            
+            displayColorPalette();
+        }
+
+        function generateRandomPalette() {
+            currentConfig.colors = [];
+            for (let i = 0; i < 12; i++) {
+                const color = generateRandomColor();
+                const wcagLevel = getWCAGLevel(color, '#ffffff');
+                currentConfig.colors.push({
+                    hex: color,
+                    wcag: wcagLevel,
+                    contrast: calculateContrast(color, '#ffffff')
+                });
             }
             displayColorPalette();
         }
 
         function generateRandomColor() {
             const hue = Math.floor(Math.random() * 360);
-            const saturation = Math.floor(Math.random() * 40) + 40; // 40-80%
-            const lightness = Math.floor(Math.random() * 40) + 30; // 30-70%
+            const saturation = Math.floor(Math.random() * 60) + 40;
+            const lightness = Math.floor(Math.random() * 60) + 20;
             return hslToHex(hue, saturation, lightness);
-        }
-
-        function isPureForbiddenColor(color) {
-            return forbiddenColors.includes(color.toUpperCase());
         }
 
         function hslToHex(h, s, l) {
@@ -705,186 +784,11 @@
             return `#${f(0)}${f(8)}${f(4)}`;
         }
 
-        function displayColorPalette() {
-            const paletteContainer = document.getElementById('colorPalette');
-            paletteContainer.innerHTML = '';
-            
-            currentConfig.colors.forEach((color, index) => {
-                const swatch = document.createElement('div');
-                swatch.className = 'color-swatch';
-                swatch.style.backgroundColor = color;
-                swatch.innerHTML = `<div class="color-code">${color}</div>`;
-                swatch.onclick = () => selectColor(color, index);
-                paletteContainer.appendChild(swatch);
-            });
-        }
-
-        function selectColor(color, index) {
-            console.log(`Selected color ${index}: ${color}`);
-            // Could implement color editing here
-        }
-
-        function generateCard() {
-            if (!ctx) return;
-            
-            // Clear canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw background
-            drawBackground();
-            
-            // Draw dadaist elements
-            drawDadaistElements();
-            
-            // Draw company logo area
-            drawLogoArea();
-            
-            // Draw contact information
-            drawContactInfo();
-            
-            // Draw decorative elements
-            drawDecorations();
-            
-            // Update debug console
-            updateDebugConsole();
-        }
-
-        function drawBackground() {
-            const colors = currentConfig.colors;
-            if (colors.length < 2) return;
-            
-            // Create gradient background
-            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-            gradient.addColorStop(0, colors[0]);
-            gradient.addColorStop(0.5, colors[1]);
-            gradient.addColorStop(1, colors[2] || colors[0]);
-            
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
-
-        function drawDadaistElements() {
-            const colors = currentConfig.colors;
-            if (colors.length < 4) return;
-            
-            // Draw random geometric shapes
-            for (let i = 0; i < 5; i++) {
-                ctx.save();
-                ctx.globalAlpha = 0.3;
-                ctx.fillStyle = colors[i % colors.length];
-                
-                const x = Math.random() * canvas.width;
-                const y = Math.random() * canvas.height;
-                const size = Math.random() * 100 + 20;
-                
-                if (Math.random() > 0.5) {
-                    // Draw circle
-                    ctx.beginPath();
-                    ctx.arc(x, y, size, 0, Math.PI * 2);
-                    ctx.fill();
-                } else {
-                    // Draw rectangle
-                    ctx.fillRect(x, y, size, size);
-                }
-                
-                ctx.restore();
-            }
-        }
-
-        function drawLogoArea() {
-            const colors = currentConfig.colors;
-            if (colors.length < 3) return;
-            
-            // Draw logo placeholder
-            const logoSize = Math.min(canvas.width, canvas.height) * 0.2;
-            const logoX = canvas.width * 0.05;
-            const logoY = canvas.height * 0.05;
-            
-            ctx.fillStyle = colors[3];
-            ctx.fillRect(logoX, logoY, logoSize, logoSize);
-            
-            // Draw logo text
-            ctx.fillStyle = getContrastColor(colors[3]);
-            ctx.font = `${logoSize * 0.15}px Inter`;
-            ctx.textAlign = 'center';
-            ctx.fillText('LOGO', logoX + logoSize / 2, logoY + logoSize / 2);
-        }
-
-        function drawContactInfo() {
-            const colors = currentConfig.colors;
-            const contact = currentConfig.contact;
-            
-            // Calculate text area
-            const textX = canvas.width * 0.35;
-            const textY = canvas.height * 0.15;
-            const textWidth = canvas.width * 0.6;
-            
-            // Draw semi-transparent background for text
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-            ctx.fillRect(textX - 10, textY - 10, textWidth + 20, canvas.height * 0.7);
-            
-            // Draw text
-            ctx.fillStyle = colors[4] || '#333333';
-            ctx.textAlign = 'left';
-            
-            let currentY = textY + 20;
-            const lineHeight = canvas.height * 0.08;
-            
-            // Name (English)
-            ctx.font = `bold ${lineHeight * 0.7}px Inter`;
-            ctx.fillText(contact.nameEnglish, textX, currentY);
-            currentY += lineHeight * 0.5;
-            
-            // Name (Local)
-            ctx.font = `${lineHeight * 0.5}px Inter`;
-            ctx.fillStyle = colors[5] || '#666666';
-            ctx.fillText(contact.nameLocal, textX, currentY);
-            currentY += lineHeight;
-            
-            // Job Title
-            ctx.font = `${lineHeight * 0.4}px Inter`;
-            ctx.fillStyle = colors[6] || '#555555';
-            ctx.fillText(contact.jobTitle, textX, currentY);
-            currentY += lineHeight * 0.8;
-            
-            // Contact details
-            ctx.font = `${lineHeight * 0.35}px Inter`;
-            ctx.fillStyle = colors[7] || '#444444';
-            ctx.fillText(contact.phone, textX, currentY);
-            currentY += lineHeight * 0.6;
-            ctx.fillText(contact.email, textX, currentY);
-            currentY += lineHeight * 0.6;
-            ctx.fillText(contact.address, textX, currentY);
-            currentY += lineHeight * 0.6;
-            ctx.fillText(contact.company, textX, currentY);
-        }
-
-        function drawDecorations() {
-            const colors = currentConfig.colors;
-            
-            // Draw decorative border
-            ctx.strokeStyle = colors[0];
-            ctx.lineWidth = 3;
-            ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
-            
-            // Draw corner decorations
-            for (let i = 0; i < 4; i++) {
-                const x = i % 2 === 0 ? 20 : canvas.width - 20;
-                const y = i < 2 ? 20 : canvas.height - 20;
-                
-                ctx.fillStyle = colors[i % colors.length];
-                ctx.beginPath();
-                ctx.arc(x, y, 10, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        function getContrastColor(hexColor) {
-            const r = parseInt(hexColor.substr(1, 2), 16);
-            const g = parseInt(hexColor.substr(3, 2), 16);
-            const b = parseInt(hexColor.substr(5, 2), 16);
-            const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-            return luminance > 0.5 ? '#000000' : '#FFFFFF';
+        function getWCAGLevel(color1, color2) {
+            const contrast = calculateContrast(color1, color2);
+            if (contrast >= 7) return 'AAA';
+            if (contrast >= 4.5) return 'AA';
+            return 'FAIL';
         }
 
         function calculateContrast(color1, color2) {
@@ -897,6 +801,7 @@
 
         function getLuminance(color) {
             const rgb = hexToRgb(color);
+            if (!rgb) return 0;
             const [r, g, b] = rgb.map(c => {
                 c = c / 255;
                 return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
@@ -913,294 +818,23 @@
             ] : null;
         }
 
-        function updateCardStandard() {
-            const select = document.getElementById('cardStandardSelect');
-            currentConfig.standard = select.value;
-            setupCanvas();
-            generateCard();
-        }
-
-        function toggleOrientation() {
-            const toggle = document.getElementById('orientationToggle');
-            const label = document.getElementById('orientationLabel');
+        function displayColorPalette() {
+            const paletteContainer = document.getElementById('colorPalette');
+            paletteContainer.innerHTML = '';
             
-            if (toggle.checked) {
-                currentConfig.orientation = 'portrait';
-                label.textContent = 'Portrait';
-            } else {
-                currentConfig.orientation = 'landscape';
-                label.textContent = 'Landscape';
-            }
-            
-            setupCanvas();
-            generateCard();
-        }
-
-        function handleOrientationChange() {
-            setTimeout(() => {
-                detectDevice();
-                setupCanvas();
-                generateCard();
-                updateDebugConsole();
-            }, 100);
-        }
-
-        function updateContactInfo() {
-            currentConfig.contact = {
-                nameEnglish: document.getElementById('nameEnglish').value,
-                nameLocal: document.getElementById('nameLocal').value,
-                jobTitle: document.getElementById('jobTitle').value,
-                phone: document.getElementById('phone').value,
-                email: document.getElementById('email').value,
-                address: document.getElementById('address').value,
-                company: document.getElementById('company').value
-            };
-            generateCard();
-        }
-
-        function randomizeCard() {
-            // Randomize colors
-            generateNewPalette();
-            
-            // Randomize contact info with Indian names
-            const indianNames = [
-                { english: 'Arjun Patel', local: 'अर्जुन पटेल' },
-                { english: 'Priya Sharma', local: 'प्रिया शर्मा' },
-                { english: 'Kiran Kumar', local: 'किरण कुमार' },
-                { english: 'Anita Singh', local: 'अनीता सिंह' },
-                { english: 'Raj Gupta', local: 'राज गुप्ता' },
-                { english: 'Maya Joshi', local: 'माया जोशी' }
-            ];
-            
-            const jobTitles = [
-                'Digital Designer', 'Software Engineer', 'Marketing Manager',
-                'Creative Director', 'Data Analyst', 'Product Manager'
-            ];
-            
-            const companies = [
-                'Tech Solutions', 'Creative Studio', 'Digital Agency',
-                'Innovation Labs', 'Design House', 'Tech Ventures'
-            ];
-            
-            const cities = [
-                'Mumbai, Maharashtra', 'Delhi, Delhi', 'Bangalore, Karnataka',
-                'Chennai, Tamil Nadu', 'Pune, Maharashtra', 'Hyderabad, Telangana'
-            ];
-            
-            const randomName = indianNames[Math.floor(Math.random() * indianNames.length)];
-            const randomTitle = jobTitles[Math.floor(Math.random() * jobTitles.length)];
-            const randomCompany = companies[Math.floor(Math.random() * companies.length)];
-            const randomCity = cities[Math.floor(Math.random() * cities.length)];
-            
-            // Update form fields
-            document.getElementById('nameEnglish').value = randomName.english;
-            document.getElementById('nameLocal').value = randomName.local;
-            document.getElementById('jobTitle').value = randomTitle;
-            document.getElementById('company').value = randomCompany;
-            document.getElementById('address').value = randomCity + ', India';
-            
-            // Update config
-            updateContactInfo();
-        }
-
-        function updateDebugConsole() {
-            document.getElementById('screenResolution').textContent = 
-                `${deviceInfo.screenWidth}x${deviceInfo.screenHeight} (${deviceInfo.pixelRatio}x)`;
-            document.getElementById('deviceType').textContent = deviceInfo.type;
-            document.getElementById('currentOrientation').textContent = currentConfig.orientation;
-            document.getElementById('cardStandard').textContent = currentConfig.standard;
-            
-            // Calculate WCAG compliance
-            let wcagCompliant = 0;
-            let totalChecks = 0;
-            
-            for (let i = 0; i < currentConfig.colors.length - 1; i++) {
-                for (let j = i + 1; j < currentConfig.colors.length; j++) {
-                    const contrast = calculateContrast(currentConfig.colors[i], currentConfig.colors[j]);
-                    totalChecks++;
-                    if (contrast >= 4.5) wcagCompliant++;
-                }
-            }
-            
-            const complianceRate = totalChecks > 0 ? (wcagCompliant / totalChecks * 100).toFixed(1) : 0;
-            document.getElementById('wcagStatus').innerHTML = 
-                `<span class="status-indicator ${complianceRate >= 70 ? 'status-success' : complianceRate >= 50 ? 'status-warning' : 'status-error'}"></span>${complianceRate}%`;
-        }
-
-        function exportCard(format) {
-            const dpi = parseInt(document.getElementById('dpiSelect').value);
-            
-            switch (format.toLowerCase()) {
-                case 'pdf':
-                    exportToPDF();
-                    break;
-                case 'png':
-                    exportToPNG(dpi);
-                    break;
-                case 'svg':
-                    exportToSVG();
-                    break;
-            }
-        }
-
-        function exportToPDF() {
-            const { jsPDF } = window.jspdf;
-            const standard = cardStandards[currentConfig.standard];
-            
-            const orientation = currentConfig.orientation === 'landscape' ? 'l' : 'p';
-            const pdf = new jsPDF({
-                orientation: orientation,
-                unit: 'mm',
-                format: [standard.width, standard.height]
-            });
-            
-            const imgData = canvas.toDataURL('image/png');
-            if (currentConfig.orientation === 'landscape') {
-                pdf.addImage(imgData, 'PNG', 0, 0, standard.width, standard.height);
-            } else {
-                pdf.addImage(imgData, 'PNG', 0, 0, standard.height, standard.width);
-            }
-            
-            pdf.save('business-card.pdf');
-        }
-
-        function exportToPNG(dpi) {
-            canvas.toBlob((blob) => {
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `business-card-${dpi}dpi.png`;
-                a.click();
-                URL.revokeObjectURL(url);
-            }, 'image/png');
-        }
-
-        function exportToSVG() {
-            // For SVG export, we'll create a simple SVG representation
-            const standard = cardStandards[currentConfig.standard];
-            const width = currentConfig.orientation === 'landscape' ? standard.width : standard.height;
-            const height = currentConfig.orientation === 'landscape' ? standard.height : standard.width;
-            
-            const svg = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="${width}mm" height="${height}mm" viewBox="0 0 ${width} ${height}">
-                    <rect width="100%" height="100%" fill="${currentConfig.colors[0] || '#ffffff'}"/>
-                    <text x="10" y="20" font-family="Arial" font-size="4" fill="${currentConfig.colors[1] || '#000000'}">
-                        ${currentConfig.contact.nameEnglish}
-                    </text>
-                    <text x="10" y="30" font-family="Arial" font-size="3" fill="${currentConfig.colors[2] || '#000000'}">
-                        ${currentConfig.contact.jobTitle}
-                    </text>
-                </svg>
-            `;
-            
-            const blob = new Blob([svg], { type: 'image/svg+xml' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'business-card.svg';
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function exportColorPalette() {
-            const paletteCanvas = document.createElement('canvas');
-            paletteCanvas.width = 800;
-            paletteCanvas.height = 200;
-            const paletteCtx = paletteCanvas.getContext('2d');
-            
-            const swatchWidth = 800 / currentConfig.colors.length;
-            
-            currentConfig.colors.forEach((color, index) => {
-                const x = index * swatchWidth;
+            currentConfig.colors.forEach((colorObj, index) => {
+                const swatch = document.createElement('div');
+                swatch.className = 'color-swatch';
+                swatch.style.backgroundColor = colorObj.hex;
                 
-                // Draw color swatch
-                paletteCtx.fillStyle = color;
-                paletteCtx.fillRect(x, 0, swatchWidth, 150);
+                const wcagIndicator = document.createElement('div');
+                wcagIndicator.className = `wcag-indicator wcag-${colorObj.wcag.toLowerCase()}`;
                 
-                // Draw hex code
-                paletteCtx.fillStyle = getContrastColor(color);
-                paletteCtx.font = '14px monospace';
-                paletteCtx.textAlign = 'center';
-                paletteCtx.fillText(color, x + swatchWidth / 2, 170);
-            });
-            
-            paletteCanvas.toBlob((blob) => {
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'color-palette.png';
-                a.click();
-                URL.revokeObjectURL(url);
-            }, 'image/png');
-        }
-
-        function exportConfig() {
-            const config = {
-                ...currentConfig,
-                timestamp: new Date().toISOString(),
-                version: '1.0'
-            };
-            
-            const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'business-card-config.json';
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function importConfig(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const config = JSON.parse(e.target.result);
-                    currentConfig = { ...currentConfig, ...config };
-                    
-                    // Update form fields
-                    document.getElementById('nameEnglish').value = currentConfig.contact.nameEnglish;
-                    document.getElementById('nameLocal').value = currentConfig.contact.nameLocal;
-                    document.getElementById('jobTitle').value = currentConfig.contact.jobTitle;
-                    document.getElementById('phone').value = currentConfig.contact.phone;
-                    document.getElementById('email').value = currentConfig.contact.email;
-                    document.getElementById('address').value = currentConfig.contact.address;
-                    document.getElementById('company').value = currentConfig.contact.company;
-                    
-                    // Update card standard
-                    document.getElementById('cardStandardSelect').value = currentConfig.standard;
-                    
-                    // Update orientation
-                    const orientationToggle = document.getElementById('orientationToggle');
-                    orientationToggle.checked = currentConfig.orientation === 'portrait';
-                    document.getElementById('orientationLabel').textContent = 
-                        currentConfig.orientation === 'portrait' ? 'Portrait' : 'Landscape';
-                    
-                    // Regenerate card
-                    displayColorPalette();
-                    setupCanvas();
-                    generateCard();
-                    
-                    alert('Configuration imported successfully!');
-                } catch (error) {
-                    alert('Error importing configuration: ' + error.message);
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        function showError(message) {
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'error-message';
-            errorDiv.textContent = message;
-            document.body.prepend(errorDiv);
-            
-            setTimeout(() => {
-                errorDiv.remove();
-            }, 5000);
-        }
-    </script>
-</body>
-</html>
+                const colorInfo = document.createElement('div');
+                colorInfo.className = 'color-info';
+                colorInfo.textContent = colorObj.hex.toUpperCase();
+                
+                swatch.appendChild(wcagIndicator);
+                swatch.appendChild(colorInfo);
+                
+                swatch.addEventListener('click', () => selectColor(
