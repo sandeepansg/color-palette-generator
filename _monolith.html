@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dadaism Business Card Creator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            padding: 40px;
+        }
+
+        .controls-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+        }
+
+        .controls-section h2 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .control-group input,
+        .control-group select,
+        .control-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .control-group input:focus,
+        .control-group select:focus,
+        .control-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .control-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .toggle-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 12px;
+            background: #e9ecef;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .toggle-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .color-palette {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .color-item {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            border: 3px solid transparent;
+        }
+
+        .color-item:hover {
+            transform: scale(1.1);
+        }
+
+        .color-item.selected {
+            border-color: #333;
+            transform: scale(1.15);
+        }
+
+        .preview-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .preview-section h2 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+        }
+
+        .card-preview {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .card-preview:hover {
+            transform: translateY(-5px);
+        }
+
+        #businessCard {
+            display: block;
+            border-radius: 15px;
+        }
+
+        .export-controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .export-btn {
+            padding: 12px 24px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .export-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .generate-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-select {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .toggle-group {
+                flex-direction: column;
+            }
+
+            .export-controls {
+                flex-direction: column;
+            }
+        }
+
+        .debug-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .accessibility-text {
+            position: absolute;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Dadaism Business Card Creator</h1>
+            <p>Create artistic business cards with chaos and beauty</p>
+        </header>
+
+        <main class="main-content">
+            <section class="controls-section">
+                <h2>Design Controls</h2>
+                
+                <div class="control-group">
+                    <label for="primaryName">Primary Name (English)</label>
+                    <input type="text" id="primaryName" placeholder="John Doe" value="Arjun Sharma">
+                </div>
+
+                <div class="control-group">
+                    <label for="primaryLang">Primary Language</label>
+                    <select id="primaryLang">
+                        <option value="en">English</option>
+                        <option value="hi">Hindi (हिंदी)</option>
+                        <option value="bn">Bengali (বাংলা)</option>
+                        <option value="ta">Tamil (தமிழ்)</option>
+                        <option value="te">Telugu (తెలుగు)</option>
+                        <option value="mr">Marathi (मराठी)</option>
+                        <option value="gu">Gujarati (ગુજરાતી)</option>
+                        <option value="kn">Kannada (ಕನ್ನಡ)</option>
+                        <option value="ml">Malayalam (മലയാളം)</option>
+                        <option value="or">Odia (ଓଡ଼ିଆ)</option>
+                        <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+                        <option value="as">Assamese (অসমীয়া)</option>
+                        <option value="ur">Urdu (اردو)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="jobTitle">Job Title</label>
+                    <input type="text" id="jobTitle" placeholder="Software Engineer" value="Software Engineer">
+                </div>
+
+                <div class="control-group">
+                    <label for="company">Company</label>
+                    <input type="text" id="company" placeholder="Tech Corp" value="Innovation Labs">
+                </div>
+
+                <div class="control-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="john@example.com" value="arjun@innovationlabs.com">
+                </div>
+
+                <div class="control-group">
+                    <label for="phone">Phone</label>
+                    <input type="tel" id="phone" placeholder="+91 98765 43210" value="+91 98765 43210">
+                </div>
+
+                <div class="control-group">
+                    <label for="website">Website</label>
+                    <input type="url" id="website" placeholder="https://example.com" value="https://innovationlabs.com">
+                </div>
+
+                <div class="control-group">
+                    <label for="address">Address</label>
+                    <textarea id="address" placeholder="123 Tech Street, City, Country">Tech Park, Sector 5, Bangalore, India</textarea>
+                </div>
+
+                <div class="toggle-group">
+                    <button class="toggle-btn active" id="orientationPortrait" onclick="setOrientation('portrait')">Portrait</button>
+                    <button class="toggle-btn" id="orientationLandscape" onclick="setOrientation('landscape')">Landscape</button>
+                </div>
+
+                <div class="toggle-group">
+                    <button class="toggle-btn active" id="sizeISO" onclick="setSize('ISO')">ISO Standard</button>
+                    <button class="toggle-btn" id="sizeIndian" onclick="setSize('Indian')">Indian Standard</button>
+                </div>
+
+                <div class="control-group">
+                    <label>Color Palette</label>
+                    <div class="color-palette" id="colorPalette">
+                        <!-- Colors will be generated here -->
+                    </div>
+                </div>
+
+                <button class="generate-btn" onclick="generateCard()">Generate New Design</button>
+            </section>
+
+            <section class="preview-section">
+                <h2>Card Preview</h2>
+                <div class="card-preview">
+                    <canvas id="businessCard" width="600" height="400"></canvas>
+                </div>
+
+                <div class="export-controls">
+                    <button class="export-btn" onclick="exportCard('png')">Export PNG</button>
+                    <button class="export-btn" onclick="exportCard('jpeg')">Export JPEG</button>
+                    <button class="export-btn" onclick="exportCard('pdf')">Export PDF</button>
+                </div>
+
+                <div class="debug-info" id="debugInfo">
+                    <strong>Debug Info:</strong><br>
+                    Orientation: <span id="debugOrientation">portrait</span><br>
+                    Size: <span id="debugSize">ISO Standard</span><br>
+                    Dimensions: <span id="debugDimensions">85.6 × 53.98 mm</span><br>
+                    Colors: <span id="debugColors">Generated</span>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        // Global state
+        let currentState = {
+            orientation: 'portrait',
+            size: 'ISO',
+            colors: [],
+            content: {}
+        };
+
+        // Name mappings for different languages
+        const nameTranslations = {
+            'Arjun Sharma': {
+                en: 'Arjun Sharma',
+                hi: 'अर्जुन शर्मा',
+                bn: 'অর্জুন শর্মা',
+                ta: 'அர்ஜுன் ஷர்மா',
+                te: 'అర్జున్ శర్మ',
+                mr: 'अर्जुन शर्मा',
+                gu: 'અર્જુન શર્મા',
+                kn: 'ಅರ್ಜುನ್ ಶರ್ಮಾ',
+                ml: 'അർജുൻ ശർമ്മ',
+                or: 'ଅର୍ଜୁନ ଶର୍ମା',
+                pa: 'ਅਰਜੁਨ ਸ਼ਰਮਾ',
+                as: 'অৰ্জুন শৰ্মা',
+                ur: 'ارجن شرما'
+            },
+            'Priya Patel': {
+                en: 'Priya Patel',
+                hi: 'प्रिया पटेल',
+                bn: 'প্রিয়া পটেল',
+                ta: 'பிரியா பட்டேல்',
+                te: 'ప్రియా పటేల్',
+                mr: 'प्रिया पटेल',
+                gu: 'પ્રિયા પટેલ',
+                kn: 'ಪ್ರಿಯಾ ಪಟೇಲ್',
+                ml: 'പ്രിയ പട്ടേൽ',
+                or: 'ପ୍ରିୟା ପଟେଲ',
+                pa: 'ਪ੍ਰਿਯਾ ਪਟੇਲ',
+                as: 'প্ৰিয়া পটেল',
+                ur: 'پریا پٹیل'
+            }
+        };
+
+        // Card dimensions
+        const cardDimensions = {
+            ISO: {
+                portrait: { width: 600, height: 378 },
+                landscape: { width: 378, height: 600 },
+                mm: { width: 85.6, height: 53.98 }
+            },
+            Indian: {
+                portrait: { width: 400, height: 650 },
+                landscape: { width: 650, height: 400 },
+                mm: { width: 55, height: 90 }
+            }
+        };
+
+        // Initialize the application
+        function init() {
+            generateDadaismColors();
+            generateCard();
+            updateDebugInfo();
+        }
+
+        // Generate Dadaism-inspired color palette
+        function generateDadaismColors() {
+            const colors = [];
+            const baseHue = Math.random() * 360;
+            
+            for (let i = 0; i < 5; i++) {
+                const hue = (baseHue + (i * 72)) % 360;
+                const saturation = 40 + Math.random() * 40; // 40-80%
+                const lightness = 30 + Math.random() * 40;  // 30-70%
+                
+                colors.push({
+                    hsl: `hsl(${hue}, ${saturation}%, ${lightness}%)`,
+                    hex: hslToHex(hue, saturation, lightness)
+                });
+            }
+            
+            currentState.colors = colors;
+            renderColorPalette();
+        }
+
+        // Convert HSL to Hex
+        function hslToHex(h, s, l) {
+            l /= 100;
+            const a = s * Math.min(l, 1 - l) / 100;
+            const f = n => {
+                const k = (n + h / 30) % 12;
+                const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+                return Math.round(255 * color).toString(16).padStart(2, '0');
+            };
+            return `#${f(0)}${f(8)}${f(4)}`;
+        }
+
+        // Render color palette
+        function renderColorPalette() {
+            const palette = document.getElementById('colorPalette');
+            palette.innerHTML = '';
+            
+            currentState.colors.forEach((color, index) => {
+                const colorDiv = document.createElement('div');
+                colorDiv.className = 'color-item';
+                colorDiv.style.backgroundColor = color.hsl;
+                colorDiv.onclick = () => selectColor(index);
+                palette.appendChild(colorDiv);
+            });
+        }
+
+        // Select color
+        function selectColor(index) {
+            document.querySelectorAll('.color-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            document.querySelectorAll('.color-item')[index].classList.add('selected');
+            generateCard();
+        }
+
+        // Set orientation
+        function setOrientation(orientation) {
+            currentState.orientation = orientation;
+            
+            document.querySelectorAll('.toggle-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            if (orientation === 'portrait') {
+                document.getElementById('orientationPortrait').classList.add('active');
+            } else {
+                document.getElementById('orientationLandscape').classList.add('active');
+            }
+            
+            generateCard();
+            updateDebugInfo();
+        }
+
+        // Set size
+        function setSize(size) {
+            currentState.size = size;
+            
+            document.querySelectorAll('.toggle-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            if (size === 'ISO') {
+                document.getElementById('sizeISO').classList.add('active');
+            } else {
+                document.getElementById('sizeIndian').classList.add('active');
+            }
+            
+            generateCard();
+            updateDebugInfo();
+        }
+
+        // Generate business card
+        function generateCard() {
+            const canvas = document.getElementById('businessCard');
+            const ctx = canvas.getContext('2d');
+            
+            // Get dimensions
+            const dimensions = cardDimensions[currentState.size][currentState.orientation];
+            canvas.width = dimensions.width;
+            canvas.height = dimensions.height;
+            
+            // Clear canvas
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Get form data
+            const formData = getFormData();
+            
+            // Draw background with Dadaism elements
+            drawDadaismBackground(ctx, canvas.width, canvas.height);
+            
+            // Draw content
+            drawCardContent(ctx, formData, canvas.width, canvas.height);
+            
+            updateDebugInfo();
+        }
+
+        // Get form data
+        function getFormData() {
+            const primaryName = document.getElementById('primaryName').value;
+            const primaryLang = document.getElementById('primaryLang').value;
+            
+            return {
+                primaryName: primaryName,
+                translatedName: getTranslatedName(primaryName, primaryLang),
+                jobTitle: document.getElementById('jobTitle').value,
+                company: document.getElementById('company').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                website: document.getElementById('website').value,
+                address: document.getElementById('address').value,
+                primaryLang: primaryLang
+            };
+        }
+
+        // Get translated name
+        function getTranslatedName(name, lang) {
+            if (nameTranslations[name] && nameTranslations[name][lang]) {
+                return nameTranslations[name][lang];
+            }
+            return name; // Fallback to original name
+        }
+
+        // Draw Dadaism background
+        function drawDadaismBackground(ctx, width, height) {
+            // Create abstract shapes
+            for (let i = 0; i < 8; i++) {
+                const color = currentState.colors[Math.floor(Math.random() * currentState.colors.length)];
+                ctx.fillStyle = color.hsl;
+                ctx.globalAlpha = 0.6;
+                
+                // Random shape
+                const shapeType = Math.floor(Math.random() * 3);
+                
+                if (shapeType === 0) {
+                    // Circle
+                    const x = Math.random() * width;
+                    const y = Math.random() * height;
+                    const radius = Math.random() * 50 + 20;
+                    
+                    ctx.beginPath();
+                    ctx.arc(x, y, radius, 0, Math.PI * 2);
+                    ctx.fill();
+                } else if (shapeType === 1) {
+                    // Rectangle
+                    const x = Math.random() * width;
+                    const y = Math.random() * height;
+                    const w = Math.random() * 100 + 30;
+                    const h = Math.random() * 100 + 30;
+                    
+                    ctx.fillRect(x, y, w, h);
+                } else {
+                    // Triangle
+                    const x = Math.random() * width;
+                    const y = Math.random() * height;
+                    const size = Math.random() * 60 + 30;
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(x + size, y);
+                    ctx.lineTo(x + size/2, y + size);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+            }
+            
+            ctx.globalAlpha = 1;
+        }
+
+        // Draw card content
+        function drawCardContent(ctx, data, width, height) {
+            ctx.fillStyle = '#333333';
+            ctx.textAlign = 'left';
+            
+            const isPortrait = currentState.orientation === 'portrait';
+            const padding = 30;
+            
+            // Main name
+            ctx.font = 'bold 24px Arial';
+            ctx.fillText(data.primaryName, padding, padding + 30);
+            
+            // Translated name (if different)
+            if (data.translatedName !== data.primaryName) {
+                ctx.font = '18px Arial';
+                ctx.fillText(data.translatedName, padding, padding + 60);
+            }
+            
+            // Job title and company
+            ctx.font = '16px Arial';
+            ctx.fillStyle = '#666666';
+            const jobY = data.translatedName !== data.primaryName ? padding + 90 : padding + 70;
+            ctx.fillText(`${data.jobTitle} at ${data.company}`, padding, jobY);
+            
+            // Contact information
+            ctx.font = '14px Arial';
+            ctx.fillStyle = '#555555';
+            
+            let contactY = jobY + 40;
+            const lineHeight = 20;
+            
+            if (data.email) {
+                ctx.fillText(`Email: ${data.email}`, padding, contactY);
+                contactY += lineHeight;
+            }
+            
+            if (data.phone) {
+                ctx.fillText(`Phone: ${data.phone}`, padding, contactY);
+                contactY += lineHeight;
+            }
+            
+            if (data.website) {
+                ctx.fillText(`Web: ${data.website}`, padding, contactY);
+                contactY += lineHeight;
+            }
+            
+            // Address (multi-line)
+            if (data.address) {
+                const addressLines = data.address.split('\n');
+                addressLines.forEach(line => {
+                    ctx.fillText(line, padding, contactY);
+                    contactY += lineHeight;
+                });
+            }
+            
+            // Add decorative elements
+            drawDecorativeElements(ctx, width, height);
+        }
+
+        // Draw decorative elements
+        function drawDecorativeElements(ctx, width, height) {
+            // Add some small decorative shapes
+            for (let i = 0; i < 3; i++) {
+                const color = currentState.colors[Math.floor(Math.random() * currentState.colors.length)];
+                ctx.fillStyle = color.hsl;
+                ctx.globalAlpha = 0.8;
+                
+                const x = width - 100 + Math.random() * 50;
+                const y = 50 + Math.random() * 100;
+                const size = 5 + Math.random() * 10;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            ctx.globalAlpha = 1;
+        }
+
+        // Export card
+        function exportCard(format) {
+            const canvas = document.getElementById('businessCard');
+            
+            if (format === 'png' || format === 'jpeg') {
+                const link = document.createElement('a');
+                link.download = `business-card.${format}`;
+                link.href = canvas.toDataURL(`image/${format}`);
+                link.click();
+            } else if (format === 'pdf') {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF();
+                
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = 85.6; // mm
+                const imgHeight = 53.98; // mm
+                
+                pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+                pdf.save('business-card.pdf');
+            }
+        }
+
+        // Update debug info
+        function updateDebugInfo() {
+            const dimensions = cardDimensions[currentState.size];
+            document.getElementById('debugOrientation').textContent = currentState.orientation;
+            document.getElementById('debugSize').textContent = currentState.size === 'ISO' ? 'ISO Standard' : 'Indian Standard';
+            document.getElementById('debugDimensions').textContent = `${dimensions.mm.width} × ${dimensions.mm.height} mm`;
+            document.getElementById('debugColors').textContent = `${currentState.colors.length} colors generated`;
+        }
+
+        // Add event listeners for real-time updates
+        document.addEventListener('DOMContentLoaded', function() {
+            init();
+            
+            // Add input event listeners
+            const inputs = ['primaryName', 'primaryLang', 'jobTitle', 'company', 'email', 'phone', 'website', 'address'];
+            inputs.forEach(id => {
+                document.getElementById(id).addEventListener('input', generateCard);
+            });
+            
+            document.getElementById('primaryLang').addEventListener('change', generateCard);
+        });
+
+        // WCAG contrast calculation
+        function calculateContrast(color1, color2) {
+            const luminance1 = getLuminance(color1);
+            const luminance2 = getLuminance(color2);
+            
+            const brightest = Math.max(luminance1, luminance2);
+            const darkest = Math.min(luminance1, luminance2);
+            
+            return (brightest + 0.05) / (darkest + 0.05);
+        }
+
+        function getLuminance(color) {
+            const rgb = hexToRgb(color);
+            if (!rgb) return 0;
+            
+            const [r, g, b] = [rgb.r, rgb.g, rgb.b].map(c => {
+                c = c / 255;
+                return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+            });
+            
+            return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        // Accessibility announcements
+        function announceToScreenReader(message) {
+            const announcement = document.createElement('div');
+            announcement.setAttribute('aria-live', 'polite');
+            announcement.setAttribute('aria-atomic', 'true');
+            announcement.className = 'accessibility-text';
+            announcement.textContent = message;
+            
+            document.body.appendChild(announcement);
+            setTimeout(() => document.body.removeChild(announcement), 1000);
+        }
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                if (e.target.classList.contains('toggle-btn')) {
+                    e.target.click();
+                    e.preventDefault();
+                }
+            }
+        });
+
+        // Performance monitoring
+        const performanceMonitor = {
+            startTime: null,
+            
+            start() {
+                this.startTime = performance.now();
+            },
+            
+            end(operation) {
+                if (this.startTime) {
+                    const duration = performance.now() - this.startTime;
+                    console.log(`${operation} took ${duration.toFixed(2)}ms`);
+                    this.startTime = null;
+                }
+            }
+        };
+
+        // Add performance monitoring to card generation
+        const originalGenerateCard = generateCard;
+        generateCard = function() {
+            performanceMonitor.start();
+            originalGenerateCard();
+            performanceMonitor.end('Card generation');
+        };
+    </script>
+</body>
+</html>
