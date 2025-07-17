@@ -211,6 +211,7 @@
             grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
             gap: 8px;
             margin-top: 10px;
+			justify-items: center;
         }
 
         .color-swatch {
@@ -316,8 +317,6 @@
             <div class="controls">
                 <button id="generateBtn">Generate New Card</button>
                 <button id="chaosBtn">Randomize</button>
-                <button id="saveConfigBtn">Save Config</button>
-                <button id="loadConfigBtn">Load Config</button>
             </div>
         </header>
         
@@ -387,8 +386,6 @@
             </div>
         </main>
     </div>
-
-    <input type="file" id="configLoader" accept=".json" style="display: none;">
 
     <script>
         // Global configuration object
@@ -571,6 +568,7 @@
         }
 
         function generateCard() {
+    try {
             // Clear canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
@@ -581,7 +579,11 @@
             drawLogoArea();
             drawContactInfo();
             drawBorder();
-        }
+    } catch (error) {
+        console.error('Error generating card:', error);
+        showNotification('Error generating card', 'error');
+    }
+}
 
         function drawBackground() {
             // Create gradient background
@@ -596,7 +598,7 @@
         function generateBackgroundElements() {
     currentConfig.elements = [];
     const baseElementCount = 8;
-    const chaosMultiplier = 1 + (currentConfig.chaosLevel / 100) * 4;
+    const chaosMultiplier = 1 + (currentConfig.chaosLevel / 100) * 2;
     const elementCount = Math.floor(baseElementCount * chaosMultiplier);
     
     for (let i = 0; i < elementCount; i++) {
@@ -835,6 +837,15 @@
 
         function drawContactInfo() {
     const chaosOffset = currentConfig.chaosLevel / 100 * 100;
+	
+	const AVAILABLE_FONTS = [
+    'Inter, sans-serif',
+    'Creepster, cursive',
+    'Nosifer, cursive',
+    'Butcherman, cursive',
+    'Eater, cursive',
+    'Griffy, cursive'
+];
     
     // Primary group with random positions and colors
     const primaryGroup = [
@@ -842,7 +853,7 @@
             text: currentConfig.contact.nameEnglish, 
             fontSize: Math.min(canvas.width / 25, 32), 
             fontWeight: 'bold',
-            font: 'Creepster, cursive',
+            font: randomChoice(AVAILABLE_FONTS),
             x: randomFloat(canvas.width * 0.1, canvas.width * 0.6),
             y: randomFloat(canvas.height * 0.4, canvas.height * 0.7),
             rotation: randomFloat(-15, 15),
@@ -852,7 +863,7 @@
             text: currentConfig.contact.nameLocal, 
             fontSize: Math.min(canvas.width / 35, 24),
             fontWeight: 'normal',
-            font: 'Nosifer, cursive',
+            font: randomChoice(AVAILABLE_FONTS),
             x: randomFloat(canvas.width * 0.1, canvas.width * 0.6),
             y: randomFloat(canvas.height * 0.4, canvas.height * 0.7),
             rotation: randomFloat(-10, 10),
@@ -862,7 +873,7 @@
             text: currentConfig.contact.jobTitle, 
             fontSize: Math.min(canvas.width / 40, 20),
             fontWeight: '500',
-            font: 'Butcherman, cursive',
+            font: randomChoice(AVAILABLE_FONTS),
             x: randomFloat(canvas.width * 0.1, canvas.width * 0.6),
             y: randomFloat(canvas.height * 0.4, canvas.height * 0.7),
             rotation: randomFloat(-20, 20),
@@ -876,7 +887,7 @@
             text: currentConfig.contact.phone, 
             fontSize: Math.min(canvas.width / 50, 16),
             fontWeight: 'normal',
-            font: 'Eater, cursive',
+            font: randomChoice(AVAILABLE_FONTS),
             x: randomFloat(canvas.width * 0.1, canvas.width * 0.6),
             y: randomFloat(canvas.height * 0.6, canvas.height * 0.9),
             rotation: randomFloat(-8, 8),
@@ -886,7 +897,7 @@
             text: currentConfig.contact.email, 
             fontSize: Math.min(canvas.width / 50, 16),
             fontWeight: 'normal',
-            font: 'Griffy, cursive',
+            font: randomChoice(AVAILABLE_FONTS),
             x: randomFloat(canvas.width * 0.1, canvas.width * 0.6),
             y: randomFloat(canvas.height * 0.6, canvas.height * 0.9),
             rotation: randomFloat(-8, 8),
@@ -894,7 +905,15 @@
         }
     ];
     
-    // Draw all text items
+    // Add before drawing text:
+let textColor = randomChoice(currentConfig.colorPalette).hex;
+const bgContrast = calculateContrast(textColor, '#ffffff');
+if (bgContrast < 4.5) {
+    textColor = generateWCAGCompliantColor(textColor, 4.5);
+}
+ctx.fillStyle = textColor;
+	
+	// Draw all text items
     [...primaryGroup, ...secondaryGroup].forEach(item => {
         if (item.text) {
             ctx.save();
@@ -966,9 +985,19 @@
         ctx.globalAlpha = shapeElement.opacity;
         
         drawElement(shapeElement);
-        
-        ctx.restore();
-    }
+
+		// Create SVG image
+		const img = new Image();
+		const svgBlob = new Blob([COMPANY_LOGO], { type: 'image/svg+xml' });
+		const url = URL.createObjectURL(svgBlob);
+		
+		img.onload = () => {
+			ctx.drawImage(img, -logoSize/2, -logoSize/2, logoSize, logoSize);
+			URL.revokeObjectURL(url);
+		};
+		img.src = url;        
+			ctx.restore();
+		}
     
     ctx.restore();
 }
@@ -1027,7 +1056,14 @@
                 swatch.addEventListener('click', () => {
                     document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
                     swatch.classList.add('selected');
-                });
+                
+				// Apply selected color to next text element
+    const nextElement = currentConfig.elements.find(el => el.type === 'text');
+    if (nextElement) {
+        nextElement.color = color.hex;
+        generateCard();
+    }
+				});
                 
                 container.appendChild(swatch);
             });
@@ -1075,14 +1111,6 @@
                 document.getElementById('chaosValue').textContent = currentConfig.chaosLevel;
                 generateCard();
             });
-
-            // Config save/load
-            document.getElementById('saveConfigBtn').addEventListener('click', saveConfig);
-            document.getElementById('loadConfigBtn').addEventListener('click', () => {
-                document.getElementById('configLoader').click();
-            });
-            
-            document.getElementById('configLoader').addEventListener('change', loadConfig);
         }
 
         function setupDragAndDrop() {
@@ -1095,9 +1123,10 @@
                 const y = e.clientY - rect.top;
                 
                 // Simple element selection
-                const element = currentConfig.elements.find(el => 
-                    Math.abs(el.x - x) < 50 && Math.abs(el.y - y) < 50
-                );
+                const element = currentConfig.elements.find(el => {
+    const distance = Math.sqrt(Math.pow(el.x - x, 2) + Math.pow(el.y - y, 2));
+    return distance < el.size / 2;
+});
                 
                 if (element) {
                     isDragging = true;
@@ -1120,55 +1149,6 @@
                 dragElement = null;
                 canvas.style.cursor = 'grab';
             });
-        }
-
-        function saveConfig() {
-            const configData = JSON.stringify(currentConfig, null, 2);
-            const blob = new Blob([configData], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'business-card-config.json';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            showNotification('Configuration saved successfully!', 'success');
-        }
-
-        function loadConfig(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const config = JSON.parse(e.target.result);
-                    Object.assign(currentConfig, config);
-                    
-                    // Update UI elements
-                    document.getElementById('nameEnglish').value = currentConfig.contact.nameEnglish;
-                    document.getElementById('nameLocal').value = currentConfig.contact.nameLocal;
-                    document.getElementById('jobTitle').value = currentConfig.contact.jobTitle;
-                    document.getElementById('phone').value = currentConfig.contact.phone;
-                    document.getElementById('email').value = currentConfig.contact.email;
-                    document.getElementById('standard').value = currentConfig.standard;
-                    document.getElementById('orientation').value = currentConfig.orientation;
-                    document.getElementById('chaosLevel').value = currentConfig.chaosLevel;
-                    document.getElementById('chaosValue').textContent = currentConfig.chaosLevel;
-                    
-                    updateCanvasDimensions();
-                    updateColorSwatches();
-                    generateCard();
-                    
-                    showNotification('Configuration loaded successfully!', 'success');
-                } catch (error) {
-                    showNotification('Error loading configuration file', 'error');
-                }
-            };
-            reader.readAsText(file);
         }
 
         function showNotification(message, type) {
