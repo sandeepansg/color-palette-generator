@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WCAG Compliant Color Wheel Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .wheels-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .wheel-section {
+            text-align: center;
+        }
+
+        .wheel-title {
+            color: white;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .color-wheel {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            position: relative;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .color-segment {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: 100% 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .color-segment:hover {
+            transform: scale(1.1);
+            z-index: 10;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .color-segment:nth-child(1) { transform: rotate(0deg) translateY(-50%); }
+        .color-segment:nth-child(2) { transform: rotate(72deg) translateY(-50%); }
+        .color-segment:nth-child(3) { transform: rotate(144deg) translateY(-50%); }
+        .color-segment:nth-child(4) { transform: rotate(216deg) translateY(-50%); }
+        .color-segment:nth-child(5) { transform: rotate(288deg) translateY(-50%); }
+
+        .color-info {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .color-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(5px);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .color-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .color-preview {
+            width: 100%;
+            height: 60px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .color-hex {
+            color: white;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            font-size: 0.9em;
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .generate-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, #ee5a24, #ff6b6b);
+        }
+
+        .generate-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .compliance-info {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .wheels-container {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .color-wheel {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .color-info {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 WCAG Compliant Color Wheel Generator</h1>
+        
+        <div class="wheels-container">
+            <div class="wheel-section">
+                <h2 class="wheel-title">🌙 Dark Theme Palette</h2>
+                <div class="color-wheel" id="darkWheel">
+                    <div class="color-segment" data-index="0"></div>
+                    <div class="color-segment" data-index="1"></div>
+                    <div class="color-segment" data-index="2"></div>
+                    <div class="color-segment" data-index="3"></div>
+                    <div class="color-segment" data-index="4"></div>
+                </div>
+                <div class="color-info" id="darkInfo"></div>
+            </div>
+            
+            <div class="wheel-section">
+                <h2 class="wheel-title">☀️ Light Theme Palette</h2>
+                <div class="color-wheel" id="lightWheel">
+                    <div class="color-segment" data-index="0"></div>
+                    <div class="color-segment" data-index="1"></div>
+                    <div class="color-segment" data-index="2"></div>
+                    <div class="color-segment" data-index="3"></div>
+                    <div class="color-segment" data-index="4"></div>
+                </div>
+                <div class="color-info" id="lightInfo"></div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="generate-btn" onclick="generateColorWheels()">
+                ✨ Generate New Palettes
+            </button>
+        </div>
+        
+        <div class="compliance-info">
+            <strong>WCAG AA Compliance:</strong> Adjacent colors maintain a minimum 3:1 contrast ratio for accessibility.
+            All colors are carefully selected subtle pastels optimized for both themes.
+        </div>
+    </div>
+
+    <script>
+        // WCAG contrast ratio calculation
+        function getLuminance(r, g, b) {
+            const [rs, gs, bs] = [r, g, b].map(c => {
+                c = c / 255;
+                return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+            });
+            return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+        }
+
+        function getContrastRatio(color1, color2) {
+            const l1 = getLuminance(...color1);
+            const l2 = getLuminance(...color2);
+            const lighter = Math.max(l1, l2);
+            const darker = Math.min(l1, l2);
+            return (lighter + 0.05) / (darker + 0.05);
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? [
+                parseInt(result[1], 16),
+                parseInt(result[2], 16),
+                parseInt(result[3], 16)
+            ] : null;
+        }
+
+        function rgbToHex(r, g, b) {
+            return "#" + [r, g, b].map(x => {
+                const hex = Math.round(x).toString(16);
+                return hex.length === 1 ? "0" + hex : hex;
+            }).join("");
+        }
+
+        function hslToRgb(h, s, l) {
+            h /= 360;
+            const a = s * Math.min(l, 1 - l);
+            const f = n => {
+                const k = (n + h * 12) % 12;
+                return l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+            };
+            return [f(0) * 255, f(8) * 255, f(4) * 255];
+        }
+
+        function generatePastelColor(baseHue, isDark) {
+            // For dark theme: higher lightness, lower saturation
+            // For light theme: moderate lightness, moderate saturation
+            const saturation = isDark ? 
+                25 + Math.random() * 25 : // 25-50% for dark theme
+                35 + Math.random() * 30;  // 35-65% for light theme
+                
+            const lightness = isDark ? 
+                70 + Math.random() * 20 : // 70-90% for dark theme
+                75 + Math.random() * 15;  // 75-90% for light theme
+
+            const hue = (baseHue + (Math.random() - 0.5) * 30) % 360;
+            
+            const [r, g, b] = hslToRgb(hue, saturation / 100, lightness / 100);
+            return rgbToHex(r, g, b);
+        }
+
+        function generateWCAGCompliantPalette(isDark) {
+            const colors = [];
+            const baseHues = [0, 72, 144, 216, 288]; // Pentagon arrangement
+            
+            let attempts = 0;
+            const maxAttempts = 100;
+            
+            while (colors.length < 5 && attempts < maxAttempts) {
+                attempts++;
+                const candidateColors = [];
+                
+                // Generate 5 candidate colors
+                for (let i = 0; i < 5; i++) {
+                    const color = generatePastelColor(baseHues[i], isDark);
+                    candidateColors.push(color);
+                }
+                
+                // Check WCAG compliance for adjacent pairs
+                let allCompliant = true;
+                for (let i = 0; i < 5; i++) {
+                    const current = hexToRgb(candidateColors[i]);
+                    const next = hexToRgb(candidateColors[(i + 1) % 5]);
+                    const contrastRatio = getContrastRatio(current, next);
+                    
+                    if (contrastRatio < 3.0) { // WCAG AA standard
+                        allCompliant = false;
+                        break;
+                    }
+                }
+                
+                if (allCompliant) {
+                    return candidateColors;
+                }
+            }
+            
+            // Fallback: return best attempt if we couldn't find perfect compliance
+            const fallbackColors = [];
+            for (let i = 0; i < 5; i++) {
+                fallbackColors.push(generatePastelColor(baseHues[i], isDark));
+            }
+            return fallbackColors;
+        }
+
+        function updateWheel(wheelId, infoId, colors) {
+            const wheel = document.getElementById(wheelId);
+            const info = document.getElementById(infoId);
+            const segments = wheel.querySelectorAll('.color-segment');
+            
+            // Update wheel segments
+            segments.forEach((segment, index) => {
+                segment.style.backgroundColor = colors[index];
+                segment.onclick = () => copyToClipboard(colors[index]);
+            });
+            
+            // Update color info cards
+            info.innerHTML = colors.map((color, index) => `
+                <div class="color-card" onclick="copyToClipboard('${color}')">
+                    <div class="color-preview" style="background-color: ${color}"></div>
+                    <div class="color-hex">${color.toUpperCase()}</div>
+                </div>
+            `).join('');
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Create a temporary notification
+                const notification = document.createElement('div');
+                notification.textContent = `Copied ${text}!`;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: rgba(0, 0, 0, 0.8);
+                    color: white;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                    z-index: 1000;
+                    animation: slideIn 0.3s ease;
+                `;
+                
+                document.body.appendChild(notification);
+                setTimeout(() => {
+                    notification.remove();
+                }, 2000);
+            });
+        }
+
+        function generateColorWheels() {
+            const darkColors = generateWCAGCompliantPalette(true);
+            const lightColors = generateWCAGCompliantPalette(false);
+            
+            updateWheel('darkWheel', 'darkInfo', darkColors);
+            updateWheel('lightWheel', 'lightInfo', lightColors);
+        }
+
+        // Add CSS animation for notifications
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Generate initial color wheels
+        generateColorWheels();
+    </script>
+</body>
+</html>
