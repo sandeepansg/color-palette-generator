@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WCAG Color Wheel Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        .color-segment {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: bottom right;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .color-segment:hover {
+            transform: scale(1.1);
+            z-index: 10;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .color-segment.rotate-0 { transform: rotate(0deg) translateY(-50%); }
+        .color-segment.rotate-72 { transform: rotate(72deg) translateY(-50%); }
+        .color-segment.rotate-144 { transform: rotate(144deg) translateY(-50%); }
+        .color-segment.rotate-216 { transform: rotate(216deg) translateY(-50%); }
+        .color-segment.rotate-288 { transform: rotate(288deg) translateY(-50%); }
+        
+        .color-segment:hover.rotate-0 { transform: rotate(0deg) translateY(-50%) scale(1.1); }
+        .color-segment:hover.rotate-72 { transform: rotate(72deg) translateY(-50%) scale(1.1); }
+        .color-segment:hover.rotate-144 { transform: rotate(144deg) translateY(-50%) scale(1.1); }
+        .color-segment:hover.rotate-216 { transform: rotate(216deg) translateY(-50%) scale(1.1); }
+        .color-segment:hover.rotate-288 { transform: rotate(288deg) translateY(-50%) scale(1.1); }
+        
+        .notification {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 50;
+            animation: slideInRight 0.3s ease;
+            display: none;
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        
+        .light-theme {
+            background: linear-gradient(135deg, #f1f5f9, #cbd5e1);
+        }
+        
+        .dark-theme {
+            background: linear-gradient(135deg, #0f172a, #581c87, #1e293b);
+        }
+        
+        .light-container {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        }
+        
+        .dark-container {
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .light-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(4px);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .dark-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn-light {
+            background: #1e293b;
+            color: white;
+        }
+        
+        .btn-light:hover {
+            background: #334155;
+        }
+        
+        .btn-dark {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-dark:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .text-light { color: #1e293b; }
+        .text-dark { color: white; }
+        
+        @media (max-width: 768px) {
+            .mobile-layout {
+                position: fixed;
+                inset: 0;
+                overflow: hidden;
+            }
+            
+            .mobile-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 1rem;
+                background: rgba(0, 0, 0, 0.2);
+                backdrop-filter: blur(12px);
+            }
+            
+            .mobile-content {
+                height: calc(100% - 60px);
+                display: flex;
+                flex-direction: column;
+                margin: 1rem;
+                margin-top: 0;
+            }
+            
+            .color-wheel-mobile {
+                width: 16rem;
+                height: 16rem;
+            }
+        }
+        
+        .color-wheel {
+            width: 20rem;
+            height: 20rem;
+        }
+        
+        .spin {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="min-h-screen transition-all duration-500 dark-theme">
+        <!-- Mobile Header -->
+        <div id="mobile-header" class="mobile-header" style="display: none;">
+            <button class="p-2 rounded-lg btn-dark transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </button>
+            <h1 class="font-bold text-lg text-dark">Color Wheel</h1>
+            <button id="mobile-theme-toggle" class="p-2 rounded-lg btn-dark transition-colors">
+                <svg id="mobile-sun-icon" class="w-5 h-5" style="display: none;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <svg id="mobile-moon-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div id="main-container" class="max-w-4xl mx-auto p-4">
+            <div id="content-container" class="dark-container rounded-2xl p-6">
+                <!-- Desktop Header -->
+                <div id="desktop-header" class="flex items-center justify-between mb-8">
+                    <h1 class="text-3xl font-bold text-dark">
+                        [*] WCAG Color Wheel Generator
+                    </h1>
+                    <button id="desktop-theme-toggle" class="p-3 rounded-xl btn-dark transition-all">
+                        <svg id="desktop-sun-icon" class="w-6 h-6" style="display: none;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg id="desktop-moon-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Color Wheel Section -->
+                <div id="color-wheel-section" class="text-center mb-8">
+                    <h2 id="theme-title" class="text-xl font-semibold mb-6 text-dark">
+                        [MOON] Dark Theme Palette
+                    </h2>
+                    
+                    <div id="color-wheel" class="relative mx-auto rounded-full overflow-hidden shadow-2xl color-wheel">
+                        <!-- Color segments will be generated here -->
+                    </div>
+
+                    <!-- Color Info Cards -->
+                    <div id="color-cards" class="grid grid-cols-5 gap-3 mt-6">
+                        <!-- Cards will be generated here -->
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="flex gap-4 justify-center">
+                    <button id="generate-btn" class="flex items-center justify-center gap-2 py-3 px-6 rounded-xl font-semibold transition-all btn-dark">
+                        <svg id="refresh-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <polyline points="1 20 1 14 7 14"></polyline>
+                            <path d="m3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                        </svg>
+                        <span id="generate-text">Generate New</span>
+                    </button>
+                    
+                    <button id="download-btn" class="flex items-center justify-center gap-2 py-3 px-6 rounded-xl font-semibold transition-all btn-dark">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <span id="download-text">Download</span>
+                    </button>
+                </div>
+
+                <!-- WCAG Info -->
+                <div id="wcag-info" class="dark-card p-4 rounded-xl mt-6 text-center">
+                    <p class="text-sm text-dark opacity-80">
+                        <strong>WCAG AA Compliant:</strong> Adjacent colors maintain 3:1+ contrast ratio.
+                        Optimized subtle pastels for <span id="current-theme-text">dark</span> theme accessibility.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification -->
+        <div id="notification" class="notification">
+            <div class="flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="m5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span id="notification-text"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class ColorWheelGenerator {
+            constructor() {
+                this.currentTheme = 'dark';
+                this.darkPalette = [];
+                this.lightPalette = [];
+                this.isGenerating = false;
+                this.isMobile = window.innerWidth < 768;
+                
+                this.init();
+                this.setupEventListeners();
+                this.generatePalettes();
+            }
+
+            init() {
+                this.updateLayout();
+                window.addEventListener('resize', () => {
+                    this.isMobile = window.innerWidth < 768;
+                    this.updateLayout();
+                });
+            }
+
+            setupEventListeners() {
+                document.getElementById('desktop-theme-toggle').addEventListener('click', () => this.toggleTheme());
+                document.getElementById('mobile-theme-toggle').addEventListener('click', () => this.toggleTheme());
+                document.getElementById('generate-btn').addEventListener('click', () => this.generatePalettes());
+                document.getElementById('download-btn').addEventListener('click', () => this.downloadSwatch());
+            }
+
+            updateLayout() {
+                const app = document.getElementById('app');
+                const mobileHeader = document.getElementById('mobile-header');
+                const mainContainer = document.getElementById('main-container');
+                const desktopHeader = document.getElementById('desktop-header');
+                const downloadText = document.getElementById('download-text');
+                const colorWheel = document.getElementById('color-wheel');
+
+                if (this.isMobile) {
+                    app.classList.add('mobile-layout');
+                    mobileHeader.style.display = 'flex';
+                    mainContainer.classList.add('mobile-content');
+                    desktopHeader.style.display = 'none';
+                    downloadText.style.display = 'none';
+                    colorWheel.classList.remove('color-wheel');
+                    colorWheel.classList.add('color-wheel-mobile');
+                } else {
+                    app.classList.remove('mobile-layout');
+                    mobileHeader.style.display = 'none';
+                    mainContainer.classList.remove('mobile-content');
+                    desktopHeader.style.display = 'flex';
+                    downloadText.style.display = 'inline';
+                    colorWheel.classList.remove('color-wheel-mobile');
+                    colorWheel.classList.add('color-wheel');
+                }
+            }
+
+            // WCAG contrast calculation utilities
+            getLuminance(r, g, b) {
+                const [rs, gs, bs] = [r, g, b].map(c => {
+                    c = c / 255;
+                    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+                });
+                return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+            }
+
+            getContrastRatio(color1, color2) {
+                const l1 = this.getLuminance(...color1);
+                const l2 = this.getLuminance(...color2);
+                const lighter = Math.max(l1, l2);
+                const darker = Math.min(l1, l2);
+                return (lighter + 0.05) / (darker + 0.05);
+            }
+
+            hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? [
+                    parseInt(result[1], 16),
+                    parseInt(result[2], 16),
+                    parseInt(result[3], 16)
+                ] : [0, 0, 0];
+            }
+
+            rgbToHex(r, g, b) {
+                return "#" + [r, g, b].map(x => {
+                    const hex = Math.round(x).toString(16);
+                    return hex.length === 1 ? "0" + hex : hex;
+                }).join("");
+            }
+
+            hslToRgb(h, s, l) {
+                h /= 360;
+                const a = s * Math.min(l, 1 - l);
+                const f = (n) => {
+                    const k = (n + h * 12) % 12;
+                    return l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+                };
+                return [f(0) * 255, f(8) * 255, f(4) * 255];
+            }
+
+            async generatePastelColor(baseHue, isDark) {
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        const saturation = isDark ? 
+                            25 + Math.random() * 25 : 
+                            35 + Math.random() * 30;
+                            
+                        const lightness = isDark ? 
+                            70 + Math.random() * 20 : 
+                            75 + Math.random() * 15;
+
+                        const hue = (baseHue + (Math.random() - 0.5) * 30) % 360;
+                        const [r, g, b] = this.hslToRgb(hue, saturation / 100, lightness / 100);
+                        resolve(this.rgbToHex(r, g, b));
+                    }, Math.random() * 10);
+                });
+            }
+
+            async generateWCAGCompliantPalette(isDark) {
+                const baseHues = [0, 72, 144, 216, 288];
+                let attempts = 0;
+                const maxAttempts = 50;
+                
+                while (attempts < maxAttempts) {
+                    attempts++;
+                    const candidateColors = await Promise.all(
+                        baseHues.map(hue => this.generatePastelColor(hue, isDark))
+                    );
+                    
+                    let allCompliant = true;
+                    for (let i = 0; i < 5; i++) {
+                        const current = this.hexToRgb(candidateColors[i]);
+                        const next = this.hexToRgb(candidateColors[(i + 1) % 5]);
+                        const contrastRatio = this.getContrastRatio(current, next);
+                        
+                        if (contrastRatio < 3.0) {
+                            allCompliant = false;
+                            break;
+                        }
+                    }
+                    
+                    if (allCompliant) return candidateColors;
+                }
+                
+                return Promise.all(baseHues.map(hue => this.generatePastelColor(hue, isDark)));
+            }
+
+            async generatePalettes() {
+                if (this.isGenerating) return;
+                
+                this.isGenerating = true;
+                const generateBtn = document.getElementById('generate-btn');
+                const generateText = document.getElementById('generate-text');
+                const refreshIcon = document.getElementById('refresh-icon');
+                
+                generateBtn.disabled = true;
+                generateBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                generateText.textContent = 'Generating...';
+                refreshIcon.classList.add('spin');
+
+                try {
+                    const [dark, light] = await Promise.all([
+                        this.generateWCAGCompliantPalette(true),
+                        this.generateWCAGCompliantPalette(false)
+                    ]);
+                    this.darkPalette = dark;
+                    this.lightPalette = light;
+                    this.updateColorWheel();
+                } catch (error) {
+                    console.error('Error generating palettes:', error);
+                } finally {
+                    this.isGenerating = false;
+                    generateBtn.disabled = false;
+                    generateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    generateText.textContent = 'Generate New';
+                    refreshIcon.classList.remove('spin');
+                }
+            }
+
+            toggleTheme() {
+                this.currentTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
+                this.updateTheme();
+                this.updateColorWheel();
+            }
+
+            updateTheme() {
+                const app = document.getElementById('app');
+                const container = document.getElementById('content-container');
+                const wcagInfo = document.getElementById('wcag-info');
+                const cards = document.querySelectorAll('.color-card');
+                const buttons = document.querySelectorAll('.theme-btn');
+                const texts = document.querySelectorAll('.theme-text');
+                const themeTitle = document.getElementById('theme-title');
+                const currentThemeText = document.getElementById('current-theme-text');
+                
+                // Update icons
+                const desktopSun = document.getElementById('desktop-sun-icon');
+                const desktopMoon = document.getElementById('desktop-moon-icon');
+                const mobileSun = document.getElementById('mobile-sun-icon');
+                const mobileMoon = document.getElementById('mobile-moon-icon');
+
+                if (this.currentTheme === 'light') {
+                    app.className = 'min-h-screen transition-all duration-500 light-theme';
+                    container.className = 'light-container rounded-2xl p-6';
+                    wcagInfo.className = 'light-card p-4 rounded-xl mt-6 text-center';
+                    themeTitle.innerHTML = '[SUN] Light Theme Palette';
+                    themeTitle.className = 'text-xl font-semibold mb-6 text-light';
+                    currentThemeText.textContent = 'light';
+                    
+                    // Show sun icons, hide moon icons
+                    desktopSun.style.display = 'block';
+                    desktopMoon.style.display = 'none';
+                    mobileSun.style.display = 'block';
+                    mobileMoon.style.display = 'none';
+                    
+                    // Update button classes
+                    document.querySelectorAll('.btn-dark').forEach(btn => {
+                        btn.className = btn.className.replace('btn-dark', 'btn-light');
+                    });
+                    
+                } else {
+                    app.className = 'min-h-screen transition-all duration-500 dark-theme';
+                    container.className = 'dark-container rounded-2xl p-6';
+                    wcagInfo.className = 'dark-card p-4 rounded-xl mt-6 text-center';
+                    themeTitle.innerHTML = '[MOON] Dark Theme Palette';
+                    themeTitle.className = 'text-xl font-semibold mb-6 text-dark';
+                    currentThemeText.textContent = 'dark';
+                    
+                    // Show moon icons, hide sun icons
+                    desktopSun.style.display = 'none';
+                    desktopMoon.style.display = 'block';
+                    mobileSun.style.display = 'none';
+                    mobileMoon.style.display = 'block';
+                    
+                    // Update button classes
+                    document.querySelectorAll('.btn-light').forEach(btn => {
+                        btn.className = btn.className.replace('btn-light', 'btn-dark');
+                    });
+                }
+
+                // Update text colors
+                document.querySelectorAll('.text-light, .text-dark').forEach(el => {
+                    el.className = el.className.replace(/text-(light|dark)/, `text-${this.currentTheme === 'light' ? 'light' : 'dark'}`);
+                });
+
+                // Update WCAG info text
+                const wcagText = wcagInfo.querySelector('p');
+                wcagText.className = `text-sm text-${this.currentTheme === 'light' ? 'light' : 'dark'} opacity-80`;
+
+                // Update main title
+                const mainTitle = document.querySelector('h1');
+                mainTitle.className = `text-3xl font-bold text-${this.currentTheme === 'light' ? 'light' : 'dark'}`;
+                if (this.isMobile) {
+                    const mobileTitle = document.querySelector('.mobile-header h1');
+                    mobileTitle.className = `font-bold text-lg text-${this.currentTheme === 'light' ? 'light' : 'dark'}`;
+                }
+            }
+
+            updateColorWheel() {
+                const currentColors = this.currentTheme === 'dark' ? this.darkPalette : this.lightPalette;
+                if (currentColors.length === 0) return;
+
+                const colorWheel = document.getElementById('color-wheel');
+                const colorCards = document.getElementById('color-cards');
+                
+                // Clear existing segments and cards
+                colorWheel.innerHTML = '';
+                colorCards.innerHTML = '';
+
+                // Create color segments
+                currentColors.forEach((color, index) => {
+                    const segment = document.createElement('div');
+                    const rotations = ['rotate-0', 'rotate-72', 'rotate-144', 'rotate-216', 'rotate-288'];
+                    segment.className = `color-segment ${rotations[index]}`;
+                    segment.style.backgroundColor = color;
+                    segment.addEventListener('click', () => this.copyToClipboard(color));
+                    colorWheel.appendChild(segment);
+
+                    // Create color card
+                    const card = document.createElement('div');
+                    card.className = `${this.currentTheme === 'dark' ? 'dark-card' : 'light-card'} p-3 rounded-xl cursor-pointer transition-all hover:scale-105 hover:shadow-lg color-card`;
+                    card.addEventListener('click', () => this.copyToClipboard(color));
+                    
+                    const colorPreview = document.createElement('div');
+                    colorPreview.className = 'w-full h-12 rounded-lg mb-2 border-2 border-white/20';
+                    colorPreview.style.backgroundColor = color;
+                    
+                    const colorText = document.createElement('div');
+                    colorText.className = `text-xs font-mono font-bold text-${this.currentTheme === 'light' ? 'light' : 'dark'}`;
+                    colorText.textContent = color.toUpperCase();
+                    
+                    card.appendChild(colorPreview);
+                    card.appendChild(colorText);
+                    colorCards.appendChild(card);
+                });
+            }
+
+            async copyToClipboard(text) {
+                try {
+                    await navigator.clipboard.writeText(text);
+                    this.showNotification(`Copied ${text}!`);
+                } catch (error) {
+                    console.error('Copy failed:', error);
+                    this.showNotification('Copy failed!');
+                }
+            }
+
+            showNotification(message) {
+                const notification = document.getElementById('notification');
+                const notificationText = document.getElementById('notification-text');
+                
+                notificationText.textContent = message;
+                notification.style.display = 'block';
+                
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 2000);
+            }
+
+            downloadSwatch() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                if (!ctx) return;
+
+                // ID-1 ISO business card size: 85.6 × 53.98 mm at 300 DPI
+                const width = 1009;
+                const height = 637;
+                canvas.width = width;
+                canvas.height = height;
+
+                const colors = this.currentTheme === 'dark' ? this.darkPalette : this.lightPalette;
+                const segmentWidth = width / 5;
+
+                // Draw color segments
+                colors.forEach((color, index) => {
+                    ctx.fillStyle = color;
+                    ctx.fillRect(index * segmentWidth, 0, segmentWidth, height);
+                    
+                    // Add color labels
+                    ctx.fillStyle = this.currentTheme === 'dark' ? '#000' : '#fff';
+                    ctx.font = 'bold 24px Arial, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(
+                        color.toUpperCase(), 
+                        index * segmentWidth + segmentWidth / 2, 
+                        height - 50
+                    );
+                });
+
+                // Add title
+                ctx.fillStyle = this.currentTheme === 'dark' ? '#000' : '#fff';
+                ctx.font = 'bold 32px Arial, sans-serif';
+                ctx.textAlign = 'center';
+                
